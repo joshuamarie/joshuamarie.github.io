@@ -288,14 +288,36 @@ We created a SQLite database file called <code>first_database.sqlite</code> in y
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" aria-labelledby="tabset-2-1-tab">
 <p>Did you know that with <code>{knitr}</code>, you can write SQL code chunks directly in your R Markdown or Quarto documents? This is incredibly handy for mixing SQL queries with your data analysis in R.</p>
-<pre><code>```\{sql connection=con\}
-SELECT name, age, city 
-FROM customers 
-WHERE age &gt; 30
-```</code></pre>
-<blockquote class="blockquote">
-<p>Kindly remove the <code>\</code> when you copy the code chunk above.</p>
-</blockquote>
+<!-- ````  -->
+<!-- ```\{sql connection=con\} -->
+<!-- SELECT name, age, city  -->
+<!-- FROM customers  -->
+<!-- WHERE age > 30 -->
+<!-- ``` -->
+<!-- ```` -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">```{sql connection=con}</span></span>
+<span id="cb4-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span> name, age, city </span>
+<span id="cb4-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">FROM</span> customers </span>
+<span id="cb4-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">WHERE</span> age <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span></span>
+<span id="cb4-5"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">```</span></span></code></pre></div></div>
+<!-- > Kindly remove the `\` when you copy the code chunk above. -->
 <p>Alright, I wrote the SQL code chunk above again here for your reference:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><span class="kw" style="color: #003B4F;

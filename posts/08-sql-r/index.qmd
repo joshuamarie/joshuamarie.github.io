@@ -202,15 +202,13 @@ Now comes the fun part—you can query this database in two different ways, and 
 
 Did you know that with `{knitr}`, you can write SQL code chunks directly in your R Markdown or Quarto documents? This is incredibly handy for mixing SQL queries with your data analysis in R.
 
-```` 
-```\{sql connection=con\}
+````
+```{{sql connection=con}}
 SELECT name, age, city 
 FROM customers 
 WHERE age > 30
 ```
 ````
-
-> Kindly remove the `\` when you copy the code chunk above.
 
 Alright, I wrote the SQL code chunk above again here for your reference:
 

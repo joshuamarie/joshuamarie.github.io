@@ -618,7 +618,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["Species"],"name":[1],"type":["fct"],"align":["left"]},{"label":["m_sl"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["n"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"setosa","2":"4.982667","3":"105"},{"1":"versicolor","2":"5.861333","3":"105"},{"1":"virginica","2":"6.536000","3":"105"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["Species"],"name":[1],"type":["fct"],"align":["left"]},{"label":["m_sl"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["n"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"setosa","2":"4.960000","3":"105"},{"1":"versicolor","2":"5.974667","3":"105"},{"1":"virginica","2":"6.609333","3":"105"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -1481,7 +1481,6 @@ textarea:focus {
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Create theme toggle button
   const themeToggle = document.createElement('button');
   themeToggle.className = 'theme-toggle';
   themeToggle.innerHTML = '🌙';
@@ -1490,12 +1489,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.body.appendChild(themeToggle);
   
-  // Check for saved theme preference
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   themeToggle.innerHTML = savedTheme === 'dark' ? '🌙' : '☀️';
   
-  // Theme toggle functionality
   themeToggle.addEventListener('click', function() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -1504,14 +1501,12 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('theme', newTheme);
     themeToggle.innerHTML = newTheme === 'dark' ? '🌙' : '☀️';
     
-    // Add a little animation feedback
     themeToggle.style.transform = 'rotate(360deg)';
     setTimeout(() => {
       themeToggle.style.transform = 'rotate(0deg)';
     }, 300);
   });
   
-  // Hide "on this page" text in TOC using JavaScript as backup
   setTimeout(function() {
     const tocTitles = document.querySelectorAll('.toc-title, #quarto-margin-sidebar h2, nav[role="doc-toc"] h2');
     tocTitles.forEach(function(title) {
@@ -1519,7 +1514,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }, 100);
   
-  // Smooth scroll for TOC links
   const tocLinks = document.querySelectorAll('#TOC a, .tocify a');
   tocLinks.forEach(function(link) {
     link.addEventListener('click', function(e) {
@@ -1537,7 +1531,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // Add loading animation to images
   const images = document.querySelectorAll('img');
   images.forEach(function(img) {
     if (img.complete) {

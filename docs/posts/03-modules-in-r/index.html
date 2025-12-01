@@ -1912,8 +1912,6 @@ textarea:focus {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-  // Create theme toggle button
-
   const themeToggle = document.createElement('button');
 
   themeToggle.className = 'theme-toggle';
@@ -1930,8 +1928,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   
 
-  // Check for saved theme preference
-
   const savedTheme = localStorage.getItem('theme') || 'light';
 
   document.documentElement.setAttribute('data-theme', savedTheme);
@@ -1939,8 +1935,6 @@ document.addEventListener('DOMContentLoaded', function() {
   themeToggle.innerHTML = savedTheme === 'dark' ? '🌙' : '☀️';
 
   
-
-  // Theme toggle functionality
 
   themeToggle.addEventListener('click', function() {
 
@@ -1958,8 +1952,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
 
-    // Add a little animation feedback
-
     themeToggle.style.transform = 'rotate(360deg)';
 
     setTimeout(() => {
@@ -1971,8 +1963,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   
-
-  // Hide "on this page" text in TOC using JavaScript as backup
 
   setTimeout(function() {
 
@@ -1987,8 +1977,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 100);
 
   
-
-  // Smooth scroll for TOC links
 
   const tocLinks = document.querySelectorAll('#TOC a, .tocify a');
 
@@ -2023,8 +2011,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   
-
-  // Add loading animation to images
 
   const images = document.querySelectorAll('img');
 

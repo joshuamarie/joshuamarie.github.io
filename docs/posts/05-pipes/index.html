@@ -685,8 +685,8 @@ Coefficients:
 <pre><code># A tibble: 2 × 6
   expression         min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 magrittr pipe   61.7ms   61.7ms      16.2     375KB     97.3
-2 native R pipe   21.7ms   28.8ms      36.2     369KB     15.1</code></pre>
+1 magrittr pipe  121.3ms  121.3ms      8.25     375KB    33.0 
+2 native R pipe   30.9ms   44.4ms     23.2      369KB     7.75</code></pre>
 </div>
 </div>
 </section><section id="pipe-bind-operator" class="level3" data-number="4.5.3"><h3 data-number="4.5.3" class="anchored" data-anchor-id="pipe-bind-operator">
@@ -1647,7 +1647,6 @@ textarea:focus {
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Create theme toggle button
   const themeToggle = document.createElement('button');
   themeToggle.className = 'theme-toggle';
   themeToggle.innerHTML = '🌙';
@@ -1656,12 +1655,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.body.appendChild(themeToggle);
   
-  // Check for saved theme preference
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   themeToggle.innerHTML = savedTheme === 'dark' ? '🌙' : '☀️';
   
-  // Theme toggle functionality
   themeToggle.addEventListener('click', function() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -1670,14 +1667,12 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('theme', newTheme);
     themeToggle.innerHTML = newTheme === 'dark' ? '🌙' : '☀️';
     
-    // Add a little animation feedback
     themeToggle.style.transform = 'rotate(360deg)';
     setTimeout(() => {
       themeToggle.style.transform = 'rotate(0deg)';
     }, 300);
   });
   
-  // Hide "on this page" text in TOC using JavaScript as backup
   setTimeout(function() {
     const tocTitles = document.querySelectorAll('.toc-title, #quarto-margin-sidebar h2, nav[role="doc-toc"] h2');
     tocTitles.forEach(function(title) {
@@ -1685,7 +1680,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }, 100);
   
-  // Smooth scroll for TOC links
   const tocLinks = document.querySelectorAll('#TOC a, .tocify a');
   tocLinks.forEach(function(link) {
     link.addEventListener('click', function(e) {
@@ -1703,7 +1697,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // Add loading animation to images
   const images = document.querySelectorAll('img');
   images.forEach(function(img) {
     if (img.complete) {

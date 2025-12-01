@@ -2,7 +2,6 @@
   {
     "listing": "/posts/index.html",
     "items": [
-      "/posts/09-ggplot2/index.html",
       "/posts/08-sql-r/index.html",
       "/posts/07-glm/index.html",
       "/posts/06-load-pkg/index.html",

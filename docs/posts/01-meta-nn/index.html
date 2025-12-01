@@ -1701,7 +1701,6 @@ textarea:focus {
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Create theme toggle button
   const themeToggle = document.createElement('button');
   themeToggle.className = 'theme-toggle';
   themeToggle.innerHTML = '🌙';
@@ -1710,12 +1709,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.body.appendChild(themeToggle);
   
-  // Check for saved theme preference
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   themeToggle.innerHTML = savedTheme === 'dark' ? '🌙' : '☀️';
   
-  // Theme toggle functionality
   themeToggle.addEventListener('click', function() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -1724,14 +1721,12 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('theme', newTheme);
     themeToggle.innerHTML = newTheme === 'dark' ? '🌙' : '☀️';
     
-    // Add a little animation feedback
     themeToggle.style.transform = 'rotate(360deg)';
     setTimeout(() => {
       themeToggle.style.transform = 'rotate(0deg)';
     }, 300);
   });
   
-  // Hide "on this page" text in TOC using JavaScript as backup
   setTimeout(function() {
     const tocTitles = document.querySelectorAll('.toc-title, #quarto-margin-sidebar h2, nav[role="doc-toc"] h2');
     tocTitles.forEach(function(title) {
@@ -1739,7 +1734,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }, 100);
   
-  // Smooth scroll for TOC links
   const tocLinks = document.querySelectorAll('#TOC a, .tocify a');
   tocLinks.forEach(function(link) {
     link.addEventListener('click', function(e) {
@@ -1757,7 +1751,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // Add loading animation to images
   const images = document.querySelectorAll('img');
   images.forEach(function(img) {
     if (img.complete) {

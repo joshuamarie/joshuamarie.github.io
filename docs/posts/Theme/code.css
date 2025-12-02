@@ -2,7 +2,6 @@
    Code Blocks
    ========================= */
 
-/* Container div - handles scrolling and dimensions */
 div.sourceCode {
   background: #f5f5f5; /* Light mode background */
   border: 1px solid #ddd;
@@ -18,15 +17,12 @@ div.sourceCode {
 }
 
 [data-theme="dark"] div.sourceCode {
-  background: #19183B; /* Dark mode background */
+  background: #222222; /* Dark mode background */
   border: 1px solid #333;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
-/* Top accent bar - REMOVED FROM HERE */
-/* Moved to pre.sourceCode so it scrolls with content */
-
-/* Pre element - remove extra styling, just handle padding */
+/* Pre element */
 pre.sourceCode {
   background: transparent !important;
   border: none !important;
@@ -54,11 +50,15 @@ pre.sourceCode::before {
   border-radius: 8px 8px 0 0;
 }
 
+/* =========================
+   Code Output Blocks (not source code)
+   ========================= */
 pre:not(.sourceCode) {
   background: #f5f5f5;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1.5rem !important;
+  padding-top: 1.5rem !important;   
   overflow-x: auto;
   margin: 1.5rem 0;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
@@ -68,22 +68,20 @@ pre:not(.sourceCode) {
   display: block;
 }
 
+pre:not(.sourceCode)::before {
+  content: none !important;
+}
+
+/* Dark mode */
 [data-theme="dark"] pre:not(.sourceCode) {
-  background: #19183B;
+  background: #222222;
   border: 1px solid #333;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
-pre:not(.sourceCode)::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #6a5acd, #ff6f61);
-  border-radius: 8px 8px 0 0;
-}
+/* =========================
+   Base Code Text Color
+   ========================= */
 
 /* Code element styling */
 pre code {
@@ -95,14 +93,14 @@ pre code {
   padding: 0;
   margin: 0;
   font-weight: 500;
-  color: #19183B; /* Light mode text */
+  color: #19183B !important; /* Light mode text */
   display: block;
   white-space: pre;
   min-height: 0;
 }
 
 [data-theme="dark"] pre code {
-  color: #FFF5F2; /* Dark mode text */
+  color: #FFF5F2 !important; /* Dark mode text */
 }
 
 pre.sourceCode code,
@@ -112,40 +110,90 @@ div.sourceCode code {
   background: inherit !important;
 }
 
+/* Only inherit background for child elements */
 pre.sourceCode code *,
-div.sourceCode code *,
-pre.sourceCode code span,
-div.sourceCode code span,
-pre.sourceCode code .kw, 
-pre.sourceCode code .dt,
-pre.sourceCode code .dv, 
-pre.sourceCode code .bn, 
-pre.sourceCode code .fl, 
-pre.sourceCode code .ch, 
-pre.sourceCode code .st, 
-pre.sourceCode code .co, 
-pre.sourceCode code .ot, 
-pre.sourceCode code .al, 
-pre.sourceCode code .fu, 
-pre.sourceCode code .re, 
-pre.sourceCode code .er, 
-pre.sourceCode code .cn, 
-pre.sourceCode code .sc, 
-pre.sourceCode code .vs, 
-pre.sourceCode code .ss, 
-pre.sourceCode code .im, 
-pre.sourceCode code .va, 
-pre.sourceCode code .cf, 
-pre.sourceCode code .op, 
-pre.sourceCode code .in {
+div.sourceCode code * {
   background: inherit !important;
-  color: inherit !important;
 }
 
 pre:not(.sourceCode) code * {
   display: inline;
   background: inherit;
-  color: inherit;
+}
+
+/* =========================
+   Syntax Highlighting Colors
+   Override Quarto's highlight-style with theme-aware colors
+   ========================= */
+
+/* LIGHT MODE SYNTAX COLORS (based on Tango theme) */
+pre.sourceCode code .kw { color: #8B008B !important; } /* Keywords - purple */
+pre.sourceCode code .dt { color: #B8860B !important; } /* Data types - dark goldenrod */
+pre.sourceCode code .dv,
+pre.sourceCode code .bn,
+pre.sourceCode code .fl { color: #B452CD !important; } /* Numbers - medium orchid */
+pre.sourceCode code .ch,
+pre.sourceCode code .st { color: #C41A16 !important; } /* Strings - red */
+pre.sourceCode code .co { color: #8C8C8C !important; } /* Comments - gray */
+pre.sourceCode code .ot { color: #8B4513 !important; } /* Other - saddle brown */
+pre.sourceCode code .al { color: #FF0000 !important; } /* Alert - red */
+pre.sourceCode code .fu { color: #000080 !important; } /* Functions - navy */
+pre.sourceCode code .er { color: #FF0000 !important; } /* Error - red */
+pre.sourceCode code .wa { color: #FF8C00 !important; } /* Warning - dark orange */
+pre.sourceCode code .cn { color: #B8860B !important; } /* Constant - dark goldenrod */
+pre.sourceCode code .sc { color: #C41A16 !important; } /* Special char - red */
+pre.sourceCode code .vs { color: #C41A16 !important; } /* Verbatim string - red */
+pre.sourceCode code .ss { color: #C41A16 !important; } /* Special string - red */
+pre.sourceCode code .va { color: #19183B !important; } /* Variables - base text color */
+pre.sourceCode code .cf { color: #8B008B !important; } /* Control flow - purple */
+pre.sourceCode code .op { color: #8B008B !important; } /* Operators - purple */
+
+/* DARK MODE SYNTAX COLORS (based on Zenburn theme) */
+[data-theme="dark"] pre.sourceCode code .kw { color: #F0DFAF !important; } /* Keywords - light yellow */
+[data-theme="dark"] pre.sourceCode code .dt { color: #DFDFBF !important; } /* Data types - light beige */
+[data-theme="dark"] pre.sourceCode code .dv,                                                                         
+[data-theme="dark"] pre.sourceCode code .bn,                                                                
+[data-theme="dark"] pre.sourceCode code .fl { color: #8CD0D3 !important; } /* Numbers - cyan */
+[data-theme="dark"] pre.sourceCode code .ch,                                                                 
+[data-theme="dark"] pre.sourceCode code .st { color: #CC9393 !important; } /* Strings - pink */
+[data-theme="dark"] pre.sourceCode code .co { color: #7F9F7F !important; } /* Comments - green-gray */
+[data-theme="dark"] pre.sourceCode code .ot { color: #EFEF8F !important; } /* Other - light yellow */
+[data-theme="dark"] pre.sourceCode code .al { color: #FFCFAF !important; } /* Alert - light orange */
+[data-theme="dark"] pre.sourceCode code .fu { color: #93E0E3 !important; } /* Functions - light cyan */
+[data-theme="dark"] pre.sourceCode code .er { color: #C3BF9F !important; } /* Error - beige */
+[data-theme="dark"] pre.sourceCode code .wa { color: #DFAF8F !important; } /* Warning - tan */
+[data-theme="dark"] pre.sourceCode code .cn { color: #DCA3A3 !important; } /* Constant - dusty rose */
+[data-theme="dark"] pre.sourceCode code .sc { color: #CC9393 !important; } /* Special char - pink */
+[data-theme="dark"] pre.sourceCode code .vs { color: #CC9393 !important; } /* Verbatim string - pink */
+[data-theme="dark"] pre.sourceCode code .ss { color: #CC9393 !important; } /* Special string - pink */
+[data-theme="dark"] pre.sourceCode code .va { color: #FFF5F2 !important; } /* Variables - base text color */
+[data-theme="dark"] pre.sourceCode code .cf { color: #F0DFAF !important; } /* Control flow - light yellow */
+[data-theme="dark"] pre.sourceCode code .op { color: #F0DFAF !important; } /* Operators - light yellow */
+
+/* =========================
+   Code Annotations
+   ========================= */
+/* Light mode annotations */
+div.sourceCode .code-annotation-gutter,
+div.sourceCode .code-annotation-gutter-bg {
+  background: transparent;
+}
+
+/* Dark mode annotations */
+[data-theme="dark"] div.sourceCode .code-annotation-gutter,
+[data-theme="dark"] div.sourceCode .code-annotation-gutter-bg {
+  background: transparent;
+}
+
+/* Annotation anchor circles */
+div.sourceCode a.code-annotation-anchor {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] div.sourceCode a.code-annotation-anchor {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* =========================

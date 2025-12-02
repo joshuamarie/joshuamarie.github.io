@@ -24,6 +24,9 @@ format:
       - Theme/theme.html
       - Theme/code-modal.html
     toc-title: ""
+    highlight-style:
+      light: tango
+      dark: zenburn
     # theme: 
     #   light: 
     #     - cosmo

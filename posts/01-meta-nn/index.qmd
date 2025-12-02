@@ -14,7 +14,6 @@ format:
     code-fold: false
     code-tools: false
     theme: default
-    highlight-style: tango
     fig-width: 10
     fig-height: 6
     fig-cap-location: bottom

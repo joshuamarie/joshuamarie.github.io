@@ -35,7 +35,7 @@ website:
   page-footer:
     center: "Design inspired by [Geeky Hugo](https://github.com/statichunt/geeky-hugo)"
   twitter-card: true
-  repo-url: https://github.com/joshuamarie/joshuamarie
+  repo-url: https://github.com/joshuamarie/joshuamarie.github.io
   repo-actions: [edit, issue]
   repo-branch: main
   site-url: https://joshuamarie.com
@@ -49,7 +49,7 @@ format:
           <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script>
     comments:
       utterances:
-        repo: joshuamarie/joshuamarie
+        repo: joshuamarie/joshuamarie.github.io
     code-link: true
     anchor-sections: true
     fig-cap-location: margin

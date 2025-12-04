@@ -2,11 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://joshuamarie.com/services.html</loc>
-    <lastmod>2025-11-24T09:48:14.850Z</lastmod>
+    <lastmod>2025-12-01T09:12:24.672Z</lastmod>
   </url>
   <url>
     <loc>https://joshuamarie.com/posts/index.html</loc>
     <lastmod>2025-12-01T09:12:24.665Z</lastmod>
+  </url>
+  <url>
+    <loc>https://joshuamarie.com/posts/08-sql-r/index.html</loc>
+    <lastmod>2025-12-01T12:08:18.771Z</lastmod>
   </url>
   <url>
     <loc>https://joshuamarie.com/posts/06-load-pkg/index.html</loc>
@@ -22,11 +26,11 @@
   </url>
   <url>
     <loc>https://joshuamarie.com/index.html</loc>
-    <lastmod>2025-11-28T03:41:48.046Z</lastmod>
+    <lastmod>2025-12-01T09:12:24.490Z</lastmod>
   </url>
   <url>
     <loc>https://joshuamarie.com/contacts.html</loc>
-    <lastmod>2025-11-24T09:28:40.120Z</lastmod>
+    <lastmod>2025-12-01T09:12:24.174Z</lastmod>
   </url>
   <url>
     <loc>https://joshuamarie.com/posts/01-meta-nn/index.html</loc>
@@ -45,15 +49,11 @@
     <lastmod>2025-12-01T12:09:10.563Z</lastmod>
   </url>
   <url>
-    <loc>https://joshuamarie.com/resources.html</loc>
-    <lastmod>2025-11-23T05:52:36.064Z</lastmod>
-  </url>
-  <url>
-    <loc>https://joshuamarie.com/posts/08-sql-r/index.html</loc>
-    <lastmod>2025-12-01T12:08:18.771Z</lastmod>
-  </url>
-  <url>
     <loc>https://joshuamarie.com/posts/09-ggplot2/index.html</loc>
     <lastmod>2025-12-04T05:24:20.605Z</lastmod>
+  </url>
+  <url>
+    <loc>https://joshuamarie.com/resources.html</loc>
+    <lastmod>2025-12-01T09:12:24.671Z</lastmod>
   </url>
 </urlset>

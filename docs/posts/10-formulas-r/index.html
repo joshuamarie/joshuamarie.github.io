@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.8.26">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
 <meta name="author" content="Joshua Marie">
-<meta name="dcterms.date" content="2025-10-08">
-
-<title>Box: Placing module system into R – Joshua Marie</title>
+<meta name="dcterms.date" content="2025-12-08">
+<meta name="description" content="Let’s discover how in the world it works">
+<title>What’s so special about formulas in R – Joshua Marie</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,8 +20,42 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
-
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
@@ -45,8 +77,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-c2a4070949356990582fa11d5da3dd57.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/quarto-contrib/social-share-1.0.0/social-share.css" rel="stylesheet">
-<link href="../../site_libs/quarto-contrib/social-share-1.0.0/all.min.css" rel="stylesheet">
-<script id="quarto-search-options" type="application/json">{
+<link href="../../site_libs/quarto-contrib/social-share-1.0.0/all.min.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
@@ -72,11 +103,7 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script>
-<script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script>
-
-
-<link rel="stylesheet" href="../../styles/base.css">
+}</script><script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script><link rel="stylesheet" href="../../styles/base.css">
 <link rel="stylesheet" href="../../styles/layout.css">
 <link rel="stylesheet" href="../../styles/hero.css">
 <link rel="stylesheet" href="../../styles/cards.css">
@@ -84,20 +111,17 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../styles/dark-mode.css">
 <link rel="stylesheet" href="../Theme/code.css">
 <link rel="stylesheet" href="../Theme/table.css">
-<meta name="twitter:title" content="Box: Placing module system into R – Joshua Marie">
-<meta name="twitter:description" content="Definitive Guide">
-<meta name="twitter:image" content="https://joshuamarie.com/posts/03-modules-in-r/tmbnl.png">
-<meta name="twitter:image-height" content="277">
-<meta name="twitter:image-width" content="240">
+<meta name="twitter:title" content="What’s so special about formulas in R – Joshua Marie">
+<meta name="twitter:description" content="Let’s discover how in the world it works">
+<meta name="twitter:image" content="https://joshuamarie.com/posts/10-formulas-r/image.png">
+<meta name="twitter:image-height" content="788">
+<meta name="twitter:image-width" content="940">
 <meta name="twitter:card" content="summary_large_image">
 </head>
-
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
-      <div class="navbar-container container-fluid">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Joshua Marie</span>
@@ -109,7 +133,7 @@ ul.task-list li input[type="checkbox"] {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
+<li class="nav-item">
     <a class="nav-link" href="../../contacts.html"> 
 <span class="menu-text">Contact</span></a>
   </li>  
@@ -122,8 +146,8 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Posts</span></a>
   </li>  
 </ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
+<ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item compact">
     <a class="nav-link" href="https://github.com/joshuamarie"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
 <span class="menu-text"></span></a>
@@ -144,21 +168,25 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text"></span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
+</div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
-    </nav>
-</header>
-<!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
+    </nav></header><!-- content --><header id="title-block-header" class="quarto-title-block default page-columns page-full"><div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Box: Placing module system into R</h1>
-            <p class="subtitle lead">Definitive Guide</p>
-                                <div class="quarto-categories">
+      <h1 class="title">What’s so special about formulas in R</h1>
+            <p class="subtitle lead">Hidden secrets? Somewhat</p>
+                  <div>
+        <div class="description">
+          Let’s discover how in the world it works
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">R</div>
-                <div class="quarto-category">book</div>
+                <div class="quarto-category">formulas</div>
+                <div class="quarto-category">rlang</div>
+                <div class="quarto-category">machine-learning</div>
+                <div class="quarto-category">statistics</div>
               </div>
                   </div>
   </div>
@@ -176,7 +204,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 8, 2025</p>
+        <p class="date">December 8, 2025</p>
       </div>
     </div>
     
@@ -188,2921 +216,1846 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome"><span class="header-section-number">1</span> Welcome!</a>
+<li><a href="#what-exactly-are-the-formulas" id="toc-what-exactly-are-the-formulas" class="nav-link active" data-scroll-target="#what-exactly-are-the-formulas"><span class="header-section-number">1</span> What exactly are the formulas?</a></li>
+  <li><a href="#truth-it-doesnt-have-an-exact-meaning" id="toc-truth-it-doesnt-have-an-exact-meaning" class="nav-link" data-scroll-target="#truth-it-doesnt-have-an-exact-meaning"><span class="header-section-number">2</span> Truth: It doesn’t have an exact meaning</a></li>
+  <li>
+<a href="#the-ancestor-of-quosures" id="toc-the-ancestor-of-quosures" class="nav-link" data-scroll-target="#the-ancestor-of-quosures"><span class="header-section-number">3</span> The ancestor of quosures</a>
   <ul class="collapse">
-  <li><a href="#what-youll-find-here" id="toc-what-youll-find-here" class="nav-link" data-scroll-target="#what-youll-find-here"><span class="header-section-number">1.1</span> What You’ll Find Here</a></li>
-  <li><a href="#why-this-book" id="toc-why-this-book" class="nav-link" data-scroll-target="#why-this-book"><span class="header-section-number">1.2</span> Why this book</a></li>
-  <li><a href="#how-to-use-this-guide" id="toc-how-to-use-this-guide" class="nav-link" data-scroll-target="#how-to-use-this-guide"><span class="header-section-number">1.3</span> How to Use This Guide</a></li>
-  <li><a href="#contributing" id="toc-contributing" class="nav-link" data-scroll-target="#contributing"><span class="header-section-number">1.4</span> Contributing</a></li>
-  <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license"><span class="header-section-number">1.5</span> License</a></li>
-  <li><a href="#credits" id="toc-credits" class="nav-link" data-scroll-target="#credits"><span class="header-section-number">1.6</span> Credits</a></li>
-  </ul></li>
+<li><a href="#it-captures-both-the-expression-and-the-environment" id="toc-it-captures-both-the-expression-and-the-environment" class="nav-link" data-scroll-target="#it-captures-both-the-expression-and-the-environment"><span class="header-section-number">3.1</span> It captures both the expression and the environment</a></li>
+  <li><a href="#difference-between-and-quo" id="toc-difference-between-and-quo" class="nav-link" data-scroll-target="#difference-between-and-quo"><span class="header-section-number">3.2</span> Difference between “~” and quo</a></li>
+  <li><a href="#difference-between-and-enquo" id="toc-difference-between-and-enquo" class="nav-link" data-scroll-target="#difference-between-and-enquo"><span class="header-section-number">3.3</span> Difference between “~” and enquo</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/03-modules-in-r/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+</li>
+  <li><a href="#why-other-languages-struggle-with-formulas" id="toc-why-other-languages-struggle-with-formulas" class="nav-link" data-scroll-target="#why-other-languages-struggle-with-formulas"><span class="header-section-number">4</span> Why other languages struggle with formulas</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">5</span> Further Reading</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/10-formulas-r/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
-<div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://twitter.com/share?url=https://joshuamarie.com/posts/03-modules-in-r/&amp;text=Module System in R - Joshua Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/03-modules-in-r/&amp;title=Module System in R - Joshua Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Module System in R - Joshua Marie&amp;body=Check out this link:https://joshuamarie.com/posts/03-modules-in-r/" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/03-modules-in-r/" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/03-modules-in-r/&amp;title=Module System in R - Joshua Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/03-modules-in-r/&amp;title=Module System in R - Joshua Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/03-modules-in-r/&amp;name=Module System in R - Joshua Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Module System in R - Joshua Marie https://joshuamarie.com/posts/03-modules-in-r/'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/03-modules-in-r/ Module System in R - Joshua Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a></div></div>
+<main class="content quarto-banner-title-block" id="quarto-document-content"><div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/11-formulas-r&amp;text=Formulas%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/11-formulas-r&amp;title=Formulas%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Formulas%20in%20R%20%E2%80%94%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/11-formulas-r" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/11-formulas-r" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/11-formulas-r&amp;title=Formulas%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/11-formulas-r&amp;title=Formulas%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/11-formulas-r&amp;name=Formulas%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Formulas in R — Joshua Marie https://joshuamarie.com/posts/11-formulas-r'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/11-formulas-r%20Formulas%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
 
 
-
-
-
-<section id="welcome" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Welcome!</h1>
-<p><em>Click <a href="https://joshuamarie.github.io/modules-in-r/">here</a> to read the actual book. </em></p>
-<p>Welcome to the definitive guide to module system in R using box!</p>
-<p>Whether you want another way to import R packages, or simply seeking better ways to organize your code, this guide helps you to reimagine something did not exist in R for quite a long time: module system. This book introduces you the package that I discovered few years ago, it is called <a href="https://github.com/klmr/box">box</a>, initially <strong>modules</strong> package, by Konrad Rudolph. This package provides a clean, straightforward API to define and manage modules. R, especially its users, suffers from managing huge R pipelines, because there’s no clean way to manage such complex pipelines…this problem will potentially cease to exists, as <strong>box</strong> package affords closely equivalent module system to other programming languages like Python, C#, and more.</p>
-<section id="what-youll-find-here" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="what-youll-find-here"><span class="header-section-number">1.1</span> What You’ll Find Here</h2>
-<p>A definitive guide that walks you through:</p>
-<ul>
-<li>Alternative approach to import R codes (i.e.&nbsp;R packages, modules)</li>
-<li>Modern approaches to compose and organize R codes</li>
-<li>Step-by-step tutorials for using the <strong>box</strong> package</li>
-<li>Best practices for maintainable R code</li>
-</ul>
-</section>
-<section id="why-this-book" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="why-this-book"><span class="header-section-number">1.2</span> Why this book</h2>
-<p>Only little to no books teach you to correctly write reusable, composable, and modular R codes :). Most of the books maybe teaches you about R, particularly application of R in different fields, but little to none explains one of the best practices. Most of them uses <code>library()</code> anyways, so you won’t certainly find similar book like this.</p>
-<p>Consequently, while R offers various ways to organize code, the <strong>box</strong> package manages to be superior among them (I am bias) by introducing a fresh, modern approach to module system that may significantly improve your R development workflow, similar to the workflow made by other developers, particularly Python devs. This book bridges the gap between basic R programming and professional-grade code organization.</p>
-</section>
-<section id="how-to-use-this-guide" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="how-to-use-this-guide"><span class="header-section-number">1.3</span> How to Use This Guide</h2>
-<p><em>Click <a href="https://joshuamarie.github.io/modules-in-r/">here</a> and it will send you to the actual book. </em></p>
-<p>The content is structured progressively, building from foundational concepts to deep applications. For the best learning experience:</p>
+<p><img src="image.png" class="img-fluid"></p>
+<p>If you’ve used R for any statistical modeling, I am certainly sure you’ve encountered formulas, like, by a lot.</p>
+<p>However, what if I told you they’re generally everywhere? For example:</p>
 <ol type="1">
-<li>Start with the introduction to understand the core concepts</li>
-<li>Learning the fundamentals of import system with <strong>{box}</strong> package</li>
-<li>Learning the structures and constructions of reusability of modules, treating them like R packages, and supplied with documentation</li>
-<li>Learning unit testing the modules</li>
+<li><p>Linear model <code>lm(y ~ x)</code></p></li>
+<li>
+<p>ggplot2’s <code>facet_grid()</code> and <code>formula</code> from <code>geom_smooth()</code>:</p>
+<pre><code>mtcars |&gt; 
+    ggplot(aes(wt, mpg, color = factor(cyl))) + 
+    geom_point(size = 3, alpha = 0.7) + 
+    theme_minimal(base_size = 12) +  
+
+    # You can modify the existing formula
+    geom_smooth(
+        method = "lm", 
+        formula = y ~ log(x), 
+        se = TRUE, 
+        alpha = 0.2, 
+        linewidth = 1
+    ) + 
+
+    # Facet grid accepts formula for rows and cols as an argument
+    facet_grid(~ cyl) + 
+
+    scale_color_manual(
+        values = c("4" = "#2E86AB", "6" = "#A23B72", "8" = "#F18F01"),
+        name = "Cylinders"
+    )</code></pre>
+</li>
+<li>
+<p>Machine learning with <a href="https://tidymodels.tidymodels.org">tidymodels</a>’s <a href="https://github.com/tidymodels/recipes">recipes</a> API, e.g.:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">recipe</span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">step_normalize</span><span class="op">(</span><span class="fu">all_numeric_predictors</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">step_corr</span><span class="op">(</span><span class="fu">all_predictors</span><span class="op">(</span><span class="op">)</span>, threshold <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</li>
 </ol>
-</section>
-<section id="contributing" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="contributing"><span class="header-section-number">1.4</span> Contributing</h2>
-<p>Contributions are welcome! If you have suggestions or improvements, please open an <a href="https://github.com/joshuamarie/modules-in-r/issues">issue</a> or submit a pull request on the <a href="https://github.com/joshuamarie/modules-in-r">GitHub repository</a>.</p>
-</section>
-<section id="license" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="license"><span class="header-section-number">1.5</span> License</h2>
-<p>This book is licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0). See the <a href="https://github.com/joshuamarie/modules-in-r/blob/main/LICENSE.md">LICENSE</a> file for details.</p>
-</section>
-<section id="credits" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="credits"><span class="header-section-number">1.6</span> Credits</h2>
-<p>This book was created by <a href="https://github.com/joshuamarie">Joshua Marie</a>.</p>
-<p>Special thanks to:</p>
+<p>The application is not limited to statistical modelling per se, where it describes the relationship between the variables, whereas the left hand side is the dependent variable, while the right hand side is the independent variable, for example. Also, have you ever wondered what makes them tick?</p>
+<p>Formula <code>~</code> in R is just another tool, most particular in metaprogramming, where it captures expressions in runtime without evaluating them.</p>
+<p>Can we dive deep into what makes formulas special and how you can leverage them in your own code?</p>
+<section id="what-exactly-are-the-formulas" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> What exactly are the formulas?</h1>
+<p>At their core, formulas are R objects created with the <code>~</code> operator. They look simple:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f</span> <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "formula"</code></pre>
+</div>
+</div>
+<p>But there’s more than meets the eye. A formula is actually a call object that stores unevaluated expressions along with their environment.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/typeof.html">typeof</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "language"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+</div>
+<p>A formula typically has three parts:</p>
+<ol type="1">
+<li>The tilde operator <code>~</code>
+</li>
+<li>The left-hand side (LHS) - optional</li>
+<li>The right-hand side (RHS) - required</li>
+</ol>
+<p>Example 1 contains both LHS and RHS:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f1</span> <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span></span>
+<span><span class="va">f1</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>`~`</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f1</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>y</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f1</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>x + z</code></pre>
+</div>
+</div>
+<p>Example 2 contains RHS but LHS:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f2</span> <span class="op">=</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span></span>
+<span><span class="va">f2</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>`~`</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f2</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>x + z</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>It is okay to not have LHS, only RHS. It is definitely not okay to have LHS but RHS.</p>
+</div>
+</div>
+</section><section id="truth-it-doesnt-have-an-exact-meaning" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Truth: It doesn’t have an exact meaning</h1>
+<p>Let me clarify something upfront: formulas in R don’t have a rigid, predefined meaning.</p>
+<p>What I mean is this:</p>
 <ul>
-<li><a href="https://github.com/klmr">Konrad Rudolph</a> for creating and maintaining the <a href="https://github.com/klmr/box">box</a> package</li>
-<li>The R community for their continued support and feedback</li>
+<li>The formula interface is deliberately vague. The <code>~</code> operator doesn’t enforce any particular semantics; it just captures structure. What that structure <em>means</em> entirely depends on how you choose to interpret it.</li>
 </ul>
-<p>The book is built with <a href="https://quarto.org/">Quarto</a>, hosted on GitHub Pages.</p>
+<p>In short: The formulas in R actually lean on what you exactly do it.</p>
+<p>You can really do anything. For instance:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">transform_data</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>        <span class="va">rlang</span><span class="op">[</span><span class="va">f_lhs</span>, <span class="va">f_rhs</span>, <span class="va">enexprs</span>, <span class="va">eval_tidy</span><span class="op">]</span>,</span>
+<span>        <span class="va">purrr</span><span class="op">[</span><span class="va">reduce</span><span class="op">]</span>, </span>
+<span>        <span class="va">tibble</span><span class="op">[</span>tbl <span class="op">=</span> <span class="va">as_tibble</span><span class="op">]</span></span>
+<span>    <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">dots</span> <span class="op">=</span> <span class="fu">enexprs</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">new_data</span> <span class="op">=</span> <span class="fu">reduce</span><span class="op">(</span><span class="va">dots</span>, <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">expr</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">col_name</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu">f_lhs</span><span class="op">(</span><span class="va">expr</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="va">operation</span> <span class="op">=</span> <span class="fu">f_rhs</span><span class="op">(</span><span class="va">expr</span><span class="op">)</span></span>
+<span>        <span class="va">df</span><span class="op">[[</span><span class="va">col_name</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu">eval_tidy</span><span class="op">(</span><span class="va">operation</span>, data <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span>
+<span>        <span class="va">df</span></span>
+<span>    <span class="op">}</span>, .init <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu">tbl</span><span class="op">(</span><span class="va">new_data</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">iris</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">transform_data</span><span class="op">(</span></span>
+<span>        <span class="va">petal_ratio</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">/</span> <span class="va">Petal.Width</span>, </span>
+<span>        <span class="va">pr_2</span> <span class="op">~</span> <span class="va">petal_ratio</span><span class="op">^</span><span class="fl">2</span>, </span>
+<span>        <span class="va">Species</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">Species</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 150 × 7
+   Sepal.Length Sepal.Width Petal.Length Petal.Width Species petal_ratio  pr_2
+          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;int&gt;       &lt;dbl&gt; &lt;dbl&gt;
+ 1          5.1         3.5          1.4         0.2       1        7     49  
+ 2          4.9         3            1.4         0.2       1        7     49  
+ 3          4.7         3.2          1.3         0.2       1        6.5   42.2
+ 4          4.6         3.1          1.5         0.2       1        7.5   56.2
+ 5          5           3.6          1.4         0.2       1        7     49  
+ 6          5.4         3.9          1.7         0.4       1        4.25  18.1
+ 7          4.6         3.4          1.4         0.3       1        4.67  21.8
+ 8          5           3.4          1.5         0.2       1        7.5   56.2
+ 9          4.4         2.9          1.4         0.2       1        7     49  
+10          4.9         3.1          1.5         0.1       1       15    225  
+# ℹ 140 more rows</code></pre>
+</div>
+</div>
+<p>In this example, I’m treating <code>~</code> like an assignment operator — the left side becomes the column name, and the right side defines the computation. This is completely different from the statistical modeling interpretation where formulas express variable relationships.</p>
+<p>In <a href="https://tidyverse.tidyverse.org">tidyverse</a>takes yet another approach, using formulas as anonymous function shorthand:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_int</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">~</span> <span class="va">.x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]   1   4   9  16  25  36  49  64  81 100</code></pre>
+</div>
+</div>
+<p>Here’s another example — a function that uses formulas to define probability distributions, assigning them directly into your environment:</p>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">define_rv</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>        <span class="va">rlang</span><span class="op">[</span><span class="va">f_rhs</span>, <span class="va">f_lhs</span>, <span class="va">enexprs</span>, <span class="va">env</span>, <span class="va">caller_env</span>, <span class="va">as_string</span><span class="op">]</span>, </span>
+<span>        <span class="va">purrr</span><span class="op">[</span><span class="va">walk</span><span class="op">]</span></span>
+<span>    <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">dots</span> <span class="op">=</span> <span class="fu">enexprs</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>    <span class="va">distributions</span> <span class="op">=</span> <span class="fu">env</span><span class="op">(</span></span>
+<span>        normal <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>, <span class="va">sigma</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>                density <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="va">mu</span>, sd <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span>,</span>
+<span>                cdf <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="va">mu</span>, sd <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span>, </span>
+<span>                quantile <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="va">mu</span>, sd <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span>, </span>
+<span>                generate <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="va">mu</span>, sd <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span></span>
+<span>            <span class="op">)</span></span>
+<span>        <span class="op">}</span>, </span>
+<span>        uniform <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">min</span>, <span class="va">max</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>                density <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">dunif</a></span><span class="op">(</span><span class="va">x</span>, min <span class="op">=</span> <span class="va">min</span>, max <span class="op">=</span> <span class="va">max</span><span class="op">)</span>,</span>
+<span>                cdf <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">punif</a></span><span class="op">(</span><span class="va">x</span>, min <span class="op">=</span> <span class="va">min</span>, max <span class="op">=</span> <span class="va">max</span><span class="op">)</span>, </span>
+<span>                quantile <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">qunif</a></span><span class="op">(</span><span class="va">x</span>, min <span class="op">=</span> <span class="va">min</span>, max <span class="op">=</span> <span class="va">max</span><span class="op">)</span>, </span>
+<span>                generate <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="va">x</span>, min <span class="op">=</span> <span class="va">min</span>, max <span class="op">=</span> <span class="va">max</span><span class="op">)</span></span>
+<span>            <span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>    <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">target_env</span> <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu">walk</span><span class="op">(</span><span class="va">dots</span>, \<span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">var</span> <span class="op">=</span> <span class="fu">as_string</span><span class="op">(</span><span class="fu">f_lhs</span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="va">dist</span> <span class="op">=</span> <span class="fu">f_rhs</span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span>
+<span>        </span>
+<span>        <span class="va">rv_object</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span><span class="op">(</span><span class="va">dist</span>, envir <span class="op">=</span> <span class="va">distributions</span><span class="op">)</span></span>
+<span>        </span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span><span class="va">var</span>, <span class="va">rv_object</span>, pos <span class="op">=</span> <span class="va">target_env</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Let’s give it a try:</p>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span></span>
+<span>        <span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">theme_minimal</span>, <span class="va">theme</span>, <span class="va">geom_point</span>, </span>
+<span>        <span class="va">element_text</span>, <span class="va">element_blank</span>, <span class="va">element_line</span>, <span class="va">labs</span></span>
+<span>    <span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">define_rv</span><span class="op">(</span></span>
+<span>    <span class="va">x</span> <span class="op">~</span> <span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, </span>
+<span>    <span class="va">y</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">aes</span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="fu">generate</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, <span class="va">y</span><span class="op">$</span><span class="fu">generate</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#F5AFAF"</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">theme_minimal</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">labs</span><span class="op">(</span></span>
+<span>        x <span class="op">=</span> <span class="st">"Normally distributed"</span>, </span>
+<span>        y <span class="op">=</span> <span class="st">"Uniformly distributed"</span>, </span>
+<span>        title <span class="op">=</span> <span class="st">"Try visualizing it"</span>, </span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Generate up to 100 samples"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">theme</span><span class="op">(</span></span>
+<span>        plot.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"grey40"</span>, face <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="fl">15</span><span class="op">)</span>, </span>
+<span>        plot.subtitle <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"grey40"</span>, size <span class="op">=</span> <span class="fl">13</span><span class="op">)</span>,</span>
+<span>        panel.grid.minor <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        panel.grid.major <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"grey90"</span>, linewidth <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
+<span>        axis.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
+<span>        axis.text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>, </span>
+<span>        axis.title.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>, </span>
+<span>        axis.title.y <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details><div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>That’s how vague the true definition of the formula is. </em></p>
+<p>Like I said in the intro, formula <code>~</code> in R is just another tool, without an exact meaning. In my application you see, it is most particular in metaprogramming, where it captures expressions without or before evaluating them.</p>
+</section><section id="the-ancestor-of-quosures" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> The ancestor of quosures</h1>
+<p>Back in 2017, the <a href="https://rlang.r-lib.org">rlang</a> package arrived with an ambitious goal: refine and modernize base R’s metaprogramming tools. One of its key innovations — quosures — draws direct inspiration from R’s formula system.</p>
+<section id="it-captures-both-the-expression-and-the-environment" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="it-captures-both-the-expression-and-the-environment">
+<span class="header-section-number">3.1</span> It captures both the expression and the environment</h2>
+<p>The formulas themselves are, in fact, objects, which means you can extract and manipulate the expressions they contain. But they also carry something “hidden”: their environment. This dual nature: code plus context, is exactly what inspired quosures in <a href="https://rlang.r-lib.org">rlang</a>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f</span> <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/environment.html">environment</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span>
+<span><span class="co">#&gt;&gt; &lt;environment: R_GlobalEnv&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>You can even set a custom environment:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f_custom</span> <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/environment.html">environment</a></span><span class="op">(</span><span class="va">f_custom</span><span class="op">)</span> <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/env.html">env</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">10</span>, y <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/environment.html">environment</a></span><span class="op">(</span><span class="va">f_custom</span><span class="op">)</span></span>
+<span><span class="co">#&gt;&gt; &lt;environment: 0x000001db174bd0b0&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><em>Unless needed, don’t try this in your applications</em></p>
+<p>Environment capture enables delayed evaluation. When you create a formula inside a function, it retains a snapshot of where it was born:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">create_formula</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">multiplier</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="op">~</span> <span class="va">.x</span> <span class="op">*</span> <span class="va">multiplier</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">f_mult</span> <span class="op">=</span> <span class="fu">create_formula</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/environment.html">environment</a></span><span class="op">(</span><span class="va">f_mult</span><span class="op">)</span><span class="op">$</span><span class="va">multiplier</span>  <span class="co"># The formula remembers!</span></span>
+<span><span class="co">#&gt;&gt; [1] 5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<blockquote class="blockquote">
+<p>The <code>environment(f_mult)$multiplier</code> actually remembers!</p>
+</blockquote>
+</section><section id="difference-between-and-quo" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="difference-between-and-quo">
+<span class="header-section-number">3.2</span> Difference between “~” and quo</h2>
+<p>Both formulas and quosures are language objects at their core, but they differ in their class structure:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span><span class="op">)</span></span>
+<span><span class="co">#&gt;&gt; [1] "formula"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Meanwhile, <code>quo()</code> returns an object with dual inheritance — it’s both a quosure <em>and</em> a formula:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/defusing-advanced.html">quo</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;&gt; [1] "quosure" "formula"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Quosures build on formulas by adding better introspection tools, cleaner printing, and support for quasiquotation (the ability to selectively evaluate parts of an expression).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">rlang</span><span class="op">[</span></span>
+<span>        <span class="va">quo</span>, <span class="va">quo_get_expr</span>, <span class="va">quo_get_env</span></span>
+<span>    <span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">q</span> <span class="op">=</span> <span class="fu">quo</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">quo_get_expr</span><span class="op">(</span><span class="va">q</span><span class="op">)</span>     <span class="co"># 1               </span></span>
+<span><span class="co">#&gt;&gt; mean(x, na.rm = TRUE)</span></span>
+<span><span class="fu">quo_get_env</span><span class="op">(</span><span class="va">q</span><span class="op">)</span>      <span class="co"># 2              </span></span>
+<span><span class="co">#&gt;&gt; &lt;environment: R_GlobalEnv&gt;</span></span>
+<span><span class="va">value</span> <span class="op">=</span> <span class="fl">10</span>                            </span>
+<span><span class="fu">quo</span><span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="op">!</span><span class="op">!</span><span class="va">value</span><span class="op">)</span>    <span class="co"># 3         </span></span>
+<span><span class="co">#&gt;&gt; &lt;quosure&gt;</span></span>
+<span><span class="co">#&gt;&gt; expr: ^x + 10</span></span>
+<span><span class="co">#&gt;&gt; env:  global</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>I can explain each commented lines:</p>
+<ol type="1">
+<li>You can inspect the expression thanks to <code><a href="https://rlang.r-lib.org/reference/quosure-tools.html">rlang::quo_get_expr()</a></code>.</li>
+<li>You can inspect the environment thanks to <code><a href="https://rlang.r-lib.org/reference/quosure-tools.html">rlang::quo_get_env()</a></code>.</li>
+<li>The <a href="https://rlang.r-lib.org">rlang</a> package provides an good API for quasiquoation, by unquoting the <code>value</code>.</li>
+</ol></section><section id="difference-between-and-enquo" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="difference-between-and-enquo">
+<span class="header-section-number">3.3</span> Difference between “~” and enquo</h2>
+<p>There’s some noted difference between <code>quo()</code> and <code>enquo()</code> when capturing expressions.</p>
+<ol type="1">
+<li>
+<code>quo()</code> takes the quosure of the expression you write.</li>
+<li>
+<code>enquo()</code> takes the quosure of the expression taken by the user input.</li>
+</ol>
+<p>Both are still quosures and inspired by formulas in R, as they return both the same classes.</p>
+<p>Now, the distinction between using raw formulas (<code>~</code>) and <code>enquo()</code> is subtle but important when building functions that accept user expressions.</p>
+<p>For instance:</p>
+<ol type="1">
+<li>
+<p>Using <code>~</code> captures literally in the current scope</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_formula</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">f</span> <span class="op">=</span> <span class="op">~</span> <span class="va">x</span></span>
+<span>    <span class="va">f</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">my_formula</span><span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span><span class="op">)</span></span>
+<span><span class="co">#&gt;&gt; ~x</span></span>
+<span><span class="co">#&gt;&gt; &lt;environment: 0x000001db15d5db20&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</li>
+<li>
+<p><code><a href="https://rlang.r-lib.org/reference/enquo.html">rlang::enquo()</a></code> captures what the caller passed</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_enquo</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/enquo.html">enquo</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">my_enquo</span><span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span><span class="op">)</span></span>
+<span><span class="co">#&gt;&gt; &lt;quosure&gt;</span></span>
+<span><span class="co">#&gt;&gt; expr: ^a + b</span></span>
+<span><span class="co">#&gt;&gt; env:  global</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="General rule of thumb between `quo()` and `enquo()`">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>General rule of thumb between <code>quo()</code> and <code>enquo()</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use <code>enquo()</code> when building functions that accept user-supplied names or expressions. Use <code>quo()</code> when you’re programmatically constructing expressions yourself.</p>
+</div>
+</div>
+</section></section><section id="why-other-languages-struggle-with-formulas" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Why other languages struggle with formulas</h1>
+<p>Python has an attempt on emulating formulas in R, done by some libraries like <code>{statsmodels}</code>, but failed miserably due to Python’s limitation. The core issue is because Python evaluates expressions eagerly, while R formulas require lazy evaluation</p>
+<p>So to approximate (not really even close) R’s formula interface, they had to use strings, which itself is a bad solution.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">'y ~ x + I(x**2)'</span>, data<span class="op">=</span>df).fit()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Julia has an actual R’s formula interface, but there are some slight differences</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">GLM</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(<span class="pp">@formula</span>(y <span class="op">~</span> x <span class="op">+</span> x<span class="op">^</span><span class="fl">2</span>), data <span class="op">=</span> df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The formulas API in R is one of the reasons why some languages cannot fully integrated into other programming languages. The tight integration of:</p>
+<ol type="1">
+<li>Lazy evaluation</li>
+<li>Environment capture<br>
+</li>
+<li>Special operator semantics</li>
+<li>Implicit data masking</li>
+</ol>
+<p>creates a unique programming model that’s hard to transplant. This is both R’s greatest strength in statistical computing.</p>
+</section><section id="further-reading" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Further Reading</h1>
+<ul>
+<li><a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html">R Language Definition: Formula Objects</a></li>
+<li><a href="https://adv-r.hadley.nz/metaprogramming.html">Advanced R: Metaprogramming</a></li>
+<li><a href="https://rlang.r-lib.org/">rlang documentation</a></li>
+</ul>
 
 
-</section>
-</section>
-
-</main> <!-- /main -->
-<style>
-
+</section></main><!-- /main --><style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-
-
 /* Light theme variables */
-
 :root {
-
   --primary-color: #3b82f6;
-
   --primary-dark: #2563eb;
-
   --secondary-color: #64748b;
-
   --accent-color: #06b6d4;
-
   --background: #ffffff;
-
   --surface: #f8fafc;
-
   --surface-hover: #f1f5f9;
-
   --surface-light: #e2e8f0;
-
   --border: #e2e8f0;
-
   --text-primary: #0f172a;
-
   --text-secondary: #475569;
-
   --text-muted: #64748b;
-
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-
   --radius: 8px;
-
   --radius-lg: 12px;
-
 }
-
-
 
 /* Dark theme variables */
-
 [data-theme="dark"] {
-
   --primary-color: #60a5fa;
-
   --primary-dark: #3b82f6;
-
   --secondary-color: #94a3b8;
-
   --accent-color: #22d3ee;
-
   --background: #0f172a;
-
   --surface: #1e293b;
-
   --surface-hover: #334155;
-
   --surface-light: #475569;
-
   --border: #334155;
-
   --text-primary: #f1f5f9;
-
   --text-secondary: #cbd5e1;
-
   --text-muted: #94a3b8;
-
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
-
 }
 
-
-
 /* =========================
-
    Navbar Theme Fix
-
    ========================= */
-
-
 
 /* Target all navbar elements to use theme colors */
-
 .navbar,
-
 .navbar-default,
-
 .navbar-expand-lg,
-
 nav.navbar,
-
 header.navbar,
-
 #quarto-header,
-
 .quarto-navbar,
-
 nav[role="navigation"] {
-
   background: var(--background) !important;
-
   border-bottom: 1px solid var(--border) !important;
-
   box-shadow: var(--shadow-sm) !important;
-
 }
 
-
-
 /* =========================
-
    Title Block Banner Theme Fix
-
    ========================= */
-
-
 
 /* Target title block banner area */
-
 #title-block-header,
-
 .quarto-title-block,
-
 header#title-block-header,
-
 .quarto-title-banner {
-
   background: var(--background) !important;
-
   color: var(--text-primary) !important;
-
 }
-
-
 
 /* Title block container */
-
 .quarto-title-block .quarto-title,
-
 #title-block-header .quarto-title {
-
   background: var(--background) !important;
-
 }
 
-
-
 /* =========================
-
    Listing Controls Theme Fix (Sorter/Filter)
-
    ========================= */
-
-
 
 /* Order By / Sort dropdown and Filter input */
-
 .listing-option-group,
-
 .listing-actions,
-
 .listing-controls,
-
 div[class*="listing"] {
-
   background: var(--background) !important;
-
 }
-
-
 
 /* Dropdowns and inputs in listing controls */
-
 .listing-option-group select,
-
 .listing-option-group input,
-
 #listing-order-by,
-
 select,
-
 input[type="text"],
-
 input[type="search"] {
-
   background: var(--surface) !important;
-
   color: var(--text-primary) !important;
-
   border: 1px solid var(--border) !important;
-
 }
-
-
 
 .listing-option-group select:hover,
-
 .listing-option-group input:hover,
-
 select:hover,
-
 input[type="text"]:hover,
-
 input[type="search"]:hover {
-
   background: var(--surface-hover) !important;
-
   border-color: var(--primary-color) !important;
-
 }
-
-
 
 /* Labels in listing controls */
-
 .listing-option-group label,
-
 .listing-controls label {
-
   color: var(--text-primary) !important;
-
 }
 
-
-
 /* =========================
-
    Footer Theme Fix
-
    ========================= */
-
-
 
 /* Footer area */
-
 footer,
-
 .footer,
-
 .nav-footer,
-
 .quarto-footer,
-
 body > footer,
-
 #quarto-footer {
-
   background: var(--surface) !important;
-
   color: var(--text-secondary) !important;
-
   border-top: 1px solid var(--border) !important;
-
 }
-
-
 
 /* Footer links */
-
 footer a,
-
 .footer a,
-
 .nav-footer a,
-
 .quarto-footer a {
-
   color: var(--text-secondary) !important;
-
 }
-
-
 
 footer a:hover,
-
 .footer a:hover,
-
 .nav-footer a:hover,
-
 .quarto-footer a:hover {
-
   color: var(--primary-color) !important;
-
 }
-
-
 
 /* Footer text */
-
 footer p,
-
 footer div,
-
 .footer p,
-
 .footer div,
-
 .nav-footer p,
-
 .nav-footer div {
-
   color: var(--text-secondary) !important;
-
 }
-
-
 
 /* Navbar brand/logo */
-
 .navbar-brand,
-
 .navbar-title,
-
 a.navbar-brand {
-
   color: var(--text-primary) !important;
-
 }
-
-
 
 /* Navbar links */
-
 .navbar-nav .nav-link,
-
 .navbar .nav-link,
-
 .navbar a,
-
 .nav-link {
-
   color: var(--text-secondary) !important;
-
 }
-
-
 
 .navbar-nav .nav-link:hover,
-
 .navbar .nav-link:hover,
-
 .navbar a:hover,
-
 .nav-link:hover {
-
   color: var(--primary-color) !important;
-
 }
-
-
 
 /* Active navbar link */
-
 .navbar-nav .nav-link.active,
-
 .navbar .nav-link.active,
-
 .nav-link.active {
-
   color: var(--primary-color) !important;
-
 }
-
-
 
 /* Navbar toggler*/
-
 .navbar-toggler {
-
   border-color: var(--border) !important;
-
   padding: 0.25rem 0.5rem;
-
 }
-
-
 
 .navbar-toggler:focus {
-
   box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
-
 }
-
-
 
 /* Create custom hamburger icon that respects theme */
-
 .navbar-toggler-icon {
-
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(71, 85, 105, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
-
   display: inline-block;
-
   width: 1.5em;
-
   height: 1.5em;
-
   vertical-align: middle;
-
 }
-
-
 
 /* Dark theme hamburger icon */
-
 [data-theme="dark"] .navbar-toggler-icon {
-
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(203, 213, 225, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
-
 }
-
-
 
 /* Search button and icons in navbar */
-
 .navbar .quarto-navbar-tools,
-
 .navbar-nav .nav-item i,
-
 .navbar i {
-
   color: var(--text-secondary) !important;
-
 }
-
-
 
 .navbar .quarto-navbar-tools:hover,
-
 .navbar-nav .nav-item i:hover,
-
 .navbar i:hover {
-
   color: var(--primary-color) !important;
-
 }
-
-
 
 /* Theme toggle button - repositioned to avoid navbar overlap */
-
 .theme-toggle {
-
   position: fixed;
-
   bottom: 20px;
-
   right: 20px;
-
   z-index: 1000;
-
   background: var(--primary-color);
-
   color: white;
-
   border: none;
-
   width: 50px;
-
   height: 50px;
-
   border-radius: 50%;
-
   cursor: pointer;
-
   font-size: 1.25rem;
-
   transition: all 0.3s ease;
-
   box-shadow: var(--shadow-lg);
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
 }
-
-
 
 .theme-toggle:hover {
-
   background: var(--primary-dark);
-
   transform: scale(1.1);
-
   box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.3);
-
 }
-
-
 
 .theme-toggle:active {
-
   transform: scale(0.95);
-
 }
-
-
 
 /* Base styles with smooth transitions */
-
 * {
-
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-
 }
-
-
 
 /* Remove automatic numbering for headings */
-
 body {
-
   counter-reset: none;
-
 }
-
-
 
 h1::before,
-
 h2::before,
-
 h3::before,
-
 h4::before,
-
 h5::before,
-
 h6::before {
-
   content: none !important;
-
 }
-
-
 
 /* Override any automatic numbering */
-
 .section .header-section-number {
-
   display: none !important;
-
 }
-
-
 
 .header-section-number {
-
   display: none !important;
-
 }
-
-
 
 body {
-
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
   line-height: 1.7;
-
   color: var(--text-primary);
-
   background: var(--background);
-
   margin: 0;
-
   padding: 0;
-
   font-size: 16px;
-
   -webkit-font-smoothing: antialiased;
-
   -moz-osx-font-smoothing: grayscale;
-
 }
-
-
 
 /* Container styling */
-
 .container-fluid {
-
   max-width: 1200px;
-
   margin: 0 auto;
-
   padding: 2rem;
-
   padding-top: 4rem; 
-
 }
-
-
 
 /* Header styling with enhanced animations */
-
 .title {
-
   font-size: 2.5rem;
-
   font-weight: 700;
-
   color: var(--text-primary);
-
   margin-bottom: 0.5rem;
-
   line-height: 1.2;
-
   background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-
   -webkit-background-clip: text;
-
   -webkit-text-fill-color: transparent;
-
   background-clip: text;
-
   animation: slideInFromTop 0.8s ease-out;
-
 }
-
-
 
 .subtitle {
-
   font-size: 1.25rem;
-
   color: var(--text-secondary);
-
   margin-bottom: 2rem;
-
   font-weight: 400;
-
   animation: slideInFromTop 0.8s ease-out 0.2s both;
-
 }
-
-
 
 .author, .date {
-
   color: var(--text-muted);
-
   font-size: 1.325rem;
-
   margin-bottom: 0.5rem;
-
   animation: slideInFromTop 0.8s ease-out 0.4s both;
-
 }
-
-
 
 /* Animations */
-
 @keyframes slideInFromTop {
-
   from {
-
     opacity: 0;
-
     transform: translateY(-30px);
-
   }
-
   to {
-
     opacity: 1;
-
     transform: translateY(0);
-
   }
-
 }
-
-
 
 @keyframes fadeIn {
-
   from {
-
     opacity: 0;
-
   }
-
   to {
-
     opacity: 1;
-
   }
-
 }
 
-
-
 /* =========================
-
    Table of Contents
-
    ========================= */
-
-
 
 #TOC {
-
   background: var(--surface) !important;
-
   border: 1px solid var(--border) !important;
-
   border-radius: var(--radius-lg);
-
   padding: 1.5rem;
-
   margin-bottom: 2rem;
-
   box-shadow: var(--shadow-sm);
-
   animation: fadeIn 0.8s ease-out 0.6s both;
-
 }
-
-
 
 /* Force all TOC elements to use theme colors */
-
 #TOC,
-
 #TOC ul,
-
 #TOC li,
-
 #TOC div {
-
   background: var(--surface) !important;
-
   color: var(--text-primary) !important;
-
 }
-
-
 
 /* Hide "on this page" text in TOC - Multiple selectors for compatibility */
-
 body.quarto-post #TOC .toc-title,
-
 #TOC .toc-title,
-
 .toc-title,
-
 #quarto-margin-sidebar .toc-title,
-
 .sidebar nav[role="doc-toc"] > h2,
-
 .sidebar nav[role="doc-toc"] > .h2,
-
 #quarto-margin-sidebar h2,
-
 aside[role="complementary"] h2,
-
 nav[role="doc-toc"] h2 {
-
   display: none !important;
-
 }
-
-
 
 #TOC ul {
-
   margin: 0;
-
   padding-left: 1.25rem;
-
   list-style: none;
-
   background: var(--surface) !important;
-
 }
-
-
 
 #TOC > ul {
-
   padding-left: 0;
-
   background: var(--surface) !important;
-
 }
-
-
 
 #TOC li {
-
   margin: 0.5rem 0;
-
   position: relative;
-
   transform: translateX(0);
-
   transition: transform 0.2s ease;
-
   background: var(--surface) !important;
-
 }
-
-
 
 #TOC li:hover {
-
   transform: translateX(5px);
-
   background: var(--surface) !important;
-
 }
-
-
 
 #TOC li::before {
-
   content: "→";
-
   color: var(--primary-color);
-
   font-weight: bold;
-
   position: absolute;
-
   left: -1rem;
-
   opacity: 0;
-
   transition: opacity 0.2s ease;
-
 }
-
-
 
 #TOC li:hover::before {
-
   opacity: 1;
-
 }
-
-
 
 #TOC a {
-
   color: var(--text-primary) !important;
-
   text-decoration: none;
-
   font-weight: 500;
-
   transition: all 0.2s ease;
-
   display: block;
-
   padding: 0.25rem 0;
-
   border-radius: var(--radius);
-
   padding-left: 0.5rem;
-
   background: transparent !important;
-
 }
-
-
 
 #TOC a:hover {
-
   color: var(--primary-color) !important;
-
   background: var(--surface-hover) !important;
-
 }
-
-
 
 /* Target specific R Markdown TOC structure */
-
 .tocify-wrapper,
-
 .tocify-extend-page {
-
   background: var(--surface) !important;
-
 }
-
-
 
 /* Override any white backgrounds in TOC */
-
 #TOC * {
-
   background-color: var(--surface) !important;
-
 }
-
-
 
 #TOC a * {
-
   background-color: transparent !important;
-
 }
-
-
 
 /* Floating TOC with enhanced styling */
-
 .tocify {
-
   background: var(--surface) !important;
-
   border: 1px solid var(--border) !important;
-
   border-radius: var(--radius);
-
   box-shadow: var(--shadow-md);
-
   padding: 1rem;
-
   backdrop-filter: blur(10px);
-
 }
-
-
 
 .tocify-header {
-
   font-weight: 600;
-
   color: var(--text-primary) !important;
-
   padding: 0.5rem 0;
-
   border-bottom: 1px solid var(--border);
-
   margin-bottom: 0.5rem;
-
 }
-
-
 
 .tocify-item {
-
   padding: 0.25rem 0;
-
 }
-
-
 
 .tocify-item a {
-
   color: var(--text-secondary) !important;
-
   text-decoration: none;
-
   transition: all 0.2s ease;
-
   padding: 0.25rem 0.5rem;
-
   border-radius: var(--radius);
-
   display: block;
-
 }
-
-
 
 .tocify-item a:hover,
-
 .tocify-item.active a {
-
   color: var(--primary-color) !important;
-
   background: var(--surface-hover) !important;
-
 }
-
-
 
 /* Headers styling */
-
 h1, h2, h3, h4, h5, h6 {
-
   font-weight: 600;
-
   margin-top: 2.5rem;
-
   margin-bottom: 1rem;
-
   line-height: 1.3;
-
   color: var(--text-primary);
-
 }
-
-
 
 h1 {
-
   font-size: 2.25rem;
-
   border-bottom: 3px solid var(--primary-color);
-
   padding-bottom: 0.75rem;
-
   margin-bottom: 1.5rem;
-
   position: relative;
-
   overflow: hidden;
-
 }
-
-
 
 h1::after {
-
   content: "";
-
   position: absolute;
-
   bottom: -3px;
-
   left: -100%;
-
   right: 100%;
-
   height: 3px;
-
   background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
-
   animation: shimmer 2s ease-in-out infinite;
-
 }
-
-
 
 @keyframes shimmer {
-
   0%, 100% {
-
     left: -100%;
-
     right: 100%;
-
   }
-
   50% {
-
     left: 0%;
-
     right: 0%;
-
   }
-
 }
-
-
 
 h2 {
-
   font-size: 1.875rem;
-
   color: var(--primary-dark);
-
   position: relative;
-
   padding-left: 1rem;
-
 }
-
-
 
 h2::before {
-
   content: "";
-
   position: absolute;
-
   left: 0;
-
   top: 0.25rem;
-
   bottom: 0.25rem;
-
   width: 4px;
-
   background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
-
   border-radius: 2px;
-
   transform: scaleY(0);
-
   transform-origin: top;
-
   transition: transform 0.3s ease;
-
 }
-
-
 
 h2:hover::before {
-
   transform: scaleY(1);
-
 }
-
-
 
 h3 {
-
   font-size: 1.5rem;
-
   color: var(--text-primary);
-
 }
-
-
 
 h4 {
-
   font-size: 1.25rem;
-
   color: var(--secondary-color);
-
 }
-
-
 
 /* Interactive code folding button */
-
 .code-folding-btn {
-
   background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-
   color: white;
-
   border: none;
-
   padding: 0.75rem 1.25rem;
-
   border-radius: var(--radius);
-
   cursor: pointer;
-
   font-size: 0.875rem;
-
   font-weight: 600;
-
   transition: all 0.3s ease;
-
   margin-bottom: 1rem;
-
   position: relative;
-
   overflow: hidden;
-
 }
-
-
 
 .code-folding-btn:hover {
-
   transform: translateY(-2px);
-
   box-shadow: var(--shadow-lg);
-
 }
-
-
 
 .code-folding-btn:active {
-
   transform: translateY(0);
-
 }
-
-
 
 .code-folding-btn::after {
-
   content: "";
-
   position: absolute;
-
   top: 0;
-
   left: -100%;
-
   width: 100%;
-
   height: 100%;
-
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-
   transition: left 0.5s ease;
-
 }
-
-
 
 .code-folding-btn:hover::after {
-
   left: 100%;
-
 }
 
-
-
 /* =========================
-
    Callout title
-
    ========================= */
-
-
 
 .callout-title-container {
-
   color: #19183B !important;
-
 }
 
-
-
 /* =========================
-
    Global hyperlink styling
-
    ========================= */
-
-
 
 /* Global styling - Light mode */
-
 a:not(.quarto-category):not(.listing-category),
-
 a:visited:not(.quarto-category):not(.listing-category) {
-
   color: #3A6F43 !important;
-
   text-decoration: none;
-
 }
-
-
 
 a:hover:not(.quarto-category):not(.listing-category) {
-
   color: #333333 !important;
-
 }
-
-
 
 /* Dark mode hyperlinks */
-
 [data-theme="dark"] a:not(.quarto-category):not(.listing-category),
-
 [data-theme="dark"] a:visited:not(.quarto-category):not(.listing-category) {
-
   color: #8BAE66 !important;
-
 }
-
-
 
 [data-theme="dark"] a:hover:not(.quarto-category):not(.listing-category) {
-
   color: #a8cc88 !important;
-
 }
 
-
-
 /* =========================
-
    Category Links Fix
-
    ========================= */
-
-
 
 /* Ensure category links remain functional */
-
 .quarto-category,
-
 a.quarto-category,
-
 .quarto-categories .quarto-category,
-
 .listing-category,
-
 a.listing-category {
-
   pointer-events: auto !important;
-
   cursor: pointer !important;
-
   color: inherit !important;
-
   text-decoration: none !important;
-
 }
-
-
 
 .quarto-category:hover,
-
 .listing-category:hover {
-
   opacity: 0.8 !important;
-
   text-decoration: none !important;
-
 }
-
-
 
 /* =========================
-
    Strong Global bold text
-
    ========================= */
 
-
-
 strong, b {
-
   font-weight: 700;
-
 }
-
-
 
 /* Enhanced blockquotes */
-
 blockquote {
-
   border-left: 4px solid var(--accent-color);
-
   margin: 1.5rem 0;
-
   padding: 1rem 1.5rem;
-
   background: var(--surface);
-
   border-radius: 0 var(--radius) var(--radius) 0;
-
   color: var(--text-secondary);
-
   font-style: italic;
-
   position: relative;
-
   box-shadow: var(--shadow-sm);
-
 }
-
-
 
 blockquote::before {
-
   content: """;
-
   font-size: 3rem;
-
   color: var(--accent-color);
-
   position: absolute;
-
   top: -10px;
-
   left: 10px;
-
   opacity: 0.3;
-
 }
-
-
 
 /* Smooth scrolling and enhanced focus */
-
 html {
-
   scroll-behavior: smooth;
-
 }
-
-
 
 /* Selection styling */
-
 ::selection {
-
   background: var(--primary-color);
-
   color: white;
-
 }
-
-
 
 ::-moz-selection {
-
   background: var(--primary-color);
-
   color: white;
-
 }
-
-
 
 /* Enhanced focus styles */
-
 button:focus,
-
 a:focus,
-
 input:focus,
-
 textarea:focus {
-
   outline: 2px solid var(--primary-color);
-
   outline-offset: 2px;
-
   border-radius: var(--radius);
-
 }
-
-
 
 /* Custom scrollbar */
-
 ::-webkit-scrollbar {
-
   width: 12px;
-
 }
-
-
 
 ::-webkit-scrollbar-track {
-
   background: var(--surface);
-
   border-radius: 6px;
-
 }
-
-
 
 ::-webkit-scrollbar-thumb {
-
   background: var(--border);
-
   border-radius: 6px;
-
   border: 2px solid var(--surface);
-
 }
-
-
 
 ::-webkit-scrollbar-thumb:hover {
-
   background: var(--secondary-color);
-
 }
-
-
 
 /* Responsive design */
-
 @media (max-width: 768px) {
-
   .theme-toggle {
-
     bottom: 15px;
-
     right: 15px;
-
     width: 45px;
-
     height: 45px;
-
     font-size: 1.1rem;
-
   }
-
   
-
   .container-fluid {
-
     padding: 1rem;
-
     padding-top: 3rem;
-
   }
-
   
-
   .title {
-
     font-size: 2rem;
-
   }
-
   
-
   .subtitle {
-
     font-size: 1.725rem;
-
   }
-
   
-
   h1 {
-
     font-size: 1.875rem;
-
   }
-
   
-
   h2 {
-
     font-size: 1.5rem;
-
   }
-
   
-
   pre {
-
     padding: 1rem;
-
   }
-
   
-
   pre code {
-
     font-size: 0.9rem;
-
   }
-
 }
-
-
 
 /* Print styles */
-
 @media print {
-
   .theme-toggle {
-
     display: none;
-
   }
-
   
-
   body {
-
     font-size: 12pt;
-
     line-height: 1.5;
-
     color: black;
-
     background: white;
-
   }
-
   
-
   .title {
-
     color: black;
-
     -webkit-text-fill-color: black;
-
   }
-
   
-
   h1, h2, h3, h4, h5, h6 {
-
     color: black;
-
     page-break-after: avoid;
-
   }
-
   
-
   pre, blockquote {
-
     page-break-inside: avoid;
-
   }
-
   
-
   .tocify {
-
     display: none;
-
   }
-
 }
-
 </style>
-
-
-
 <script>
-
 document.addEventListener('DOMContentLoaded', function() {
-
   const themeToggle = document.createElement('button');
-
   themeToggle.className = 'theme-toggle';
-
   themeToggle.innerHTML = '🌙';
-
   themeToggle.setAttribute('aria-label', 'Toggle dark mode');
-
   themeToggle.setAttribute('title', 'Toggle dark/light mode');
-
   
-
   document.body.appendChild(themeToggle);
-
   
-
   const savedTheme = localStorage.getItem('theme') || 'light';
-
   document.documentElement.setAttribute('data-theme', savedTheme);
-
   themeToggle.innerHTML = savedTheme === 'dark' ? '🌙' : '☀️';
-
   
-
   themeToggle.addEventListener('click', function() {
-
     const currentTheme = document.documentElement.getAttribute('data-theme');
-
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
     
-
     document.documentElement.setAttribute('data-theme', newTheme);
-
     localStorage.setItem('theme', newTheme);
-
     themeToggle.innerHTML = newTheme === 'dark' ? '🌙' : '☀️';
-
     
-
     themeToggle.style.transform = 'rotate(360deg)';
-
     setTimeout(() => {
-
       themeToggle.style.transform = 'rotate(0deg)';
-
     }, 300);
-
   });
-
   
-
   setTimeout(function() {
-
     const tocTitles = document.querySelectorAll('.toc-title, #quarto-margin-sidebar h2, nav[role="doc-toc"] h2');
-
     tocTitles.forEach(function(title) {
-
       title.style.display = 'none';
-
     });
-
   }, 100);
-
   
-
   const tocLinks = document.querySelectorAll('#TOC a, .tocify a');
-
   tocLinks.forEach(function(link) {
-
     link.addEventListener('click', function(e) {
-
       const href = this.getAttribute('href');
-
       if (href && href.startsWith('#')) {
-
         e.preventDefault();
-
         const target = document.querySelector(href);
-
         if (target) {
-
           target.scrollIntoView({
-
             behavior: 'smooth',
-
             block: 'start'
-
           });
-
         }
-
       }
-
     });
-
   });
-
   
-
   const images = document.querySelectorAll('img');
-
   images.forEach(function(img) {
-
     if (img.complete) {
-
       img.style.opacity = '1';
-
     } else {
-
       img.style.opacity = '0';
-
       img.style.transition = 'opacity 0.5s ease';
-
       
-
       img.addEventListener('load', function() {
-
         this.style.opacity = '1';
-
       });
-
     }
-
   });
-
 });
-
-</script>
-
-<style>
-
+</script><style>
     /* Modal Styles */
-
     .code-modal {
-
         display: none;
-
         position: fixed;
-
         z-index: 1000;
-
         left: 0;
-
         top: 0;
-
         width: 100%;
-
         height: 100%;
-
         background-color: rgba(0, 0, 0, 0.8);
-
         backdrop-filter: blur(5px);
-
     }
-
-
 
     .code-modal-content {
-
         position: relative;
-
         background-color: #fff;
-
         margin: 5% auto;
-
         padding: 0;
-
         border-radius: 8px;
-
         width: 90%;
-
         max-width: 1200px;
-
         max-height: 80vh;
-
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-
         overflow: hidden;
-
         display: flex;
-
         flex-direction: column;
-
     }
-
-
 
     .code-modal-header {
-
         background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
-
         color: white;
-
         padding: 15px 20px;
-
         display: flex;
-
         justify-content: space-between;
-
         align-items: center;
-
         border-bottom: 1px solid #ddd;
-
     }
-
-
 
     .code-modal-title {
-
         font-size: 1.2em;
-
         font-weight: 600;
-
         margin: 0;
-
     }
-
-
 
     .code-modal-close {
-
         background: none;
-
         border: none;
-
         color: white;
-
         font-size: 24px;
-
         cursor: pointer;
-
         padding: 0;
-
         width: 30px;
-
         height: 30px;
-
         border-radius: 50%;
-
         display: flex;
-
         align-items: center;
-
         justify-content: center;
-
         transition: background-color 0.2s;
-
     }
-
-
 
     .code-modal-close:hover {
-
         background-color: rgba(255, 255, 255, 0.2);
-
     }
-
-
 
     .code-modal-body {
-
         flex: 1;
-
         overflow-y: auto;
-
         padding: 20px;
-
         background-color: #f8f9fa;
-
     }
-
-
 
     .code-modal-section {
-
         margin-bottom: 20px;
-
     }
-
-
 
     .code-modal-section:last-child {
-
         margin-bottom: 0;
-
     }
-
-
 
     .code-modal-section h3 {
-
         margin: 0 0 10px 0;
-
         font-size: 1.1em;
-
         color: #333;
-
         padding-bottom: 5px;
-
         border-bottom: 2px solid #1e3a8a;
-
         display: flex;
-
         justify-content: space-between;
-
         align-items: center;
-
     }
-
-
 
     .code-modal-code {
-
         background-color: #0f172a;
-
         color: #e2e8f0;
-
         padding: 15px;
-
         border-radius: 6px;
-
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-
         font-size: 0.9em;
-
         line-height: 1.4;
-
         overflow-x: auto;
-
         white-space: pre;
-
         margin: 0;
-
     }
-
-
 
     .code-modal-output {
-
         background-color: #fff;
-
         border: 1px solid #e2e8f0;
-
         padding: 15px;
-
         border-radius: 6px;
-
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-
         font-size: 0.9em;
-
         line-height: 1.4;
-
         white-space: pre-wrap;
-
         margin: 0;
-
         color: #2d3748;
-
     }
-
-
 
     /* Button to open modal */
-
     .code-open-btn {
-
         background: #0f172a;
-
         color: white;
-
         border: none;
-
         padding: 8px 16px;
-
         border-radius: 4px;
-
         cursor: pointer;
-
         font-size: 0.85em;
-
         font-weight: 500;
-
         margin: 5px 0;
-
         transition: all 0.3s ease;
-
     }
-
-
 
     .code-open-btn:hover {
-
         background: #1e293b;
-
         transform: translateY(-1px);
-
     }
-
-
 
     /* Copy button styles */
-
     .copy-btn {
-
         background: #1e3a8a;
-
         color: white;
-
         border: none;
-
         padding: 4px 8px;
-
         border-radius: 4px;
-
         cursor: pointer;
-
         font-size: 0.75em;
-
         display: flex;
-
         align-items: center;
-
         gap: 4px;
-
         transition: all 0.2s ease;
-
     }
-
-
 
     .copy-btn:hover {
-
         background: #1e40af;
-
     }
-
-
 
     .copy-btn.copied {
-
         background: #059669;
-
     }
-
-
 
     .copy-icon {
-
         width: 14px;
-
         height: 14px;
-
         fill: currentColor;
-
     }
-
-
 
     /* Hide original code blocks that have code-open */
-
     .cell[data-code-open="true"] .sourceCode {
-
         display: none;
-
     }
-
-
 
     .cell[data-code-open="true"] .cell-output {
-
         display: none;
-
     }
-
-
 
     /* Animation */
-
     @keyframes modalFadeIn {
-
         from {
-
             opacity: 0;
-
             transform: scale(0.8);
-
         }
-
         to {
-
             opacity: 1;
-
             transform: scale(1);
-
         }
-
     }
-
-
 
     .code-modal.show .code-modal-content {
-
         animation: modalFadeIn 0.3s ease-out;
-
     }
-
-
 
     /* Responsive */
-
     @media (max-width: 768px) {
-
         .code-modal-content {
-
             width: 95%;
-
             margin: 2% auto;
-
             max-height: 90vh;
-
         }
-
-
 
         .code-modal-header {
-
             padding: 10px 15px;
-
         }
-
-
 
         .code-modal-body {
-
             padding: 15px;
-
         }
-
     }
-
 </style>
-
-
-
 <script>
-
     document.addEventListener('DOMContentLoaded', function() {
-
         // Function to create modal
-
         function createModal() {
-
             const modal = document.createElement('div');
-
             modal.className = 'code-modal';
-
             document.body.appendChild(modal);
-
             return modal;
-
         }
-
-
 
         // Create the modal
-
         const modal = createModal();
-
         const modalContent = modal.querySelector('.code-modal-content');
-
         const closeBtn = modal.querySelector('.code-modal-close');
-
         const codeElement = modal.querySelector('.code-modal-code');
-
         const outputElement = modal.querySelector('.code-modal-output');
 
-
-
         // Function to open modal
-
         function openModal(codeText, outputText, title = 'Code & Output') {
-
             modal.querySelector('.code-modal-title').textContent = title;
-
             codeElement.textContent = codeText;
-
             outputElement.textContent = outputText || 'No output';
-
             modal.style.display = 'block';
-
             setTimeout(() => modal.classList.add('show'), 10);
-
             document.body.style.overflow = 'hidden';
-
         }
-
-
 
         // Function to close modal
-
         function closeModal() {
-
             modal.classList.remove('show');
-
             setTimeout(() => {
-
                 modal.style.display = 'none';
-
                 document.body.style.overflow = '';
-
             }, 300);
-
         }
-
-
 
         // Event listeners for modal
-
         closeBtn.addEventListener('click', closeModal);
 
-
-
         // Copy functionality
-
         const copyCodeBtn = modal.querySelector('#copy-code-btn');
-
         const copyOutputBtn = modal.querySelector('#copy-output-btn');
 
-
-
         copyCodeBtn.addEventListener('click', async function() {
-
             try {
-
                 await navigator.clipboard.writeText(codeElement.textContent);
-
                 copyCodeBtn.innerHTML = `
-
                     <svg class="copy-icon" viewBox="0 0 24 24">
-
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-
                     </svg>
-
                     Copied!
-
                 `;
-
                 copyCodeBtn.classList.add('copied');
-
                 setTimeout(() => {
-
                     copyCodeBtn.innerHTML = `
-
                         <svg class="copy-icon" viewBox="0 0 24 24">
-
                             <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-
                         </svg>
-
                         Copy
-
                     `;
-
                     copyCodeBtn.classList.remove('copied');
-
                 }, 2000);
-
             } catch (err) {
-
                 console.error('Failed to copy code:', err);
-
             }
-
         });
-
-
 
         copyOutputBtn.addEventListener('click', async function() {
-
             try {
-
                 await navigator.clipboard.writeText(outputElement.textContent);
-
                 copyOutputBtn.innerHTML = `
-
                     <svg class="copy-icon" viewBox="0 0 24 24">
-
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-
                     </svg>
-
                     Copied!
-
                 `;
-
                 copyOutputBtn.classList.add('copied');
-
                 setTimeout(() => {
-
                     copyOutputBtn.innerHTML = `
-
                         <svg class="copy-icon" viewBox="0 0 24 24">
-
                             <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-
                         </svg>
-
                         Copy
-
                     `;
-
                     copyOutputBtn.classList.remove('copied');
-
                 }, 2000);
-
             } catch (err) {
-
                 console.error('Failed to copy output:', err);
-
             }
-
         });
-
-
 
         modal.addEventListener('click', function(e) {
-
             if (e.target === modal) {
-
                 closeModal();
-
             }
-
         });
-
-
 
         document.addEventListener('keydown', function(e) {
-
             if (e.key === 'Escape' && modal.style.display === 'block') {
-
                 closeModal();
-
             }
-
         });
 
-
-
         // Function to extract title from Quarto cell metadata
-
         function extractTitleFromCell(cell) {
-
             // Look for code-modal-title in various places
-
             let title = null;
 
-
-
             // 1. Check for data attribute on the cell
-
             if (cell.hasAttribute('data-code-modal-title')) {
-
                 title = cell.getAttribute('data-code-modal-title');
-
             }
-
-
 
             // 2. Check for code-modal-title in cell options (Quarto metadata)
-
             const cellOptions = cell.querySelector('.cell-meta, .cell-code-meta');
-
             if (cellOptions && !title) {
-
                 const optionsText = cellOptions.textContent;
-
                 const titleMatch = optionsText.match(/code-modal-title:\s*["']([^"']+)["']/);
-
                 if (titleMatch) {
-
                     title = titleMatch[1];
-
                 }
-
             }
-
-
 
             // 3. Look for title in HTML comments (Quarto sometimes puts metadata there)
-
             const htmlContent = cell.innerHTML;
-
             const commentMatch = htmlContent.match(/<!--.*?code-modal-title:\s*["']([^"']+)["'].*?-->/s);
-
             if (commentMatch && !title) {
-
                 title = commentMatch[1];
-
             }
-
-
 
             // 4. Look for title in the cell's script tags or data attributes
-
             const scripts = cell.querySelectorAll('script[type="application/json"]');
-
             scripts.forEach(script => {
-
                 if (!title) {
-
                     try {
-
                         const data = JSON.parse(script.textContent);
-
                         if (data['code-modal-title']) {
-
                             title = data['code-modal-title'];
-
                         }
-
                     } catch (e) {
-
                         // Ignore JSON parse errors
-
                     }
-
                 }
-
             });
-
-
 
             // 5. Look in the raw text content for the pattern
-
             if (!title) {
-
                 const rawText = cell.textContent;
-
                 const rawMatch = rawText.match(/code-modal-title:\s*["']?([^"'\n]+)["']?/);
-
                 if (rawMatch) {
-
                     title = rawMatch[1].trim().replace(/["']/g, '');
-
                 }
-
             }
-
-
 
             // 6. Alternative pattern matching for YAML-like syntax
-
             if (!title) {
-
                 const yamlMatch = htmlContent.match(/code-modal-title:\s*(.+)/);
-
                 if (yamlMatch) {
-
                     title = yamlMatch[1].trim().replace(/["']/g, '');
-
                 }
-
             }
 
-
-
             return title;
-
         }
-
-
 
         // Function to process code blocks with code-open attribute
-
         function processCodeOpenBlocks() {
-
             // Look for cells with code-open attribute in Quarto
-
             const cells = document.querySelectorAll('.cell');
 
-
-
             cells.forEach((cell, index) => {
-
                 // Skip if already processed
-
                 if (cell.hasAttribute('data-processed')) return;
 
-
-
                 // Check if this cell should have code-open functionality
-
                 const hasCodeOpen = cell.querySelector('[data-code-open="true"]') ||
-
                     cell.hasAttribute('data-code-open') ||
-
                     cell.innerHTML.includes('code-open: true') ||
-
                     cell.textContent.includes('code-open: true');
 
-
-
                 if (hasCodeOpen) {
-
                     // Mark the cell as processed
-
                     cell.setAttribute('data-code-open', 'true');
-
                     cell.setAttribute('data-processed', 'true');
 
-
-
                     // Extract custom title
-
                     const customTitle = extractTitleFromCell(cell);
 
-
-
                     // Find source code
-
                     const sourceCode = cell.querySelector('.sourceCode code, pre code, .r code');
-
                     const codeText = sourceCode ? sourceCode.textContent : '';
 
-
-
                     // Find output
-
                     const outputElements = cell.querySelectorAll('.cell-output pre, .cell-output .output');
-
                     let outputText = '';
-
                     outputElements.forEach(output => {
-
                         outputText += output.textContent + '\n';
-
                     });
-
-
 
                     // Create open button
-
                     const openBtn = document.createElement('button');
-
                     openBtn.className = 'code-open-btn';
-
                     openBtn.textContent = 'View Code & Output';
 
-
-
                     openBtn.addEventListener('click', function() {
-
                         // Use custom title if available, otherwise default
-
                         const title = customTitle || `Code Block ${index + 1}`;
-
                         openModal(codeText, outputText.trim(), title);
-
                     });
 
-
-
                     // Insert button at the beginning of the cell
-
                     cell.insertBefore(openBtn, cell.firstChild);
-
                 }
-
             });
-
         }
 
-
-
         // Alternative approach for direct code blocks
-
         function processDirectCodeBlocks() {
-
             const codeBlocks = document.querySelectorAll('pre code');
 
-
-
             codeBlocks.forEach(code => {
-
                 const preElement = code.parentElement;
-
                 const container = preElement.parentElement;
 
-
-
                 // Skip if already processed
-
                 if (container.hasAttribute('data-processed')) return;
 
-
-
                 // Check for code-open in various ways
-
                 if (container.hasAttribute('data-code-open') ||
-
                     container.classList.contains('code-open') ||
-
                     preElement.hasAttribute('data-code-open') ||
-
                     container.innerHTML.includes('code-open: true')) {
 
-
-
                     // Mark as processed
-
                     container.setAttribute('data-processed', 'true');
 
-
-
                     // Extract custom title
-
                     const customTitle = extractTitleFromCell(container);
-
-
 
                     const codeText = code.textContent;
 
-
-
                     // Look for adjacent output
-
                     let outputText = '';
-
                     let nextElement = container.nextElementSibling;
-
                     if (nextElement && (nextElement.tagName === 'PRE' || nextElement.classList.contains('output'))) {
-
                         outputText = nextElement.textContent;
-
                     }
-
-
 
                     // Create and insert button
-
                     const openBtn = document.createElement('button');
-
                     openBtn.className = 'code-open-btn';
-
                     openBtn.textContent = 'View Code & Output';
 
-
-
                     openBtn.addEventListener('click', function() {
-
                         const title = customTitle || 'Code Block';
-
                         openModal(codeText, outputText, title);
-
                     });
 
-
-
                     // Hide original and add button
-
                     container.style.display = 'none';
-
                     if (nextElement && outputText) {
-
                         nextElement.style.display = 'none';
-
                     }
 
-
-
                     container.parentElement.insertBefore(openBtn, container);
-
                 }
-
             });
-
         }
-
-
 
         // Run processing functions
-
         processCodeOpenBlocks();
-
         processDirectCodeBlocks();
 
-
-
         // Also run after a short delay to catch dynamically loaded content
-
         setTimeout(() => {
-
             processCodeOpenBlocks();
-
             processDirectCodeBlocks();
-
         }, 1000);
 
-
-
         // Run again after a longer delay for slow-loading content
-
         setTimeout(() => {
-
             processCodeOpenBlocks();
-
             processDirectCodeBlocks();
-
         }, 3000);
-
     });
-
-
 
     // Manual function to add code-open functionality
-
     function addCodeOpen(codeElement, outputElement, title) {
-
         const openBtn = document.createElement('button');
-
         openBtn.className = 'code-open-btn';
-
         openBtn.textContent = 'View Code & Output';
 
-
-
         openBtn.addEventListener('click', function() {
-
             const codeText = codeElement.textContent;
-
             const outputText = outputElement ? outputElement.textContent : '';
 
-
-
             // Trigger the modal (assuming the modal is already created)
-
             const modal = document.querySelector('.code-modal');
-
             if (modal) {
-
                 const event = new CustomEvent('openCodeModal', {
-
                     detail: { codeText, outputText, title }
-
                 });
-
                 document.dispatchEvent(event);
-
             }
-
         });
 
-
-
         return openBtn;
-
     }
 
-
-
     // Listen for custom events
-
     document.addEventListener('openCodeModal', function(e) {
-
         const { codeText, outputText, title } = e.detail;
-
         const modal = document.querySelector('.code-modal');
-
         if (modal) {
-
             modal.querySelector('.code-modal-title').textContent = title || 'Code & Output';
-
             modal.querySelector('.code-modal-code').textContent = codeText;
-
             modal.querySelector('.code-modal-output').textContent = outputText || 'No output';
-
             modal.style.display = 'block';
-
             setTimeout(() => modal.classList.add('show'), 10);
-
             document.body.style.overflow = 'hidden';
-
         }
-
     });
-
-</script>
-
-
-
-<script id="quarto-html-after-body" type="application/javascript">
+</script><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -3501,25 +2454,21 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
-  </script>
-<script src="https://utteranc.es/client.js" repo="joshuamarie/joshuamarie.github.io" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+  </script><script src="https://utteranc.es/client.js" repo="joshuamarie/joshuamarie.github.io" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
-<footer class="footer">
-  <div class="nav-footer">
+<footer class="footer"><div class="nav-footer">
     <div class="nav-footer-left">
       &nbsp;
     </div>   
     <div class="nav-footer-center">
 <p>Design inspired by <a href="https://github.com/statichunt/geeky-hugo">Geeky Hugo</a></p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/03-modules-in-r/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/10-formulas-r/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
-
-
 
 
 </body></html>

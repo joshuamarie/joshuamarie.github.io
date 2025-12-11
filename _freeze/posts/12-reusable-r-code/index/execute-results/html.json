@@ -1,0 +1,15 @@
+{
+  "hash": "a05fe923f2c43b246826fc4a5dd20df4",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Bother yourself writing reusable codes in R, not throwaway codes\"\nsubtitle: \"Reasons and applications with box\"\ndate: \"2025-12-18\"\nimage: \"image.png\"\ncategories: [R, box, programming]\ndescription: \"A proper way to write reusable R codes\"\nformat:\n    html:\n        toc: true\n        toc-float: true\n        toc-depth: 3\n        number-sections: true\n        code-fold: false\n        code-tools: false\n        theme: default\n        fig-width: 10\n        fig-height: 6\n        fig-cap-location: bottom\n        code-annotations: hover\nexecute:\n    echo: true\n    warning: false\n    message: false\nfilters:\n    - social-share\n    - collapse-output\nshare:\n    permalink: \"https://joshuamarie.com/posts/12-reusable-r-code\"\n    description: \"Reusable codes in R — Joshua Marie\"\n    twitter: true\n    facebook: true\n    reddit: true\n    stumble: true\n    tumblr: true\n    linkedin: true\n    email: true\n    mastodon: true\n    bsky: true\n    location: \"before-body\"\nengine: knitr\n---\n\nWhy bother yourself writing reusable codes? There are piles of garbage codes in the wild\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

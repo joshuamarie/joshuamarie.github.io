@@ -2,6 +2,7 @@
   {
     "listing": "/posts/index.html",
     "items": [
+      "/posts/10-formulas-r/index.html",
       "/posts/09-ggplot2/index.html",
       "/posts/08-sql-r/index.html",
       "/posts/07-glm/index.html",
@@ -16,6 +17,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/10-formulas-r/index.html",
       "/posts/09-ggplot2/index.html",
       "/posts/08-sql-r/index.html",
       "/posts/07-glm/index.html",

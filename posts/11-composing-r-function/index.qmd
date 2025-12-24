@@ -1,0 +1,325 @@
+---
+title: "Three levels to compose R functions"
+subtitle: "Intro to my functional programming series"
+date: "2025-12-15"
+image: "image.png"
+categories: [R, data-science, tidyverse, purrr, functional-programming, fp]
+description: "Introducing the 3 ways to compose functions in R. "
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+        code-annotations: hover
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/11-composing-r-function"
+    description: "Three levels to compose R functions — Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+Maybe few people who use R have forgotten already that R is functional by heart. R has Python dogma OO system, thanks to *Reference Class* (RC) and R6. R functions can be treated as Lisp's macros, where it can let you meddle the function and *abstract syntax tree* (AST) of the function call. 
+
+R has few ways to compose a function, divided by three (3) levels: 
+
+1.  [Manual Typing](#manual-compose)
+2.  [Higher-order Functions](#higher-order)
+3.  [Programmatic](#program)
+
+# Level 1: Manual Composition {#manual-compose}
+
+At the most basic level, we compose functions by manually writing them out. This is the approach most R users start with, and it's perfectly valid for many use cases.
+
+## Nested Function Calls
+
+The most straightforward way to compose functions is nesting them:
+
+```{r}
+result = sqrt(mean(log(c(1, 2, 3, 4, 5))))
+result
+```
+
+While this works, it quickly becomes hard to read as complexity grows. You have to read from the inside out, which goes against our natural left-to-right reading pattern.
+
+## Using the Pipe Operator
+
+The pipe operator `|>` (or `%>%` from magrittr) makes composition much more readable:
+
+```{r}
+c(1, 2, 3, 4, 5) |>
+    log() |>
+    mean() |>
+    sqrt()
+```
+
+This is essentially manual composition with better syntax. Each function is still written out explicitly, but the flow is clearer.
+
+Wanna learn more about pipes? Read this [blog](https://joshuamarie.com/posts/05-pipes/). 
+
+## Creating Wrapper Functions
+
+Sometimes we want to reuse a composition pattern. We can manually create a wrapper function with `function` keyword:
+
+```{r}
+normalize = function(x) {
+    (x - mean(x)) / sd(x)
+}
+
+data = c(10, 20, 30, 40, 50)
+normalize(data)
+```
+
+While this level of composition is explicit, straightforward, and easy to understand, it requires writing out each function definition manually, which can become repetitive when you have many similar transformations.
+
+# Level 2: Using Higher-order Functions {#higher-order}
+
+How about we comprises the existing functions and give birth to another function? We can easily make that with `purrr::compose()`. How about we create a function out of the function? That's *function operators* in action. 
+
+Higher-order functions can return new functions by combining or modifying existing ones, reducing manual code writing.
+
+## Function Composition with purrr::compose()
+
+The nice thing about this is that it takes multiple functions and creates a single new function that applies them in sequence (the default direction is *backwards*).
+
+So, instead of writing this manually:
+
+```{r}
+transform = function(x) {
+    sqrt(mean(log(x)))
+}
+
+transform(1:5)
+```
+
+We can compose it through `purrr::compose()`:
+
+```{r}
+purrr::compose(sqrt, mean, log)(1:5)
+```
+
+Furthermore, this is also (almost) as readable as using pipe:
+
+```{r}
+1:5 |> log() |> mean() |> sqrt()
+```
+
+> I have a [different blog](https://joshuamarie.com/posts/05-pipes/#the-early-days-pre-pipe-workflows-2010) mentioning on how bad can the nested function call go. 
+
+This function can be read from left to right (by default, it is read vice-versa):
+
+```{r}
+purrr::compose(sqrt, mean, log, .dir = "forward")(1:5)
+```
+
+Which is an equivalent of:
+
+```{r}
+1:5 |> sqrt() |> mean() |> log()
+```
+
+This function can take the inverse: can be read from left to right (by default, it is read vice-versa):
+
+```{r}
+transform_forward = purrr::compose(sqrt, mean, log, .dir = "forward")
+transform_forward(1:5)
+```
+
+Which is an equivalent of:
+
+```{r}
+1:5 |> sqrt() |> mean() |> log()
+```
+
+## Partial Application with purrr::partial()
+
+Another function from `{purrr}` is the `purrr::partial()`, where the application is where you "pre-fill" some arguments of a function, creating a new function with fewer parameters. This is incredibly useful for creating specialized versions of general functions.
+
+Consider this function, where a number argument `x` is divided by 100:
+
+```{r}
+divide_by_100 = function(x) {
+    x / 100
+}
+
+divide_by_100(500)
+```
+
+We can write as:
+
+```{r}
+divide_by_100 = purrr::partial(`/`, e2 = 100)
+divide_by_100(500)
+```
+
+If you ask "what's the point of partial application", this can be particularly useful in conjunction with functionals and other function operators, and also supports `{rlang}` and NSE APIs — which means you can write it without "typing too much".
+
+## Function Operators in general
+
+In case you don't know, decorators in Python are just "function operators" in general, except it is pretty much tied into Python and coated with syntactic sugars. 
+
+Function operators take functions as input and return modified functions as output. They're like functions that operate on the "function space" rather than the data space.
+
+### Example 1: 
+
+Function operators can add behavior without changing the core logic:
+
+```{r}
+with_logging = function(f) {
+    function(...) {
+        cat("Calling function with args:", paste(list(...), collapse = ", "), "\n")
+        res = f(...)
+        cat("Result:", res, "\n")
+        res
+    }
+}
+
+logged_sqrt = with_logging(sqrt)
+logged_sqrt(16)
+```
+
+If you want to do this with Python, here take a look:
+
+```{python}
+def with_logging(func):
+    def call(*args):
+        print(f"Calling function with args: {args}")
+        res = func(*args)
+        print(f"Result: {res}")
+        return res
+    
+    return call
+
+@with_logging
+def logged_sqrt(x):
+    return x ** 0.5
+
+print(logged_sqrt(16))
+```
+
+### Example 2: Creating a Memoization Operator
+
+Memoization caches function results to speed up repeated calls:
+
+```{r}
+memoize = function(f) {
+    cache = new.env(parent = emptyenv())
+    
+    function(...) {
+        key = paste(list(...), collapse = "_")
+        if (!exists(key, envir = cache)) {
+            cache[[key]] = f(...)
+        }
+        cache[[key]]
+    }
+}
+
+slow_function = function(x) {
+    Sys.sleep(1) 
+    x^2
+}
+
+fast_function = memoize(slow_function)
+system.time(fast_function(5))
+```
+
+# Level 3: Programmatic Approach {#program}
+
+Swear, this is not an easy thing to do — you need at least better understanding on how to build / generate expressions in R, and this involves understanding metaprogramming in R — Yes, most of the part on manipulating ASTs. 
+
+The `rlang::new_function()` provides an API that programmatically constructs a function expression (yes, it does creates formals, body, and an environment — 3 main components of R functions). Keep in mind that the construction of the function expression with `rlang::new_function()` happens in runtime. 
+
+## Start with the basic first
+
+The `new_function()` function takes three arguments: 
+
+-   `args`: The formal arguments under that function
+-   `body`: An expression that takes the function body
+-   `env`: If supplied, this will be the parent environment of the function.  
+
+Let's start with a function that squares the number: 
+
+```{r}
+box::use(
+    rlang[new_function, expr, caller_env, call2]
+)
+
+square = new_function(
+    args = list(x = expr()), 
+    body = call2("{", quote(x^2)), 
+    env = caller_env()
+)
+
+square(5)
+```
+
+Or instead of `list()` in `args` parameter, how about using `pairlist2()` instead? 
+
+```{r}
+box::use(rlang[pairlist2])
+
+square2 = new_function(
+    args = pairlist2(x = ), 
+    body = expr(x^2), 
+    env = caller_env()
+)
+
+square2(5)
+```
+
+Alright, you might be asking: What's the point of using `new_function()` if we can just use `function()` instead? The purpose of this approach is that you can *programmatically generate functions* based on data or configuration.
+
+In fact, this is how I *automatically* generate `torch::nn_module()` expression used in my new R package called `{kindling}`:
+
+```{r}
+box::use(kindling[ffnn_generator, act_funs, args])
+
+ffnn_generator(
+    nn_name = "MyFFNN2",
+    hd_neurons = c(128, 64, 32, 15),
+    no_x = 20,
+    no_y = 5,
+    activations = act_funs(
+        relu,
+        selu,
+        softshrink = args(lambd = 0.5),
+        "celu(alpha = 0.5)"
+    )
+)
+```
+
+In which, this function is a reference from this [blog post](https://joshuamarie.com/posts/01-meta-nn/) of mine quite a while ago, based on what I learned in [Advanced R](https://adv-r.hadley.nz) to automatically generate `torch::nn_module()`. 
+
+# When to Use Each Approach (here are some of my guides)
+
+- **Level 1 (Manual)**: When you're prototyping, the logic is simple, or you need maximum clarity
+- **Level 2 (Higher-order)**: When you want to reuse composition patterns and keep code DRY (Don't Repeat Yourself)
+- **Level 3 (Programmatic)**: When you're building frameworks, DSLs, or need to generate many similar functions from specifications (my package `{kindling}` is one of the many example packages)
+
+# Resources
+
+-  [Advanced R by Hadley Wickham](https://adv-r.hadley.nz)
+-  [Functional Programming in R with purrr](https://purrr.tidyverse.org/)
+-  [rlang Documentation](https://rlang.r-lib.org/)

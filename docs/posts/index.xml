@@ -1078,7 +1078,7 @@ background-color: null;
 font-style: inherit;">)</span></span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-   0.00    0.00    1.03 </code></pre>
+   0.00    0.00    1.01 </code></pre>
 </div>
 </div>
 </section></section></section><section id="program" class="level1" data-number="3"><h1 data-number="3">
@@ -1285,7 +1285,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </div>
 </div>
 <p>Alright, you might be asking: What’s the point of using <code>new_function()</code> if we can just use <code>function()</code> instead? The purpose of this approach is that you can <em>programmatically generate functions</em> based on data or configuration.</p>
-<p>In fact, this is how I <em>automatically</em> generate <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html">torch::nn_module()</a></code> expression used in my new R package called <a href="https://packages.joshuamarie.com/kindling">kindling</a>:</p>
+<p>In fact, this is how I <em>automatically</em> generate <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html">torch::nn_module()</a></code> expression used in my new R package called <a href="https://kindling.joshuamarie.com">kindling</a>:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1415,7 +1415,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 <li>
 <strong>Level 2 (Higher-order)</strong>: When you want to reuse composition patterns and keep code DRY (Don’t Repeat Yourself)</li>
 <li>
-<strong>Level 3 (Programmatic)</strong>: When you’re building frameworks, DSLs, or need to generate many similar functions from specifications (my package <a href="https://packages.joshuamarie.com/kindling">kindling</a> is one of the many example packages)</li>
+<strong>Level 3 (Programmatic)</strong>: When you’re building frameworks, DSLs, or need to generate many similar functions from specifications (my package <a href="https://kindling.joshuamarie.com">kindling</a> is one of the many example packages)</li>
 </ul></section><section id="resources" class="level1" data-number="5"><h1 data-number="5">
 <span class="header-section-number">5</span> Resources</h1>
 <ul>

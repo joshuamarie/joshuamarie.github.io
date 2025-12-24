@@ -53,32 +53,6 @@ R has few ways to compose a function, divided by three (3) levels:
 
 At the most basic level, we compose functions by manually writing them out. This is the approach most R users start with, and it's perfectly valid for many use cases.
 
-## Nested Function Calls
-
-The most straightforward way to compose functions is nesting them:
-
-```{r}
-result = sqrt(mean(log(c(1, 2, 3, 4, 5))))
-result
-```
-
-While this works, it quickly becomes hard to read as complexity grows. You have to read from the inside out, which goes against our natural left-to-right reading pattern.
-
-## Using the Pipe Operator
-
-The pipe operator `|>` (or `%>%` from magrittr) makes composition much more readable:
-
-```{r}
-c(1, 2, 3, 4, 5) |>
-    log() |>
-    mean() |>
-    sqrt()
-```
-
-This is essentially manual composition with better syntax. Each function is still written out explicitly, but the flow is clearer.
-
-Wanna learn more about pipes? Read this [blog](https://joshuamarie.com/posts/05-pipes/). 
-
 ## Creating Wrapper Functions
 
 Sometimes we want to reuse a composition pattern. We can manually create a wrapper function with `function` keyword:
@@ -93,6 +67,36 @@ normalize(data)
 ```
 
 While this level of composition is explicit, straightforward, and easy to understand, it requires writing out each function definition manually, which can become repetitive when you have many similar transformations.
+
+## Application in *functionals*
+
+Many base R and tidyverse functions are *functionals*: they take a function as input and apply it across data (e.g., `sapply()`, `purrr::map()`, `integrate()`).
+
+To compose functions for functionals, instead of manually writing function from the outside of the call:
+
+```{r}
+sqrt2 = function(x) x^0.5
+
+sapply(1:5, sqrt2)
+```
+
+You can compose on the fly with anonymous functions (you can just refer it as an "unassigned function" if you want):
+
+```{r}
+sapply(1:5, function(x) x^0.5)
+```
+
+Or use the modern shorthand `\()` (after 4.1):
+
+```{r}
+sapply(1:5, \(x) x^0.5)
+```
+
+Even better — show that `\()` is just syntactic sugar for `function()`:
+
+```{r}
+quote(\(x) x^2)
+```
 
 # Level 2: Using Higher-order Functions {#higher-order}
 
@@ -203,19 +207,21 @@ logged_sqrt(16)
 If you want to do this with Python, here take a look:
 
 ```{python}
-def with_logging(func):
+def with_logging(f):
     def call(*args):
-        print(f"Calling function with args: {args}")
-        res = func(*args)
+        args_str = ", ".join(str(a) for a in args)
+        print(f"Calling function with args: {args_str}")
+        res = f(*args)
         print(f"Result: {res}")
         return res
     
     return call
 
+
 @with_logging
 def logged_sqrt(x):
     return x ** 0.5
-
+    
 print(logged_sqrt(16))
 ```
 

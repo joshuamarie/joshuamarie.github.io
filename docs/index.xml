@@ -10,7 +10,7 @@
 <atom:link href="https://joshuamarie.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Wed, 17 Dec 2025 16:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 19 Dec 2025 16:00:00 GMT</lastBuildDate>
 <item>
   <title>Bother yourself writing reusable codes in R, not throwaway codes</title>
   <dc:creator>Joshua Marie</dc:creator>
@@ -29,7 +29,7 @@
   <category>box</category>
   <category>programming</category>
   <guid>https://joshuamarie.com/posts/12-reusable-r-code/</guid>
-  <pubDate>Wed, 17 Dec 2025 16:00:00 GMT</pubDate>
+  <pubDate>Fri, 19 Dec 2025 16:00:00 GMT</pubDate>
   <media:content url="https://joshuamarie.com/posts/12-reusable-r-code/image.png" medium="image" type="image/png"/>
 </item>
 <item>
@@ -51,116 +51,11 @@
 <section id="manual-compose" class="level1" data-number="1"><h1 data-number="1">
 <span class="header-section-number">1</span> Level 1: Manual Composition</h1>
 <p>At the most basic level, we compose functions by manually writing them out. This is the approach most R users start with, and it’s perfectly valid for many use cases.</p>
-<section id="nested-function-calls" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="nested-function-calls">
-<span class="header-section-number">1.1</span> Nested Function Calls</h2>
-<p>The most straightforward way to compose functions is nesting them:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">result</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span></span>
-<span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">result</span></span></code></pre></div></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9785184</code></pre>
-</div>
-</div>
-<p>While this works, it quickly becomes hard to read as complexity grows. You have to read from the inside out, which goes against our natural left-to-right reading pattern.</p>
-</section><section id="using-the-pipe-operator" class="level2" data-number="1.2"><h2 data-number="1.2" class="anchored" data-anchor-id="using-the-pipe-operator">
-<span class="header-section-number">1.2</span> Using the Pipe Operator</h2>
-<p>The pipe operator <code>|&gt;</code> (or <code>%&gt;%</code> from magrittr) makes composition much more readable:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">|&gt;</span></span>
-<span>    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">|&gt;</span></span>
-<span>    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">|&gt;</span></span>
-<span>    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span></span></code></pre></div></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9785184</code></pre>
-</div>
-</div>
-<p>This is essentially manual composition with better syntax. Each function is still written out explicitly, but the flow is clearer.</p>
-<p>Wanna learn more about pipes? Read this <a href="https://joshuamarie.com/posts/05-pipes/">blog</a>.</p>
-</section><section id="creating-wrapper-functions" class="level2" data-number="1.3"><h2 data-number="1.3" class="anchored" data-anchor-id="creating-wrapper-functions">
-<span class="header-section-number">1.3</span> Creating Wrapper Functions</h2>
+<section id="creating-wrapper-functions" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="creating-wrapper-functions">
+<span class="header-section-number">1.1</span> Creating Wrapper Functions</h2>
 <p>Sometimes we want to reuse a composition pattern. We can manually create a wrapper function with <code>function</code> keyword:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">normalize</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -242,6 +137,142 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </div>
 </div>
 <p>While this level of composition is explicit, straightforward, and easy to understand, it requires writing out each function definition manually, which can become repetitive when you have many similar transformations.</p>
+</section><section id="application-in-functionals" class="level2" data-number="1.2"><h2 data-number="1.2" class="anchored" data-anchor-id="application-in-functionals">
+<span class="header-section-number">1.2</span> Application in <em>functionals</em>
+</h2>
+<p>Many base R and tidyverse functions are <em>functionals</em>: they take a function as input and apply it across data (e.g., <code><a href="https://rdrr.io/r/base/lapply.html">sapply()</a></code>, <code><a href="https://purrr.tidyverse.org/reference/map.html">purrr::map()</a></code>, <code><a href="https://rdrr.io/r/stats/integrate.html">integrate()</a></code>).</p>
+<p>To compose functions for functionals, instead of manually writing function from the outside of the call:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sqrt2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sqrt2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.000000 1.414214 1.732051 2.000000 2.236068</code></pre>
+</div>
+</div>
+<p>You can compose on the fly with anonymous functions (you can just refer it as an “unassigned function” if you want):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.000000 1.414214 1.732051 2.000000 2.236068</code></pre>
+</div>
+</div>
+<p>Or use the modern shorthand <code>\()</code> (after 4.1):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.000000 1.414214 1.732051 2.000000 2.236068</code></pre>
+</div>
+</div>
+<p>Even better — show that <code>\()</code> is just syntactic sugar for <code>function()</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/substitute.html">quote</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>\<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>function(x) x^2</code></pre>
+</div>
+</div>
 </section></section><section id="higher-order" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Level 2: Using Higher-order Functions</h1>
 <p>How about we comprises the existing functions and give birth to another function? We can easily make that with <code><a href="https://purrr.tidyverse.org/reference/compose.html">purrr::compose()</a></code>. How about we create a function out of the function? That’s <em>function operators</em> in action.</p>
@@ -251,7 +282,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 <p>The nice thing about this is that it takes multiple functions and creates a single new function that applies them in sequence (the default direction is <em>backwards</em>).</p>
 <p>So, instead of writing this manually:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">transform</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -311,7 +342,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </div>
 <p>We can compose it through <code><a href="https://purrr.tidyverse.org/reference/compose.html">purrr::compose()</a></code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">purrr</span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -344,7 +375,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </div>
 <p>Furthermore, this is also (almost) as readable as using pipe:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -384,7 +415,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </blockquote>
 <p>This function can be read from left to right (by default, it is read vice-versa):</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">purrr</span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -405,87 +436,6 @@ background-color: null;
 font-style: inherit;">"forward"</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span></span></code></pre></div></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.5166883</code></pre>
-</div>
-</div>
-<p>Which is an equivalent of:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span></span></code></pre></div></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.5166883</code></pre>
-</div>
-</div>
-<p>This function can take the inverse: can be read from left to right (by default, it is read vice-versa):</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">transform_forward</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">purrr</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://purrr.tidyverse.org/reference/compose.html">compose</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">sqrt</span>, <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">mean</span>, <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">log</span>, .dir <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"forward"</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span></span>
-<span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">transform_forward</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
 background-color: null;
@@ -537,12 +487,93 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 <pre><code>[1] 0.5166883</code></pre>
 </div>
 </div>
+<p>This function can take the inverse: can be read from left to right (by default, it is read vice-versa):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">transform_forward</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">purrr</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://purrr.tidyverse.org/reference/compose.html">compose</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sqrt</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mean</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">log</span>, .dir <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"forward"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transform_forward</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5166883</code></pre>
+</div>
+</div>
+<p>Which is an equivalent of:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5166883</code></pre>
+</div>
+</div>
 </section><section id="partial-application-with-purrrpartial" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="partial-application-with-purrrpartial">
 <span class="header-section-number">2.2</span> Partial Application with purrr::partial()</h2>
 <p>Another function from <a href="https://purrr.tidyverse.org/">purrr</a> is the <code><a href="https://purrr.tidyverse.org/reference/partial.html">purrr::partial()</a></code>, where the application is where you “pre-fill” some arguments of a function, creating a new function with fewer parameters. This is incredibly useful for creating specialized versions of general functions.</p>
 <p>Consider this function, where a number argument <code>x</code> is divided by 100:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">divide_by_100</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -584,7 +615,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </div>
 <p>We can write as:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">divide_by_100</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -627,7 +658,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 <span class="header-section-number">2.3.1</span> Example 1:</h3>
 <p>Function operators can add behavior without changing the core logic:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">with_logging</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -752,33 +783,46 @@ Result: 4 </code></pre>
 </div>
 <p>If you want to do this with Python, here take a look:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">def</span> with_logging(func):</span>
-<span id="cb28-2">    <span class="kw" style="color: #003B4F;
+font-style: inherit;">def</span> with_logging(f):</span>
+<span id="cb32-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> call(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args):</span>
-<span id="cb28-3">        <span class="bu" style="color: null;
+<span id="cb32-3">        args_str <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>.join(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>(a) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> a <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> args)</span>
+<span id="cb32-4">        <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"Calling function with args: </span><span class="sc" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">{</span>args<span class="sc" style="color: #5E5E5E;
+font-style: inherit;">{</span>args_str<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"</span>)</span>
-<span id="cb28-4">        res <span class="op" style="color: #5E5E5E;
+<span id="cb32-5">        res <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> func(<span class="op" style="color: #5E5E5E;
+font-style: inherit;">=</span> f(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args)</span>
-<span id="cb28-5">        <span class="bu" style="color: null;
+<span id="cb32-6">        <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
 background-color: null;
@@ -789,24 +833,25 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"</span>)</span>
-<span id="cb28-6">        <span class="cf" style="color: #003B4F;
+<span id="cb32-7">        <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> res</span>
-<span id="cb28-7">    </span>
-<span id="cb28-8">    <span class="cf" style="color: #003B4F;
+<span id="cb32-8">    </span>
+<span id="cb32-9">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> call</span>
-<span id="cb28-9"></span>
-<span id="cb28-10"><span class="at" style="color: #657422;
+<span id="cb32-10"></span>
+<span id="cb32-11"></span>
+<span id="cb32-12"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@with_logging</span></span>
-<span id="cb28-11"><span class="kw" style="color: #003B4F;
+<span id="cb32-13"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> logged_sqrt(x):</span>
-<span id="cb28-12">    <span class="cf" style="color: #003B4F;
+<span id="cb32-14">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> x <span class="op" style="color: #5E5E5E;
@@ -814,14 +859,14 @@ background-color: null;
 font-style: inherit;">**</span> <span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0.5</span></span>
-<span id="cb28-13"></span>
-<span id="cb28-14"><span class="bu" style="color: null;
+<span id="cb32-15">    </span>
+<span id="cb32-16"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">print</span>(logged_sqrt(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">16</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Calling function with args: (16,)
+<pre><code>Calling function with args: 16
 Result: 4.0
 4.0</code></pre>
 </div>
@@ -830,7 +875,7 @@ Result: 4.0
 <span class="header-section-number">2.3.2</span> Example 2: Creating a Memoization Operator</h3>
 <p>Memoization caches function results to speed up repeated calls:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">memoize</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -1033,7 +1078,7 @@ background-color: null;
 font-style: inherit;">)</span></span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-   0.00    0.00    1.02 </code></pre>
+   0.00    0.00    1.03 </code></pre>
 </div>
 </div>
 </section></section></section><section id="program" class="level1" data-number="3"><h1 data-number="3">
@@ -1053,7 +1098,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </ul>
 <p>Let’s start with a function that squares the number:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1158,7 +1203,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </div>
 <p>Or instead of <code><a href="https://rdrr.io/r/base/list.html">list()</a></code> in <code>args</code> parameter, how about using <code>pairlist2()</code> instead?</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1242,7 +1287,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 <p>Alright, you might be asking: What’s the point of using <code>new_function()</code> if we can just use <code>function()</code> instead? The purpose of this approach is that you can <em>programmatically generate functions</em> based on data or configuration.</p>
 <p>In fact, this is how I <em>automatically</em> generate <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html">torch::nn_module()</a></code> expression used in my new R package called <a href="https://packages.joshuamarie.com/kindling">kindling</a>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
 background-color: null;

@@ -221,9 +221,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>
 <a href="#manual-compose" id="toc-manual-compose" class="nav-link active" data-scroll-target="#manual-compose"><span class="header-section-number">1</span> Level 1: Manual Composition</a>
   <ul class="collapse">
-<li><a href="#nested-function-calls" id="toc-nested-function-calls" class="nav-link" data-scroll-target="#nested-function-calls"><span class="header-section-number">1.1</span> Nested Function Calls</a></li>
-  <li><a href="#using-the-pipe-operator" id="toc-using-the-pipe-operator" class="nav-link" data-scroll-target="#using-the-pipe-operator"><span class="header-section-number">1.2</span> Using the Pipe Operator</a></li>
-  <li><a href="#creating-wrapper-functions" id="toc-creating-wrapper-functions" class="nav-link" data-scroll-target="#creating-wrapper-functions"><span class="header-section-number">1.3</span> Creating Wrapper Functions</a></li>
+<li><a href="#creating-wrapper-functions" id="toc-creating-wrapper-functions" class="nav-link" data-scroll-target="#creating-wrapper-functions"><span class="header-section-number">1.1</span> Creating Wrapper Functions</a></li>
+  <li><a href="#application-in-functionals" id="toc-application-in-functionals" class="nav-link" data-scroll-target="#application-in-functionals"><span class="header-section-number">1.2</span> Application in <em>functionals</em></a></li>
   </ul>
 </li>
   <li>
@@ -266,36 +265,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="manual-compose" class="level1" data-number="1"><h1 data-number="1">
 <span class="header-section-number">1</span> Level 1: Manual Composition</h1>
 <p>At the most basic level, we compose functions by manually writing them out. This is the approach most R users start with, and it’s perfectly valid for many use cases.</p>
-<section id="nested-function-calls" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="nested-function-calls">
-<span class="header-section-number">1.1</span> Nested Function Calls</h2>
-<p>The most straightforward way to compose functions is nesting them:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">result</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">result</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9785184</code></pre>
-</div>
-</div>
-<p>While this works, it quickly becomes hard to read as complexity grows. You have to read from the inside out, which goes against our natural left-to-right reading pattern.</p>
-</section><section id="using-the-pipe-operator" class="level2" data-number="1.2"><h2 data-number="1.2" class="anchored" data-anchor-id="using-the-pipe-operator">
-<span class="header-section-number">1.2</span> Using the Pipe Operator</h2>
-<p>The pipe operator <code>|&gt;</code> (or <code>%&gt;%</code> from magrittr) makes composition much more readable:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9785184</code></pre>
-</div>
-</div>
-<p>This is essentially manual composition with better syntax. Each function is still written out explicitly, but the flow is clearer.</p>
-<p>Wanna learn more about pipes? Read this <a href="https://joshuamarie.com/posts/05-pipes/">blog</a>.</p>
-</section><section id="creating-wrapper-functions" class="level2" data-number="1.3"><h2 data-number="1.3" class="anchored" data-anchor-id="creating-wrapper-functions">
-<span class="header-section-number">1.3</span> Creating Wrapper Functions</h2>
+<section id="creating-wrapper-functions" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="creating-wrapper-functions">
+<span class="header-section-number">1.1</span> Creating Wrapper Functions</h2>
 <p>Sometimes we want to reuse a composition pattern. We can manually create a wrapper function with <code>function</code> keyword:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">normalize</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">normalize</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -306,6 +280,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>While this level of composition is explicit, straightforward, and easy to understand, it requires writing out each function definition manually, which can become repetitive when you have many similar transformations.</p>
+</section><section id="application-in-functionals" class="level2" data-number="1.2"><h2 data-number="1.2" class="anchored" data-anchor-id="application-in-functionals">
+<span class="header-section-number">1.2</span> Application in <em>functionals</em>
+</h2>
+<p>Many base R and tidyverse functions are <em>functionals</em>: they take a function as input and apply it across data (e.g., <code><a href="https://rdrr.io/r/base/lapply.html">sapply()</a></code>, <code><a href="https://purrr.tidyverse.org/reference/map.html">purrr::map()</a></code>, <code><a href="https://rdrr.io/r/stats/integrate.html">integrate()</a></code>).</p>
+<p>To compose functions for functionals, instead of manually writing function from the outside of the call:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sqrt2</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">0.5</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="va">sqrt2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.000000 1.414214 1.732051 2.000000 2.236068</code></pre>
+</div>
+</div>
+<p>You can compose on the fly with anonymous functions (you can just refer it as an “unassigned function” if you want):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">0.5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.000000 1.414214 1.732051 2.000000 2.236068</code></pre>
+</div>
+</div>
+<p>Or use the modern shorthand <code>\()</code> (after 4.1):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">0.5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.000000 1.414214 1.732051 2.000000 2.236068</code></pre>
+</div>
+</div>
+<p>Even better — show that <code>\()</code> is just syntactic sugar for <code>function()</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/substitute.html">quote</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>function(x) x^2</code></pre>
+</div>
+</div>
 </section></section><section id="higher-order" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Level 2: Using Higher-order Functions</h1>
 <p>How about we comprises the existing functions and give birth to another function? We can easily make that with <code><a href="https://purrr.tidyverse.org/reference/compose.html">purrr::compose()</a></code>. How about we create a function out of the function? That’s <em>function operators</em> in action.</p>
@@ -315,7 +323,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The nice thing about this is that it takes multiple functions and creates a single new function that applies them in sequence (the default direction is <em>backwards</em>).</p>
 <p>So, instead of writing this manually:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">transform</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">transform</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -326,14 +334,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>We can compose it through <code><a href="https://purrr.tidyverse.org/reference/compose.html">purrr::compose()</a></code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/compose.html">compose</a></span><span class="op">(</span><span class="va">sqrt</span>, <span class="va">mean</span>, <span class="va">log</span><span class="op">)</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/compose.html">compose</a></span><span class="op">(</span><span class="va">sqrt</span>, <span class="va">mean</span>, <span class="va">log</span><span class="op">)</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9785184</code></pre>
 </div>
 </div>
 <p>Furthermore, this is also (almost) as readable as using pipe:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9785184</code></pre>
 </div>
@@ -343,22 +351,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </blockquote>
 <p>This function can be read from left to right (by default, it is read vice-versa):</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/compose.html">compose</a></span><span class="op">(</span><span class="va">sqrt</span>, <span class="va">mean</span>, <span class="va">log</span>, .dir <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.5166883</code></pre>
-</div>
-</div>
-<p>Which is an equivalent of:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.5166883</code></pre>
-</div>
-</div>
-<p>This function can take the inverse: can be read from left to right (by default, it is read vice-versa):</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">transform_forward</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/compose.html">compose</a></span><span class="op">(</span><span class="va">sqrt</span>, <span class="va">mean</span>, <span class="va">log</span>, .dir <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span></span>
-<span><span class="fu">transform_forward</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/compose.html">compose</a></span><span class="op">(</span><span class="va">sqrt</span>, <span class="va">mean</span>, <span class="va">log</span>, .dir <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.5166883</code></pre>
 </div>
@@ -370,12 +363,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>[1] 0.5166883</code></pre>
 </div>
 </div>
+<p>This function can take the inverse: can be read from left to right (by default, it is read vice-versa):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">transform_forward</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/compose.html">compose</a></span><span class="op">(</span><span class="va">sqrt</span>, <span class="va">mean</span>, <span class="va">log</span>, .dir <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span></span>
+<span><span class="fu">transform_forward</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5166883</code></pre>
+</div>
+</div>
+<p>Which is an equivalent of:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5166883</code></pre>
+</div>
+</div>
 </section><section id="partial-application-with-purrrpartial" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="partial-application-with-purrrpartial">
 <span class="header-section-number">2.2</span> Partial Application with purrr::partial()</h2>
 <p>Another function from <a href="https://purrr.tidyverse.org/">purrr</a> is the <code><a href="https://purrr.tidyverse.org/reference/partial.html">purrr::partial()</a></code>, where the application is where you “pre-fill” some arguments of a function, creating a new function with fewer parameters. This is incredibly useful for creating specialized versions of general functions.</p>
 <p>Consider this function, where a number argument <code>x</code> is divided by 100:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">divide_by_100</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">divide_by_100</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">x</span> <span class="op">/</span> <span class="fl">100</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -386,7 +394,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>We can write as:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">divide_by_100</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/partial.html">partial</a></span><span class="op">(</span><span class="va">`/`</span>, e2 <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">divide_by_100</span> <span class="op">=</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/partial.html">partial</a></span><span class="op">(</span><span class="va">`/`</span>, e2 <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu">divide_by_100</span><span class="op">(</span><span class="fl">500</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 5</code></pre>
@@ -401,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="header-section-number">2.3.1</span> Example 1:</h3>
 <p>Function operators can add behavior without changing the core logic:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">with_logging</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">with_logging</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Calling function with args:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span>        <span class="va">res</span> <span class="op">=</span> <span class="fu">f</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
@@ -422,22 +430,24 @@ Result: 4 </code></pre>
 </div>
 <p>If you want to do this with Python, here take a look:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> with_logging(func):</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> call(<span class="op">*</span>args):</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Calling function with args: </span><span class="sc">{</span>args<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>        res <span class="op">=</span> func(<span class="op">*</span>args)</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Result: </span><span class="sc">{</span>res<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> res</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> call</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="at">@with_logging</span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logged_sqrt(x):</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">**</span> <span class="fl">0.5</span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(logged_sqrt(<span class="dv">16</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> with_logging(f):</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> call(<span class="op">*</span>args):</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        args_str <span class="op">=</span> <span class="st">", "</span>.join(<span class="bu">str</span>(a) <span class="cf">for</span> a <span class="kw">in</span> args)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Calling function with args: </span><span class="sc">{</span>args_str<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>        res <span class="op">=</span> f(<span class="op">*</span>args)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Result: </span><span class="sc">{</span>res<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> res</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> call</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="at">@with_logging</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logged_sqrt(x):</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">**</span> <span class="fl">0.5</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(logged_sqrt(<span class="dv">16</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Calling function with args: (16,)
+<pre><code>Calling function with args: 16
 Result: 4.0
 4.0</code></pre>
 </div>
@@ -446,7 +456,7 @@ Result: 4.0
 <span class="header-section-number">2.3.2</span> Example 2: Creating a Memoization Operator</h3>
 <p>Memoization caches function results to speed up repeated calls:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">memoize</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">memoize</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">cache</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html">emptyenv</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>    </span>
 <span>    <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -467,7 +477,7 @@ Result: 4.0
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="fu">fast_function</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-   0.00    0.00    1.02 </code></pre>
+   0.00    0.00    1.03 </code></pre>
 </div>
 </div>
 </section></section></section><section id="program" class="level1" data-number="3"><h1 data-number="3">
@@ -487,7 +497,7 @@ Result: 4.0
 </ul>
 <p>Let’s start with a function that squares the number:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="va">rlang</span><span class="op">[</span><span class="va">new_function</span>, <span class="va">expr</span>, <span class="va">caller_env</span>, <span class="va">call2</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -504,7 +514,7 @@ Result: 4.0
 </div>
 <p>Or instead of <code><a href="https://rdrr.io/r/base/list.html">list()</a></code> in <code>args</code> parameter, how about using <code>pairlist2()</code> instead?</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">rlang</span><span class="op">[</span><span class="va">pairlist2</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">rlang</span><span class="op">[</span><span class="va">pairlist2</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">square2</span> <span class="op">=</span> <span class="fu">new_function</span><span class="op">(</span></span>
 <span>    args <span class="op">=</span> <span class="fu">pairlist2</span><span class="op">(</span>x <span class="op">=</span> <span class="op">)</span>, </span>
@@ -520,7 +530,7 @@ Result: 4.0
 <p>Alright, you might be asking: What’s the point of using <code>new_function()</code> if we can just use <code>function()</code> instead? The purpose of this approach is that you can <em>programmatically generate functions</em> based on data or configuration.</p>
 <p>In fact, this is how I <em>automatically</em> generate <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html">torch::nn_module()</a></code> expression used in my new R package called <a href="https://packages.joshuamarie.com/kindling">kindling</a>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">kindling</span><span class="op">[</span><span class="va">ffnn_generator</span>, <span class="va">act_funs</span>, <span class="va">args</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">kindling</span><span class="op">[</span><span class="va">ffnn_generator</span>, <span class="va">act_funs</span>, <span class="va">args</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">ffnn_generator</span><span class="op">(</span></span>
 <span>    nn_name <span class="op">=</span> <span class="st">"MyFFNN2"</span>,</span>

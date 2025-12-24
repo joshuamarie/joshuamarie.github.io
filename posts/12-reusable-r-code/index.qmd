@@ -1,0 +1,44 @@
+---
+title: "Bother yourself writing reusable codes in R, not throwaway codes"
+subtitle: "Reasons and applications with box"
+date: "2025-12-20"
+image: "image.png"
+categories: [R, box, programming]
+description: "A proper way to write reusable R codes"
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+        code-annotations: hover
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/12-reusable-r-code"
+    description: "Reusable codes in R — Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+Why bother yourself writing reusable codes? R is so behind in terms of reusability and maintainability of the codes written, and I don't like the fact that there are piles of garbage codes in the wild. 

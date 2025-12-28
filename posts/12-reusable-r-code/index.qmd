@@ -4,7 +4,7 @@ subtitle: "Reasons and applications with box"
 date: "2025-12-20"
 image: "image.png"
 categories: [R, box, programming]
-description: "A proper way to write reusable R codes"
+description: "I can also show you a proper way to write reusable R codes"
 format:
     html:
         toc: true
@@ -41,4 +41,396 @@ share:
 engine: knitr
 ---
 
-Why bother yourself writing reusable codes? R is so behind in terms of reusability and maintainability of the codes written, and I don't like the fact that there are piles of garbage codes in the wild. 
+# The Problem with Throwaway Code
+
+Why bother yourself writing reusable codes? R is so behind in terms of reusability and maintainability of the codes written, and I don't like the fact that there are piles of garbage codes in the wild — although other languages, even Python, is guilty at this one. 
+
+If you've been working with R for any length of time, you've probably encountered (or written) code that looks something like this:
+
+```{r}
+#| filename: analysis_final_v3_ACTUAL.R
+#| eval: false
+library(tidyverse)
+
+records <- read_csv("records.csv") # Directly import CSV files into R
+
+# Modify the records a bit
+records$date <- as.Date(records$date) 
+records <- records %>% filter(!is.na(value))
+
+# Calculate some statistics
+mean_value <- mean(records$value)
+sd_value <- sd(records$value)
+
+# Then the usual records viz
+ggplot(records, aes(x = date, y = value)) +
+    geom_line() +
+    theme_minimal()
+```
+
+This script works, yes. It does what you need it to do right now, yes. But what happens when you need to:
+
+-   Run the same analysis on a different dataset?
+-   Share this code with a colleague?
+-   Come back to this code in six months?
+-   Use these calculations in another project?
+
+You end up copying and pasting, making small modifications, and before you know it, you have `analysis_v1.R`, `analysis_v2.R`, `analysis_final.R`, `analysis_final_ACTUAL.R`, and `analysis_final_ACTUAL_USE_THIS_ONE.R` scattered across your projects.
+
+This is throwaway code. It solves an immediate problem but creates long-term technical debt.
+
+# What Makes Code Reusable?
+
+Reusability of the code is about writing code with intention, structure, and foresight. It shouldn't be limited about writing functions (though that helps). 
+
+Here are the key characteristics:
+
+1.  ***Clear separation of concerns*** - Each piece of code should do one thing well. Data loading, cleaning, analysis, and visualization should be separate operations that can be mixed and matched.
+2.  ***Minimal dependencies*** - Your code should depend on what it actually needs, not load 20 packages "just in case". This helps for better long-term maintainability, and easier to understand.
+3.  ***Explicitness*** - Functions and codes in general should have clear inputs and outputs. No hidden dependencies on global variables or less mysterious side effects.
+4.  ***Documentation*** - Do not just indicate the code with comments, I recommend writing an actual documentation that explains what the code does, what it expects, and what it returns.
+
+# The Cost of Throwaway Code
+
+Let me be blunt: throwaway code is expensive. Not in terms of money (though that too), but in terms of time, mental energy, and opportunity cost.
+
+::: callout-important
+## Time Wasted on Repetition
+
+Every time you copy-paste code and modify it slightly, you're not just duplicating code—you're duplicating bugs, duplicating maintenance burden, and duplicating the cognitive load of understanding what the code does.
+:::
+
+::: callout-important
+## Broken Knowledge Transfer
+
+When your colleague needs to use your analysis, they shouldn't need to reverse-engineer a 500-line script to figure out which parts are relevant to them. They shouldn't need to schedule a meeting to ask you what `temp_var_2` means.
+:::
+
+::: callout-important
+## Technical Debt Compounds
+
+That script you wrote six months ago? The one that "just works"? It's now a black box. You're afraid to touch it. You build around it instead of on top of it. This is how projects become less maintainable.
+:::
+
+# Reusability in native R
+
+So how do we write reusable code in R? R offers few functionalities, but they are too fragile and suffered with numbers of limitations. I can't recommend them enough, even for new R users. 
+
+## Start with Functions
+
+Even if you think you'll only use code once, wrap it in a function. Future you will thank present you.
+
+Imagine this code is repeatable:
+
+``` r 
+library(dplyr)
+
+data = data %>% 
+    filter(!is.na(value), value > 0)
+```
+
+Instead, minimize a bit by writing a function that does the similar, but for any data frame:
+
+```{r} 
+#| eval: false
+#| filename: "filter.R"
+library(dplyr)
+
+retain_positive_value = function(data, var) {
+    data %>%
+        filter(!is.na({{ var }}), {{ var }} > 0)
+}
+
+retain_positive_value(data, value)
+```
+
+*To know more what I did, please learn more about [tidy evaluation](https://dplyr.tidyverse.org/articles/programming.html).*
+
+You gotta have to store this function in some R script, R (and programming in general) cannot remember the codes you wrote and you execute, unless you saved the `.Rdata`, which is a big no-no. So, let's go to another step. 
+
+## Sourcing a script
+
+As you know and if you read [my previous blog](https://joshuamarie.com/posts/06-load-pkg/), I have some beefs with package import system, but I have personal beefs with code reusability in R in general. This includes "sourcing a script" using `source()` function. 
+
+```{r}
+#| eval: false
+source("./filter.R")
+```
+
+What's the big matter about sourcing a script with `source()`? 
+
+1.   Everything from the sourced file goes into your global environment, resulting to a *namespace clash*. 
+2.   **No explicit imports**: You don't know what functions you're actually using.
+3.   You need to source files in the right order.
+4.   **No encapsulation**: Functions can conflict with each other.
+
+## Creating an R Package
+
+If reusability is the problem, I mean, you could turn every project into an R package. But it is too heavy (even the implication of R package being "lightweight"), sometimes overkill, and unnecessary. 
+
+That's because it:
+
+-   Requires understanding package structure
+-   Needs `DESCRIPTION`, `NAMESPACE`, and other boilerplates
+-   Must follow CRAN conventions even for internal code (sometimes this is not necessary, but it is when publishing an R package to CRAN)
+-   Overhead of package development for simple projects
+
+And besides, the structure of `R/` in your R package is ALWAYS flat. You can't organize modules into subdirectories naturally. 
+
+# Enter {box} package
+
+I already have [a book dedicated to code reusability and module systems using `{box}` package](https://modules-in-r.joshuamarie.com/), with discussions about it. In fact, in every blog post I write, I always use `{box}` (sometimes just `::`) to qualify the imports, rather than loading an entire package and attaching all exports of that particular package. 
+
+The `{box}` package provides a "lightweight", modern module system for R that gives you the benefits of packages without the overhead.
+
+Example usage: 
+
+```{r}
+#| eval: false
+install.packages("box") 
+box::use(
+    dplyr,                                          # Loading the package without attaching the names
+    ./R/data_cleaning,                              # Loading an entire particular script for data cleaning from the root path
+    etl = ./R/data_cleaning,                        # Same as above but the alias was provided
+    ./R/data_cleaning[clean_data, validate_data]    # Loading some names from a particular script for data cleaning from the root path
+)
+```
+
+With `{box}`, you get:
+
+- **Explicit imports**: Only load what you need
+- **Namespace isolation**: No pollution of global environment
+- **Module encapsulation**: Clear boundaries between code
+- **Simple syntax**: Easy to learn and use
+- **Hierarchical structure**: Organize modules in nested directories
+
+## Organize Your Code into Modules
+
+Instead of one giant script, break your code into bunch of R scripts as logical modules:
+
+- `data_loading.R` - Functions for reading and importing data
+- `data_cleaning.R` - Functions for cleaning and validation
+- `analysis.R` - Core analytical functions
+- `visualization.R` - Plotting functions
+
+## Use a Consistent Structure
+
+Every project should follow a similar structure so you (and others) know where to find things. Just imagine you have a particular project:
+
+``` bash
+project/
+├── R/
+│   ├── __init__.R       # <------ This will mark `{./R}` folder as a module
+│   ├── data_loading.R
+│   ├── data_cleaning.R
+│   ├── analysis.R
+│   └── visualization.R
+├── data/
+├── output/
+└── main.R
+```
+
+## Writing a module
+
+Under `R/analysis.R` file, place this practical example code for the module that provides summary statistics:
+
+```{r}
+#| eval: true
+#| filename: "./R/analysis.R"
+#| code-fold: true
+box::use(
+    dplyr[
+        summarise, across, n, relocate, pick,
+        cur_group_id, matches
+    ],
+    tidyr[pivot_longer, pivot_wider]
+)
+
+#' @export
+summary_data = function(data, vars, .by = NULL) {
+    mtcars |>
+        summarise(
+            grp_id = cur_group_id(), 
+            n = n(),
+            across(
+                {{ vars }},
+                list(
+                    mean = \(x) mean(x, na.rm = TRUE),
+                    median = \(x) median(x, na.rm = TRUE), 
+                    q25 = \(x) quantile(x, 0.25, na.rm = TRUE),
+                    q75 = \(x) quantile(x, 0.75, na.rm = TRUE), 
+                    sd = \(x) sd(x, na.rm = TRUE),
+                    cv = \(x) sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE),
+                    iqr = \(x) IQR(x, na.rm = TRUE),
+                    mad = \(x) mad(x, na.rm = TRUE)  
+                ), 
+                .names = "{.col}..{.fn}"
+            ),
+            
+            .by = {{ .by }}
+        ) |> 
+        pivot_longer(
+            cols = matches("\\.\\."), 
+            names_pattern = "(.+)\\.\\.(.+)",  
+            names_to = c("variable", "statistic"),
+            values_to = "est"
+        ) |>
+        pivot_wider(
+            names_from = statistic,
+            values_from = est
+        ) |>
+        relocate(n, .after = variable)
+}
+```
+
+```{r}
+#| output-fold: true
+#| output-summary: "Yes, it just works"
+mtcars |> 
+    summary_data(vars = c(mpg, hp, wt), .by = cyl)
+```
+
+Notice a few key things here:
+
+1. We only import the specific `{dplyr}` and `{tidyr}` functions we need
+2. **`#' @export` annotation**: This marks the function as public (available when the module is imported)
+3. This module has a function that does one thing: provide summary statistics
+
+Then reuse it by:
+
+```{r}
+#| eval: false
+box::use(./R/analysis[summary_data])
+
+mtcars |> 
+    summary_data(vars = c(mpg, hp, wt))
+```
+
+You are also allowed to import multiple functions or even the entire module:
+
+```{r}
+#| eval: false
+box::use(
+    # Import the module itself without attaching the names (access functions with summary$function_name)
+    ./analysis, 
+    # Import specific names
+    ./analysis[summary_data, another_function], 
+    # Attach all exported functions
+    ./analysis[...]
+)
+```
+
+## Document Your Functions
+
+Use `{roxygen2}`-style comments even if you're not building a package:
+
+```{r}
+#| eval: false
+#| filename: "./R/analysis.R"
+#| code-fold: true
+box::use(
+    dplyr[
+        summarise, across, n, relocate, pick,
+        cur_group_id, matches
+    ],
+    tidyr[pivot_longer, pivot_wider]
+)
+
+#' Get summary data from numeric column
+#' 
+#' Calculate comprehensive summary statistics for numeric variables,
+#' including measures of central tendency, dispersion, and spread.
+#' 
+#' @param data A data frame
+#' @param vars Vector of columns
+#' @param .by Optional grouping variable(s)
+#' 
+#' @return A data frame with summary statistics in long format
+#' 
+#' @examples 
+#' mtcars |> summary_data(vars = c(mpg, hp, wt))
+#' mtcars |> summary_data(vars = c(mpg, hp), .by = cyl)
+#' 
+#' @export
+summary_data = function(data, vars, .by = NULL) {
+    mtcars |>
+        summarise(
+            grp_id = cur_group_id(), 
+            n = n(),
+            across(
+                {{ vars }},
+                list(
+                    mean = \(x) mean(x, na.rm = TRUE),
+                    median = \(x) median(x, na.rm = TRUE), 
+                    q25 = \(x) quantile(x, 0.25, na.rm = TRUE),
+                    q75 = \(x) quantile(x, 0.75, na.rm = TRUE), 
+                    sd = \(x) sd(x, na.rm = TRUE),
+                    cv = \(x) sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE),
+                    iqr = \(x) IQR(x, na.rm = TRUE),
+                    mad = \(x) mad(x, na.rm = TRUE)  
+                ), 
+                .names = "{.col}..{.fn}"
+            ),
+            
+            .by = {{ .by }}
+        ) |> 
+        pivot_longer(
+            cols = matches("\\.\\."), 
+            names_pattern = "(.+)\\.\\.(.+)",  
+            names_to = c("variable", "statistic"),
+            values_to = "est"
+        ) |>
+        pivot_wider(
+            names_from = statistic,
+            values_from = est
+        ) |>
+        relocate(n, .after = variable)
+}
+```
+
+And you can access the documentation through `box::help()`:
+
+```{r}
+#| eval: false
+box::use(./R/analysis)
+
+box::help(analysis$summary_data)
+```
+
+# Conclusion
+
+Writing reusable code isn't about being pedantic or following rules for the sake of rules. It's about respecting your future self, your colleagues, and the craft of programming.
+
+The `{box}` package gives R users a modern, lightweight way to organize code into reusable modules without the overhead of creating full packages. It's a middle ground that's been missing from the R ecosystem.
+
+Start small. Pick one project and try organizing it with `{box}`. You'll quickly see the benefits:
+
+- Clearer code structure
+- Easier maintenance
+- Better collaboration
+- Less time wasted on repetitive tasks
+
+Your future self will thank you. And maybe, just maybe, we can reduce the amount of garbage code in the wild.
+
+# Conclusion
+
+I don't know about you (who read this blog post), but writing reusable code isn't about being pedantic or following rules for the sake of rules. It's about respecting your future self, your colleagues, and the craft of programming.
+
+R suffers a lot of limitations in terms of reusability and maintainability. Many other programming languages' users remarks R as being an odd one, and goes to say "it suffers for large projects", and simply because R doesn't have a right tool. Fortunately, I can't thank `{box}` package enough by giving R users a modern, lightweight way to organize code into reusable modules without the overhead of creating full packages, similar to Python module system. It's a middle ground that's been missing from the R ecosystem.
+
+Start small. Pick one project and try organizing it with `{box}`. You'll quickly see the benefits:
+
+-   Clearer code structure
+-   Easier maintenance
+-   Better collaboration
+-   Less time wasted on repetitive tasks
+
+Your future self will thank you. And maybe, just maybe, we can reduce the amount of garbage code in the wild.
+
+# Resources
+
+- [`{box}` package documentation](https://klmr.me/box/)
+- [`{box}` GitHub repository](https://github.com/klmr/box)
+- [Box: Placing module system into R](https://modules-in-r.joshuamarie.com/)
+- [R Packages book by Hadley Wickham](https://r-pkgs.org/) - for when you're ready to go beyond modules
+

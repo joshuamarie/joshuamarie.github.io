@@ -20,11 +20,1720 @@
 </div></div>
 
 
-<p>Why bother yourself writing reusable codes? There are piles of garbage codes in the wild</p>
+<section id="the-problem-with-throwaway-code" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> The Problem with Throwaway Code</h1>
+<p>Why bother yourself writing reusable codes? R is so behind in terms of reusability and maintainability of the codes written, and I don’t like the fact that there are piles of garbage codes in the wild — although other languages, even Python, is guilty at this one.</p>
+<p>If you’ve been working with R for any length of time, you’ve probably encountered (or written) code that looks something like this:</p>
+<div class="cell">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>analysis_final_v3_ACTUAL.R</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">records</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"records.csv"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Directly import CSV files into R</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Modify the records a bit</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">records</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">date</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">records</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> </span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">records</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">records</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Calculate some statistics</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mean_value</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">records</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sd_value</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">records</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Then the usual records viz</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">records</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">date</span>, y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+</div>
+<p>This script works, yes. It does what you need it to do right now, yes. But what happens when you need to:</p>
+<ul>
+<li>Run the same analysis on a different dataset?</li>
+<li>Share this code with a colleague?</li>
+<li>Come back to this code in six months?</li>
+<li>Use these calculations in another project?</li>
+</ul>
+<p>You end up copying and pasting, making small modifications, and before you know it, you have <code>analysis_v1.R</code>, <code>analysis_v2.R</code>, <code>analysis_final.R</code>, <code>analysis_final_ACTUAL.R</code>, and <code>analysis_final_ACTUAL_USE_THIS_ONE.R</code> scattered across your projects.</p>
+<p>This is throwaway code. It solves an immediate problem but creates long-term technical debt.</p>
+</section><section id="what-makes-code-reusable" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> What Makes Code Reusable?</h1>
+<p>Reusability of the code is about writing code with intention, structure, and foresight. It shouldn’t be limited about writing functions (though that helps).</p>
+<p>Here are the key characteristics:</p>
+<ol type="1">
+<li>
+<strong><em>Clear separation of concerns</em></strong> - Each piece of code should do one thing well. Data loading, cleaning, analysis, and visualization should be separate operations that can be mixed and matched.</li>
+<li>
+<strong><em>Minimal dependencies</em></strong> - Your code should depend on what it actually needs, not load 20 packages “just in case”. This helps for better long-term maintainability, and easier to understand.</li>
+<li>
+<strong><em>Explicitness</em></strong> - Functions and codes in general should have clear inputs and outputs. No hidden dependencies on global variables or less mysterious side effects.</li>
+<li>
+<strong><em>Documentation</em></strong> - Do not just indicate the code with comments, I recommend writing an actual documentation that explains what the code does, what it expects, and what it returns.</li>
+</ol></section><section id="the-cost-of-throwaway-code" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> The Cost of Throwaway Code</h1>
+<p>Let me be blunt: throwaway code is expensive. Not in terms of money (though that too), but in terms of time, mental energy, and opportunity cost.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Time Wasted on Repetition
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Every time you copy-paste code and modify it slightly, you’re not just duplicating code—you’re duplicating bugs, duplicating maintenance burden, and duplicating the cognitive load of understanding what the code does.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Broken Knowledge Transfer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When your colleague needs to use your analysis, they shouldn’t need to reverse-engineer a 500-line script to figure out which parts are relevant to them. They shouldn’t need to schedule a meeting to ask you what <code>temp_var_2</code> means.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Technical Debt Compounds
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>That script you wrote six months ago? The one that “just works”? It’s now a black box. You’re afraid to touch it. You build around it instead of on top of it. This is how projects become less maintainable.</p>
+</div>
+</div>
+</section><section id="reusability-in-native-r" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Reusability in native R</h1>
+<p>So how do we write reusable code in R? R offers few functionalities, but they are too fragile and suffered with numbers of limitations. I can’t recommend them enough, even for new R users.</p>
+<section id="start-with-functions" class="level2" data-number="4.1"><h2 data-number="4.1" class="anchored" data-anchor-id="start-with-functions">
+<span class="header-section-number">4.1</span> Start with Functions</h2>
+<p>Even if you think you’ll only use code once, wrap it in a function. Future you will thank present you.</p>
+<p>Imagine this code is repeatable:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<p>Instead, minimize a bit by writing a function that does the similar, but for any data frame:</p>
+<div class="cell">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>filter.R</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">retain_positive_value</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">var</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">var</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">var</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">retain_positive_value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+</div>
+<p><em>To know more what I did, please learn more about <a href="https://dplyr.tidyverse.org/articles/programming.html">tidy evaluation</a>.</em></p>
+<p>You gotta have to store this function in some R script, R (and programming in general) cannot remember the codes you wrote and you execute, unless you saved the <code>.Rdata</code>, which is a big no-no. So, let’s go to another step.</p>
+</section><section id="sourcing-a-script" class="level2" data-number="4.2"><h2 data-number="4.2" class="anchored" data-anchor-id="sourcing-a-script">
+<span class="header-section-number">4.2</span> Sourcing a script</h2>
+<p>As you know and if you read <a href="https://joshuamarie.com/posts/06-load-pkg/">my previous blog</a>, I have some beefs with package import system, but I have personal beefs with code reusability in R in general. This includes “sourcing a script” using <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> function.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"./filter.R"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+<p>What’s the big matter about sourcing a script with <code><a href="https://rdrr.io/r/base/source.html">source()</a></code>?</p>
+<ol type="1">
+<li>Everything from the sourced file goes into your global environment, resulting to a <em>namespace clash</em>.</li>
+<li>
+<strong>No explicit imports</strong>: You don’t know what functions you’re actually using.</li>
+<li>You need to source files in the right order.</li>
+<li>
+<strong>No encapsulation</strong>: Functions can conflict with each other.</li>
+</ol></section><section id="creating-an-r-package" class="level2" data-number="4.3"><h2 data-number="4.3" class="anchored" data-anchor-id="creating-an-r-package">
+<span class="header-section-number">4.3</span> Creating an R Package</h2>
+<p>If reusability is the problem, I mean, you could turn every project into an R package. But it is too heavy (even the implication of R package being “lightweight”), sometimes overkill, and unnecessary.</p>
+<p>That’s because it:</p>
+<ul>
+<li>Requires understanding package structure</li>
+<li>Needs <code>DESCRIPTION</code>, <code>NAMESPACE</code>, and other boilerplates</li>
+<li>Must follow CRAN conventions even for internal code (sometimes this is not necessary, but it is when publishing an R package to CRAN)</li>
+<li>Overhead of package development for simple projects</li>
+</ul>
+<p>And besides, the structure of <code>R/</code> in your R package is ALWAYS flat. You can’t organize modules into subdirectories naturally.</p>
+</section></section><section id="enter-box-package" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Enter {box} package</h1>
+<p>I already have <a href="https://modules-in-r.joshuamarie.com/">a book dedicated to code reusability and module systems using <code>{box}</code> package</a>, with discussions about it. In fact, in every blog post I write, I always use <a href="https://klmr.me/box/">box</a> (sometimes just <code>::</code>) to qualify the imports, rather than loading an entire package and attaching all exports of that particular package.</p>
+<p>The <a href="https://klmr.me/box/">box</a> package provides a “lightweight”, modern module system for R that gives you the benefits of packages without the overhead.</p>
+<p>Example usage:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"box"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> </span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span>,                                          <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Loading the package without attaching the names</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">R</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data_cleaning</span>,                              <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Loading an entire particular script for data cleaning from the root path</span></span>
+<span>    etl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">R</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data_cleaning</span>,                        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Same as above but the alias was provided</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">R</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data_cleaning</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">clean_data</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">validate_data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Loading some names from a particular script for data cleaning from the root path</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+<p>With <a href="https://klmr.me/box/">box</a>, you get:</p>
+<ul>
+<li>
+<strong>Explicit imports</strong>: Only load what you need</li>
+<li>
+<strong>Namespace isolation</strong>: No pollution of global environment</li>
+<li>
+<strong>Module encapsulation</strong>: Clear boundaries between code</li>
+<li>
+<strong>Simple syntax</strong>: Easy to learn and use</li>
+<li>
+<strong>Hierarchical structure</strong>: Organize modules in nested directories</li>
+</ul>
+<section id="organize-your-code-into-modules" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="organize-your-code-into-modules">
+<span class="header-section-number">5.1</span> Organize Your Code into Modules</h2>
+<p>Instead of one giant script, break your code into bunch of R scripts as logical modules:</p>
+<ul>
+<li>
+<code>data_loading.R</code> - Functions for reading and importing data</li>
+<li>
+<code>data_cleaning.R</code> - Functions for cleaning and validation</li>
+<li>
+<code>analysis.R</code> - Core analytical functions</li>
+<li>
+<code>visualization.R</code> - Plotting functions</li>
+</ul></section><section id="use-a-consistent-structure" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="use-a-consistent-structure">
+<span class="header-section-number">5.2</span> Use a Consistent Structure</h2>
+<p>Every project should follow a similar structure so you (and others) know where to find things. Just imagine you have a particular project:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">project/</span></span>
+<span id="cb6-2"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">├──</span> R/</span>
+<span id="cb6-3"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">│</span>   ├── __init__.R       <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># &lt;------ This will mark `{./R}` folder as a module</span></span>
+<span id="cb6-4"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">│</span>   ├── data_loading.R</span>
+<span id="cb6-5"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">│</span>   ├── data_cleaning.R</span>
+<span id="cb6-6"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">│</span>   ├── analysis.R</span>
+<span id="cb6-7"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">│</span>   └── visualization.R</span>
+<span id="cb6-8"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">├──</span> data/</span>
+<span id="cb6-9"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">├──</span> output/</span>
+<span id="cb6-10"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">└──</span> main.R</span></code></pre></div></div>
+</section><section id="writing-a-module" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="writing-a-module">
+<span class="header-section-number">5.3</span> Writing a module</h2>
+<p>Under <code>R/analysis.R</code> file, place this practical example code for the module that provides summary statistics:</p>
+<div class="cell">
+<div class="code-with-filename">
+<details class="code-fold"><summary>Code</summary><div class="code-with-filename-file">
+<pre><strong>./R/analysis.R</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span></span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">summarise</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">across</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">n</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">relocate</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pick</span>,</span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cur_group_id</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">matches</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">tidyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pivot_longer</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pivot_wider</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @export</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">summary_data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">vars</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.by</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            grp_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/context.html">cur_group_id</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>            n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">vars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span>,</span>
+<span>                <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                    mean <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    median <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>                    q25 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    q75 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>                    sd <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    cv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    iqr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/IQR.html">IQR</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    mad <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/mad.html">mad</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>  </span>
+<span>                <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>                .names <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"{.col}..{.fn}"</span></span>
+<span>            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>            </span>
+<span>            .by <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.by</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            cols <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">matches</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"\\.\\."</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>            names_pattern <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"(.+)\\.\\.(.+)"</span>,  </span>
+<span>            names_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"variable"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"statistic"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>            values_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"est"</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            names_from <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">statistic</span>,</span>
+<span>            values_from <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">est</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/relocate.html">relocate</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">n</span>, .after <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">variable</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span></code></pre></div></div>
+</details>
+</div>
+</div>
+<div class="cell" data-output-fold="true" data-output-summary="Yes, it just works">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summary_data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>vars <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mpg</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">hp</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">wt</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, .by <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cyl</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<details><summary>Yes, it just works</summary><div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 12
+    cyl grp_id variable     n   mean median    q25    q75     sd     cv    iqr
+  &lt;dbl&gt;  &lt;int&gt; &lt;chr&gt;    &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1     6      1 mpg          7  19.7   19.7   18.6   21     1.45  0.0736  2.35 
+2     6      1 hp           7 122.   110    110    123    24.3   0.198  13    
+3     6      1 wt           7   3.12   3.22   2.82   3.44  0.356 0.114   0.618
+4     4      2 mpg         11  26.7   26     22.8   30.4   4.51  0.169   7.6  
+5     4      2 hp          11  82.6   91     65.5   96    20.9   0.253  30.5  
+6     4      2 wt          11   2.29   2.2    1.88   2.62  0.570 0.249   0.737
+7     8      3 mpg         14  15.1   15.2   14.4   16.2   2.56  0.170   1.85 
+8     8      3 hp          14 209.   192.   176.   241.   51.0   0.244  65    
+9     8      3 wt          14   4.00   3.76   3.53   4.01  0.759 0.190   0.481
+# ℹ 1 more variable: mad &lt;dbl&gt;</code></pre>
+</div>
+</details>
+</div>
+<p>Notice a few key things here:</p>
+<ol type="1">
+<li>We only import the specific <a href="https://dplyr.tidyverse.org">dplyr</a> and <a href="https://tidyr.tidyverse.org">tidyr</a> functions we need</li>
+<li>
+<strong><code>#' @export</code> annotation</strong>: This marks the function as public (available when the module is imported)</li>
+<li>This module has a function that does one thing: provide summary statistics</li>
+</ol>
+<p>Then reuse it by:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">R</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">analysis</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">summary_data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summary_data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>vars <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mpg</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">hp</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">wt</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+<p>You are also allowed to import multiple functions or even the entire module:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Import the module itself without attaching the names (access functions with summary$function_name)</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">analysis</span>, </span>
+<span>    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Import specific names</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">analysis</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">summary_data</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">another_function</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>, </span>
+<span>    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Attach all exported functions</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">analysis</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">...</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+</section><section id="document-your-functions" class="level2" data-number="5.4"><h2 data-number="5.4" class="anchored" data-anchor-id="document-your-functions">
+<span class="header-section-number">5.4</span> Document Your Functions</h2>
+<p>Use <a href="https://roxygen2.r-lib.org/">roxygen2</a>-style comments even if you’re not building a package:</p>
+<div class="cell">
+<div class="code-with-filename">
+<details class="code-fold"><summary>Code</summary><div class="code-with-filename-file">
+<pre><strong>./R/analysis.R</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span></span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">summarise</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">across</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">n</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">relocate</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pick</span>,</span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cur_group_id</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">matches</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">tidyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pivot_longer</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pivot_wider</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' Get summary data from numeric column</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' </span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' Calculate comprehensive summary statistics for numeric variables,</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' including measures of central tendency, dispersion, and spread.</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' </span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param data A data frame</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param vars Vector of columns</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param .by Optional grouping variable(s)</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' </span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @return A data frame with summary statistics in long format</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' </span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @examples </span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' mtcars |&gt; summary_data(vars = c(mpg, hp, wt))</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' mtcars |&gt; summary_data(vars = c(mpg, hp), .by = cyl)</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' </span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @export</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">summary_data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">vars</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.by</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            grp_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/context.html">cur_group_id</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>            n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">vars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span>,</span>
+<span>                <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                    mean <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    median <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>                    q25 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    q75 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>                    sd <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    cv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    iqr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/IQR.html">IQR</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>                    mad <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/mad.html">mad</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, na.rm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>  </span>
+<span>                <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>                .names <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"{.col}..{.fn}"</span></span>
+<span>            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>            </span>
+<span>            .by <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.by</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            cols <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">matches</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"\\.\\."</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>            names_pattern <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"(.+)\\.\\.(.+)"</span>,  </span>
+<span>            names_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"variable"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"statistic"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>            values_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"est"</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            names_from <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">statistic</span>,</span>
+<span>            values_from <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">est</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/relocate.html">relocate</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">n</span>, .after <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">variable</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span></code></pre></div></div>
+</details>
+</div>
+</div>
+<p>And you can access the documentation through <code><a href="http://klmr.me/box/reference/help.html">box::help()</a></code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">R</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">analysis</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/help.html">help</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">analysis</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">summary_data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+</section></section><section id="conclusion" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Conclusion</h1>
+<p>Writing reusable code isn’t about being pedantic or following rules for the sake of rules. It’s about respecting your future self, your colleagues, and the craft of programming.</p>
+<p>The <a href="https://klmr.me/box/">box</a> package gives R users a modern, lightweight way to organize code into reusable modules without the overhead of creating full packages. It’s a middle ground that’s been missing from the R ecosystem.</p>
+<p>Start small. Pick one project and try organizing it with <a href="https://klmr.me/box/">box</a>. You’ll quickly see the benefits:</p>
+<ul>
+<li>Clearer code structure</li>
+<li>Easier maintenance</li>
+<li>Better collaboration</li>
+<li>Less time wasted on repetitive tasks</li>
+</ul>
+<p>Your future self will thank you. And maybe, just maybe, we can reduce the amount of garbage code in the wild.</p>
+</section><section id="conclusion-1" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Conclusion</h1>
+<p>I don’t know about you (who read this blog post), but writing reusable code isn’t about being pedantic or following rules for the sake of rules. It’s about respecting your future self, your colleagues, and the craft of programming.</p>
+<p>R suffers a lot of limitations in terms of reusability and maintainability. Many other programming languages’ users remarks R as being an odd one, and goes to say “it suffers for large projects”, and simply because R doesn’t have a right tool. Fortunately, I can’t thank <a href="https://klmr.me/box/">box</a> package enough by giving R users a modern, lightweight way to organize code into reusable modules without the overhead of creating full packages, similar to Python module system. It’s a middle ground that’s been missing from the R ecosystem.</p>
+<p>Start small. Pick one project and try organizing it with <a href="https://klmr.me/box/">box</a>. You’ll quickly see the benefits:</p>
+<ul>
+<li>Clearer code structure</li>
+<li>Easier maintenance</li>
+<li>Better collaboration</li>
+<li>Less time wasted on repetitive tasks</li>
+</ul>
+<p>Your future self will thank you. And maybe, just maybe, we can reduce the amount of garbage code in the wild.</p>
+</section><section id="resources" class="level1" data-number="8"><h1 data-number="8">
+<span class="header-section-number">8</span> Resources</h1>
+<ul>
+<li><a href="https://klmr.me/box/"><code>{box}</code> package documentation</a></li>
+<li><a href="https://github.com/klmr/box"><code>{box}</code> GitHub repository</a></li>
+<li><a href="https://modules-in-r.joshuamarie.com/">Box: Placing module system into R</a></li>
+<li>
+<a href="https://r-pkgs.org/">R Packages book by Hadley Wickham</a> - for when you’re ready to go beyond modules</li>
+</ul>
 
 
-
- ]]></description>
+</section> ]]></description>
   <category>R</category>
   <category>box</category>
   <category>programming</category>

@@ -236,8 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul>
 </li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">6</span> Conclusion</a></li>
-  <li><a href="#conclusion-1" id="toc-conclusion-1" class="nav-link" data-scroll-target="#conclusion-1"><span class="header-section-number">7</span> Conclusion</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">8</span> Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">7</span> Resources</a></li>
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/12-reusable-r-code/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
@@ -501,168 +500,60 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 </div>
-<div class="cell" data-output-fold="true" data-output-summary="Yes, it just works">
+<div class="cell" data-output-fold="true" data-output-summary="Yes, it (just) works">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu">summary_data</span><span class="op">(</span>vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">hp</span>, <span class="va">wt</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">cyl</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>    <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 6%">
-<col style="width: 8%">
-<col style="width: 2%">
-<col style="width: 10%">
-<col style="width: 7%">
-<col style="width: 8%">
-<col style="width: 9%">
-<col style="width: 10%">
-<col style="width: 9%">
-<col style="width: 8%">
-<col style="width: 9%">
-</colgroup>
-<thead><tr class="header">
-<th style="text-align: right;">cyl</th>
-<th style="text-align: right;">grp_id</th>
-<th style="text-align: left;">variable</th>
-<th style="text-align: right;">n</th>
-<th style="text-align: right;">mean</th>
-<th style="text-align: right;">median</th>
-<th style="text-align: right;">q25</th>
-<th style="text-align: right;">q75</th>
-<th style="text-align: right;">sd</th>
-<th style="text-align: right;">cv</th>
-<th style="text-align: right;">iqr</th>
-<th style="text-align: right;">mad</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">mpg</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">19.742857</td>
-<td style="text-align: right;">19.700</td>
-<td style="text-align: right;">18.6500</td>
-<td style="text-align: right;">21.00000</td>
-<td style="text-align: right;">1.4535670</td>
-<td style="text-align: right;">0.0736250</td>
-<td style="text-align: right;">2.35000</td>
-<td style="text-align: right;">1.927380</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">hp</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">122.285714</td>
-<td style="text-align: right;">110.000</td>
-<td style="text-align: right;">110.0000</td>
-<td style="text-align: right;">123.00000</td>
-<td style="text-align: right;">24.2604911</td>
-<td style="text-align: right;">0.1983919</td>
-<td style="text-align: right;">13.00000</td>
-<td style="text-align: right;">7.413000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">wt</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">3.117143</td>
-<td style="text-align: right;">3.215</td>
-<td style="text-align: right;">2.8225</td>
-<td style="text-align: right;">3.44000</td>
-<td style="text-align: right;">0.3563455</td>
-<td style="text-align: right;">0.1143180</td>
-<td style="text-align: right;">0.61750</td>
-<td style="text-align: right;">0.363237</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">mpg</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">26.663636</td>
-<td style="text-align: right;">26.000</td>
-<td style="text-align: right;">22.8000</td>
-<td style="text-align: right;">30.40000</td>
-<td style="text-align: right;">4.5098277</td>
-<td style="text-align: right;">0.1691378</td>
-<td style="text-align: right;">7.60000</td>
-<td style="text-align: right;">6.523440</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">hp</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">82.636364</td>
-<td style="text-align: right;">91.000</td>
-<td style="text-align: right;">65.5000</td>
-<td style="text-align: right;">96.00000</td>
-<td style="text-align: right;">20.9345300</td>
-<td style="text-align: right;">0.2533331</td>
-<td style="text-align: right;">30.50000</td>
-<td style="text-align: right;">32.617200</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">wt</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">2.285727</td>
-<td style="text-align: right;">2.200</td>
-<td style="text-align: right;">1.8850</td>
-<td style="text-align: right;">2.62250</td>
-<td style="text-align: right;">0.5695637</td>
-<td style="text-align: right;">0.2491827</td>
-<td style="text-align: right;">0.73750</td>
-<td style="text-align: right;">0.541149</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">mpg</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">15.100000</td>
-<td style="text-align: right;">15.200</td>
-<td style="text-align: right;">14.4000</td>
-<td style="text-align: right;">16.25000</td>
-<td style="text-align: right;">2.5600481</td>
-<td style="text-align: right;">0.1695396</td>
-<td style="text-align: right;">1.85000</td>
-<td style="text-align: right;">1.556730</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">hp</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">209.214286</td>
-<td style="text-align: right;">192.500</td>
-<td style="text-align: right;">176.2500</td>
-<td style="text-align: right;">241.25000</td>
-<td style="text-align: right;">50.9768855</td>
-<td style="text-align: right;">0.2436587</td>
-<td style="text-align: right;">65.00000</td>
-<td style="text-align: right;">44.478000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">wt</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">3.999214</td>
-<td style="text-align: right;">3.755</td>
-<td style="text-align: right;">3.5325</td>
-<td style="text-align: right;">4.01375</td>
-<td style="text-align: right;">0.7594047</td>
-<td style="text-align: right;">0.1898885</td>
-<td style="text-align: right;">0.48125</td>
-<td style="text-align: right;">0.407715</td>
-</tr>
-</tbody>
-</table>
+<span>    <span class="fu">pander</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pander/man/pandoc.table.return.html">pandoc.table</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details><summary>Yes, it (just) works</summary><div class="cell-output cell-output-stdout">
+<pre><code>
+------------------------------------------------------------------------
+ cyl   grp_id   variable   n    mean    median    q25     q75      sd   
+----- -------- ---------- ---- ------- -------- ------- ------- --------
+  6      1        mpg      7    19.74    19.7    18.65    21     1.454  
+
+  6      1         hp      7    122.3    110      110     123    24.26  
+
+  6      1         wt      7    3.117   3.215    2.822   3.44    0.3563 
+
+  4      2        mpg      11   26.66     26     22.8    30.4     4.51  
+
+  4      2         hp      11   82.64     91     65.5     96     20.93  
+
+  4      2         wt      11   2.286    2.2     1.885   2.622   0.5696 
+
+  8      3        mpg      14   15.1     15.2    14.4    16.25    2.56  
+
+  8      3         hp      14   209.2   192.5    176.2   241.2   50.98  
+
+  8      3         wt      14   3.999   3.755    3.533   4.014   0.7594 
+------------------------------------------------------------------------
+
+Table: Table continues below
+
+ 
+---------------------------
+   cv       iqr      mad   
+--------- -------- --------
+ 0.07362    2.35    1.927  
+
+ 0.1984      13     7.413  
+
+ 0.1143    0.6175   0.3632 
+
+ 0.1691     7.6     6.523  
+
+ 0.2533     30.5    32.62  
+
+ 0.2492    0.7375   0.5411 
+
+ 0.1695     1.85    1.557  
+
+ 0.2437      65     44.48  
+
+ 0.1899    0.4812   0.4077 
+---------------------------</code></pre>
+</div>
+</details>
 </div>
 <p>Notice a few key things here:</p>
 <ol type="1">
@@ -673,14 +564,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p>Then reuse it by:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">.</span><span class="op">/</span><span class="va">R</span><span class="op">/</span><span class="va">analysis</span><span class="op">[</span><span class="va">summary_data</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">.</span><span class="op">/</span><span class="va">R</span><span class="op">/</span><span class="va">analysis</span><span class="op">[</span><span class="va">summary_data</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mtcars</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu">summary_data</span><span class="op">(</span>vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">hp</span>, <span class="va">wt</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>You are also allowed to import multiple functions or even the entire module:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="co"># Import the module itself without attaching the names (access functions with summary$function_name)</span></span>
 <span>    <span class="va">.</span><span class="op">/</span><span class="va">analysis</span>, </span>
 <span>    <span class="co"># Import specific names</span></span>
@@ -697,7 +588,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details class="code-fold"><summary>Code</summary><div class="code-with-filename-file">
 <pre><strong>./R/analysis.R</strong></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="va">dplyr</span><span class="op">[</span></span>
 <span>        <span class="va">summarise</span>, <span class="va">across</span>, <span class="va">n</span>, <span class="va">relocate</span>, <span class="va">pick</span>,</span>
 <span>        <span class="va">cur_group_id</span>, <span class="va">matches</span></span>
@@ -760,24 +651,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>And you can access the documentation through <code><a href="http://klmr.me/box/reference/help.html">box::help()</a></code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">.</span><span class="op">/</span><span class="va">R</span><span class="op">/</span><span class="va">analysis</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">.</span><span class="op">/</span><span class="va">R</span><span class="op">/</span><span class="va">analysis</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/help.html">help</a></span><span class="op">(</span><span class="va">analysis</span><span class="op">$</span><span class="va">summary_data</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section></section><section id="conclusion" class="level1" data-number="6"><h1 data-number="6">
 <span class="header-section-number">6</span> Conclusion</h1>
-<p>Writing reusable code isn’t about being pedantic or following rules for the sake of rules. It’s about respecting your future self, your colleagues, and the craft of programming.</p>
-<p>The <a href="https://klmr.me/box/">box</a> package gives R users a modern, lightweight way to organize code into reusable modules without the overhead of creating full packages. It’s a middle ground that’s been missing from the R ecosystem.</p>
-<p>Start small. Pick one project and try organizing it with <a href="https://klmr.me/box/">box</a>. You’ll quickly see the benefits:</p>
-<ul>
-<li>Clearer code structure</li>
-<li>Easier maintenance</li>
-<li>Better collaboration</li>
-<li>Less time wasted on repetitive tasks</li>
-</ul>
-<p>Your future self will thank you. And maybe, just maybe, we can reduce the amount of garbage code in the wild.</p>
-</section><section id="conclusion-1" class="level1" data-number="7"><h1 data-number="7">
-<span class="header-section-number">7</span> Conclusion</h1>
 <p>I don’t know about you (who read this blog post), but writing reusable code isn’t about being pedantic or following rules for the sake of rules. It’s about respecting your future self, your colleagues, and the craft of programming.</p>
 <p>R suffers a lot of limitations in terms of reusability and maintainability. Many other programming languages’ users remarks R as being an odd one, and goes to say “it suffers for large projects”, and simply because R doesn’t have a right tool. Fortunately, I can’t thank <a href="https://klmr.me/box/">box</a> package enough by giving R users a modern, lightweight way to organize code into reusable modules without the overhead of creating full packages, similar to Python module system. It’s a middle ground that’s been missing from the R ecosystem.</p>
 <p>Start small. Pick one project and try organizing it with <a href="https://klmr.me/box/">box</a>. You’ll quickly see the benefits:</p>
@@ -788,8 +667,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Less time wasted on repetitive tasks</li>
 </ul>
 <p>Your future self will thank you. And maybe, just maybe, we can reduce the amount of garbage code in the wild.</p>
-</section><section id="resources" class="level1" data-number="8"><h1 data-number="8">
-<span class="header-section-number">8</span> Resources</h1>
+</section><section id="resources" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Resources</h1>
 <ul>
 <li><a href="https://klmr.me/box/"><code>{box}</code> package documentation</a></li>
 <li><a href="https://github.com/klmr/box"><code>{box}</code> GitHub repository</a></li>

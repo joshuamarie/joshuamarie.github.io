@@ -292,11 +292,10 @@ summary_data = function(data, vars, .by = NULL) {
 
 ```{r}
 #| output-fold: true
-#| output-summary: "Yes, it just works"
-#| output: "asis"
+#| output-summary: "Yes, it (just) works"
 mtcars |> 
     summary_data(vars = c(mpg, hp, wt), .by = cyl) |> 
-    knitr::kable()
+    pander::pandoc.table()
 ```
 
 Notice a few key things here:
@@ -405,21 +404,6 @@ box::use(./R/analysis)
 
 box::help(analysis$summary_data)
 ```
-
-# Conclusion
-
-Writing reusable code isn't about being pedantic or following rules for the sake of rules. It's about respecting your future self, your colleagues, and the craft of programming.
-
-The `{box}` package gives R users a modern, lightweight way to organize code into reusable modules without the overhead of creating full packages. It's a middle ground that's been missing from the R ecosystem.
-
-Start small. Pick one project and try organizing it with `{box}`. You'll quickly see the benefits:
-
-- Clearer code structure
-- Easier maintenance
-- Better collaboration
-- Less time wasted on repetitive tasks
-
-Your future self will thank you. And maybe, just maybe, we can reduce the amount of garbage code in the wild.
 
 # Conclusion
 

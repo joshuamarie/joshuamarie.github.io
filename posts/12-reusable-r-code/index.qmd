@@ -187,7 +187,14 @@ Example usage:
 
 ```{r}
 #| eval: false
+#| code-fold: true
+#| code-summary: "Two ways to install this package (you can't install this package from GitHub)"
 install.packages("box") 
+install.packages('box', repos = 'https://klmr.r-universe.dev')
+```
+
+```{r}
+#| eval: false
 box::use(
     dplyr,                                          # Loading the package without attaching the names
     ./R/data_cleaning,                              # Loading an entire particular script for data cleaning from the root path
@@ -286,8 +293,10 @@ summary_data = function(data, vars, .by = NULL) {
 ```{r}
 #| output-fold: true
 #| output-summary: "Yes, it just works"
+#| output: "asis"
 mtcars |> 
-    summary_data(vars = c(mpg, hp, wt), .by = cyl)
+    summary_data(vars = c(mpg, hp, wt), .by = cyl) |> 
+    knitr::kable()
 ```
 
 Notice a few key things here:

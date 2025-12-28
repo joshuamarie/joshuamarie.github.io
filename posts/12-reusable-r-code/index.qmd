@@ -293,9 +293,11 @@ summary_data = function(data, vars, .by = NULL) {
 ```{r}
 #| output-fold: true
 #| output-summary: "Yes, it (just) works"
+box::use(pander[ptb = pandoc.table])
+
 mtcars |> 
     summary_data(vars = c(mpg, hp, wt), .by = cyl) |> 
-    pander::pandoc.table()
+    ptb()
 ```
 
 Notice a few key things here:

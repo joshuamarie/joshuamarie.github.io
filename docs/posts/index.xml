@@ -10,7 +10,2322 @@
 <atom:link href="https://joshuamarie.com/posts/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Fri, 19 Dec 2025 16:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 27 Dec 2025 16:00:00 GMT</lastBuildDate>
+<item>
+  <title>A ‘careful’ and small intro guide to data science with ‘tidyverse’</title>
+  <dc:creator>Joshua Marie</dc:creator>
+  <link>https://joshuamarie.com/posts/13-careful-data/</link>
+  <description><![CDATA[ <div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/13-careful-data&amp;text=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/13-careful-data&amp;title=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/13-careful-data" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/13-careful-data" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/13-careful-data&amp;title=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/13-careful-data&amp;title=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/13-careful-data&amp;name=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Careful data science with tidyverse — Joshua Marie https://joshuamarie.com/posts/13-careful-data'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/13-careful-data%20Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<section id="why-careful" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Why “careful”?</h1>
+<p>As you read in the title, why “careful”? Using <a href="https://tidyverse.tidyverse.org">tidyverse</a>, or any frameworks for data manipulation out there, is fine. Most introductory <a href="https://tidyverse.tidyverse.org">tidyverse</a> tutorials teach you how to write code with it. Very few teach you when the nice-looking code becomes dangerous or unnecessarily painful six months later.</p>
+<p>This short guide focuses on the second part — the things that experienced people wish they had known earlier.</p>
+<p>Before we start, here are the packages I’ll be using:</p>
+<ol type="1">
+<li>
+<p>Packages that are <a href="https://tidyverse.tidyverse.org">tidyverse</a>. This includes the following specifics:</p>
+<ul>
+<li><a href="https://dplyr.tidyverse.org">dplyr</a></li>
+<li><a href="https://tidyr.tidyverse.org">tidyr</a></li>
+<li><a href="https://readr.tidyverse.org">readr</a></li>
+<li><a href="https://lubridate.tidyverse.org">lubridate</a></li>
+<li><a href="https://purrr.tidyverse.org/">purrr</a></li>
+</ul>
+</li>
+<li>
+<p>Packages that are not <a href="https://tidyverse.tidyverse.org">tidyverse</a>. This includes the following specifics:</p>
+<ul>
+<li><a href="https://klmr.me/box/">box</a></li>
+<li><a href="https://github.com/epiverse-trace/numberize">numberize</a></li>
+<li><a href="https://broom.tidymodels.org/">broom</a></li>
+</ul>
+</li>
+</ol>
+<p>And they will be used much later on.</p>
+</section><section id="tidyverse-is-not-just-unquoted-column-names" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Tidyverse is not just unquoted column names</h1>
+<p>You thought the reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> framework differ from other frameworks, e.g.&nbsp;Pandas, Polars, or <a href="https://r-datatable.com">data.table</a>, comes from accepting “columns” argument not being quoted? I mean, yes, and <a href="https://r-datatable.com">data.table</a> does this as well, but the syntax and some of the APIs are not the same. That’s not what I am trying to convey here.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># This fails R CMD check in a package</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mpg</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">wt</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt;                    mpg cyl disp  hp drat    wt  qsec vs am gear carb      new</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 8.015267</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 7.304348</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 9.827586</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 6.656299</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 5.436047</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Package-safe alternatives</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mpg</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">wt</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt;                    mpg cyl disp  hp drat    wt  qsec vs am gear carb      new</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 8.015267</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 7.304348</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 9.827586</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 6.656299</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 5.436047</span></span></code></pre></div></div>
+</div>
+<p>Why did I tell you this? Let’s say you’re planning to use this package as one of your package dependencies. Unfortunately, <code>R CMD CHECK</code> will throw an error if you are using bare column names, so instead use <code>.data$colname</code>.</p>
+</section><section id="never-trust-straight-data-imports" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Never trust straight data imports</h1>
+<p>Do not just import data (not limited to CSVs), most especially when the data wasn’t collected in one pattern. For example, a CSV data that has “date” column(s), where it doesn’t follow the right format, e.g.&nbsp;<code>%Y-%m-%d</code>. This is probably the #1 source of silent bugs in production data pipelines, especially if overlooked.</p>
+<p>But first, let me tell you something:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>When CSV file contains messy format in general
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>If the data contains messy format in general, set all the columns into string type first</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">readr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">read_csv</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cols</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">col_character</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Dangerous (very common in real life)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data.csv"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Much safer minimum</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data.csv"</span>,</span>
+<span>    col_types <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cols</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># force everything as text first</span></span>
+<span>        .default <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">col_character</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,           </span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+<p>Auto-guessing fails when:</p>
+<ol type="1">
+<li>First 1000 rows look clean, row 1001 doesn’t</li>
+<li>Excel exported dates as text in weird formats</li>
+<li>IDs like “001234” get parsed as numbers (losing leading zeros)</li>
+<li>Mix of <code>"N/A"</code>, <code>"null"</code>, <code>"NULL"</code>, <code>"-"</code>, <code>"nan"</code> all mean missing</li>
+</ol>
+</div>
+</div>
+<section id="synthetic-example-dealing-with-dates" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="synthetic-example-dealing-with-dates">
+<span class="header-section-number">3.1</span> Synthetic example: Dealing with dates</h2>
+<p>Here, imagine you have this kind of data in a certain CSV, where it contains filedate/datetime columns that come:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sample_csv</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">date, readings, x, y, z\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"Mar.23,2005\",0.02,3.3,1.1,5.7\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"Feb.26,2005\",0.15,4.5,5.0,1.9\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"Apr.5,2005\",0.2,7.2,2.8,5.2\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"May.12,2005\", 0.5,4.9,1.3,6.8</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span></code></pre></div></div>
+</div>
+<p>If you directly import this CSV data:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">readr</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sample_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  date        readings     x     y     z
+  &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Mar.23,2005     0.02   3.3   1.1   5.7
+2 Feb.26,2005     0.15   4.5   5     1.9
+3 Apr.5,2005      0.2    7.2   2.8   5.2
+4 May.12,2005     0.5    4.9   1.3   6.8</code></pre>
+</div>
+</div>
+<p>The problem arises when <code><a href="https://readr.tidyverse.org/reference/read_delim.html">readr::read_csv()</a></code> fails to parse the <code>"date"</code> column as an actual <code>date</code> type as you expect, instead it is parsed as a string type.</p>
+<p>The <a href="https://readr.tidyverse.org">readr</a> package provides an API that can explicitly judge the column type.</p>
+<p>Here’s how you do it:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">readr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">read_csv</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cols</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">col_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sample_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    col_types <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cols</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">col_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%b.%d,%Y"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  date       readings     x     y     z
+  &lt;date&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 2005-03-23     0.02   3.3   1.1   5.7
+2 2005-02-26     0.15   4.5   5     1.9
+3 2005-04-05     0.2    7.2   2.8   5.2
+4 2005-05-12     0.5    4.9   1.3   6.8</code></pre>
+</div>
+</div>
+</section><section id="synthetic-example-multiple-messy-date-formats-in-one-column" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="synthetic-example-multiple-messy-date-formats-in-one-column">
+<span class="header-section-number">3.2</span> Synthetic example: Multiple messy date formats in one column</h2>
+<p>But, what if the <code>'date'</code> column doesn’t follow 1 pattern?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">readr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">read_csv</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cols</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">col_character</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mutate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>, </span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">lubridate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">parse_date_time</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">as_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sample_csv</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">date, readings, x, y, z\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"Mar.23,2005\",0.02,3.3,1.1,5.7\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"Feb 26, 2005\",0.15,4.5,5.0,1.9\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"04-5-2005\",0.2,7.2,2.8,5.2\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"May12,05\", 0.5,4.9,1.3,6.8\n</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\"Aug.17,2005\", 0.17,9.5,0.8,4.2</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">sample_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    col_types <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cols</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">col_character</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> </span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parse_date_time</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">date</span>,</span>
+<span>                orders <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"b.d,Y"</span>,</span>
+<span>                    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"b d, Y"</span>,</span>
+<span>                    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"m-d-Y"</span>,</span>
+<span>                    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bd,y"</span></span>
+<span>                <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  date       readings     x     y     z
+  &lt;date&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 2005-03-23     0.02   3.3   1.1   5.7
+2 2005-02-26     0.15   4.5   5     1.9
+3 2005-04-05     0.2    7.2   2.8   5.2
+4 2005-05-12     0.5    4.9   1.3   6.8
+5 2005-08-17     0.17   9.5   0.8   4.2</code></pre>
+</div>
+</div>
+<p>Unfortunately, right now, <code><a href="https://readr.tidyverse.org/reference/read_delim.html">readr::read_csv()</a></code> doesn’t know how to parse CSV files with different data format, so I have to take some roundabouts to properly parse the <code>"date"</code> column.</p>
+</section></section><section id="use-tidyverse-aggressively-for-serious-data-cleaning" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Use tidyverse aggressively for serious data cleaning</h1>
+<p>Now you know how easy it get when importing the data with messed up pattern structure. Use <a href="https://tidyverse.tidyverse.org">tidyverse</a> for data cleaning for f sake, trust me. Seriously, if you can do data cleaning from other tools, e.g.&nbsp;Excel or Python-Pandas (I know some companies you are working with will choose them), <a href="https://tidyverse.tidyverse.org">tidyverse</a> makes things much easier, conventional, readable, and maintainable (arguable). Some practitioners actually use <a href="https://tidyverse.tidyverse.org">tidyverse</a> for modeling and resort to base R loops or hacky solutions for cleaning. Don’t be that person.</p>
+<p>Let us demonstrate with the <a href="https://raw.githubusercontent.com/eyowhite/Messy-dataset/main/messy_HR_data.csv%22">Messy HR Data</a> dataset from this <a href="https://github.com/eyowhite/Messy-dataset">repository</a>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">hr_data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">readr</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"https://raw.githubusercontent.com/eyowhite/Messy-dataset/main/messy_HR_data.csv"</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
+<p>If you glimpse this data:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">hr_data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 10
+$ Name                &lt;chr&gt; "grace", "david", "hannah", "eve", "grace", "jack"…
+$ Age                 &lt;chr&gt; "25", "nan", "35", "nan", "nan", "nan", "nan", "40…
+$ Salary              &lt;chr&gt; "50000", "65000", "SIXTY THOUSAND", "50000", "NAN"…
+$ Gender              &lt;chr&gt; "Male", "Female", "Female", "Female", "Female", "O…
+$ Department          &lt;chr&gt; "HR", "Finance", "Sales", "IT", "Finance", "Market…
+$ Position            &lt;chr&gt; "Manager", "Director", "Director", "Manager", "Man…
+$ `Joining Date`      &lt;chr&gt; "April 5, 2018", "2020/02/20", "01/15/2020", "Apri…
+$ `Performance Score` &lt;chr&gt; "D", "F", "C", "A", "F", "F", "B", "C", "C", "A", …
+$ Email               &lt;chr&gt; "email@example.com", "user@domain.com", "email@exa…
+$ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "098-76…</code></pre>
+</div>
+</div>
+<p>You see how bad it is, even if you said it’s not “dirty enough” or similar. The reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> makes things “conventional” because in R, missing values has its own unique representation value, denoted by <code>NA</code>, not through <code>null</code>, <code>NULL</code>, or <code>NaN</code> / <code>nan</code>.</p>
+<p>The data cleaning in R with <a href="https://tidyverse.tidyverse.org">tidyverse</a> is much easier than you thought</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mutate</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">across</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">everything</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">if_else</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">case_when</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">stringr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span>detect <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">str_detect</span>, capitalize <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">str_to_sentence</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">lubridate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">parse_date_time</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">as_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">hr_data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">everything</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>            \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">col</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">if_else</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">detect</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">col</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"^(?i)nan$"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">col</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>        `Joining Date` <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parse_date_time</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">`Joining Date`</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%B %d, %Y"</span>,</span>
+<span>                <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%Y/%m/%d"</span>, </span>
+<span>                <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%m-%d-%Y"</span>,</span>
+<span>                <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%Y.%m.%d"</span></span>
+<span>            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>        Salary <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numberize</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/pkg/numberize/man/numberize.html">numberize</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">Salary</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>        Name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">capitalize</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">Name</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>        Age <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numberize</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/pkg/numberize/man/numberize.html">numberize</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">Age</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,000 × 10
+   Name      Age Salary Gender Department Position  `Joining Date`
+   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;     &lt;date&gt;        
+ 1 Grace      25  50000 Male   HR         Manager   2018-04-05    
+ 2 David      NA  65000 Female Finance    Director  2020-02-20    
+ 3 Hannah     35  60000 Female Sales      Director  2020-01-15    
+ 4 Eve        NA  50000 Female IT         Manager   2018-04-05    
+ 5 Grace      NA     NA Female Finance    Manager   2020-01-15    
+ 6 Jack       NA  65000 Other  Marketing  Director  2019-03-25    
+ 7 Charlie    NA  50000 Male   Marketing  Clerk     2019-12-01    
+ 8 Grace      40  50000 Other  HR         Director  2019-03-25    
+ 9 Hannah     40  60000 Female Marketing  Manager   2020-01-15    
+10 Eve        30     NA Other  Finance    Assistant 2020-02-20    
+# ℹ 990 more rows
+# ℹ 3 more variables: `Performance Score` &lt;chr&gt;, Email &lt;chr&gt;,
+#   `Phone Number` &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>You see how easy is this? The fact that <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">dplyr::mutate()</a></code> accepts bare expressions together with its bare column, you can easily use other functions, like <code><a href="https://rdrr.io/pkg/numberize/man/numberize.html">numberize::numberize()</a></code> to translate bare word value, i.e.&nbsp;<code>"thirty"</code> in <code>Age</code> column and <code>"SIXTY THOUSAND"</code> in <code>Salary</code> column.</p>
+</section><section id="use-across-for-safe-type-role-based-transformations" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Use across() + <tidy-select> for safe type / role-based transformations</tidy-select>
+</h1>
+<p>One of <a href="https://tidyverse.tidyverse.org">tidyverse</a>’s most underrated features is <code>across()</code> combined with <code>&lt;tidy-select&gt;</code> helpers, commonly used in “data masking” functions. This lets you apply transformations to multiple columns based on their type or name pattern, making your code both DRY and maintainable.</p>
+<section id="clean-all-text-columns-at-once" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="clean-all-text-columns-at-once">
+<span class="header-section-number">5.1</span> Clean all text columns at once</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mutate</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">across</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">where</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">stringr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">str_trim</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">str_to_upper</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">survey</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tibble</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    resp_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"  alice  "</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"BOB"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"  Charlie  "</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    city <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"New York  "</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"  Boston"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Chicago  "</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    rating <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4.2</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3.8</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4.5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">survey</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">where</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">is.character</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">str_trim</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">where</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">is.character</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">resp_id</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">str_to_upper</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  resp_id name    city     rating
+    &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;
+1       1 ALICE   NEW YORK    4.2
+2       2 BOB     BOSTON      3.8
+3       3 CHARLIE CHICAGO     4.5</code></pre>
+</div>
+</div>
+<p>The second <code>across()</code> shows combining conditions: all character columns <em>except</em> the ID field.</p>
+</section><section id="scale-financial-columns" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="scale-financial-columns">
+<span class="header-section-number">5.2</span> Scale financial columns</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mutate</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">across</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">starts_with</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">financials</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tibble</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    company <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"TechCo"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"RetailCorp"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    revenue_q1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1200000</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">850000</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    revenue_q2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1350000</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">920000</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    costs_q1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">800000</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">600000</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    costs_q2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">850000</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">640000</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">financials</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">starts_with</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"revenue"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>            \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e6</span>,</span>
+<span>            .names <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"{.col}_M"</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 7
+  company    revenue_q1 revenue_q2 costs_q1 costs_q2 revenue_q1_M revenue_q2_M
+  &lt;chr&gt;           &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+1 TechCo        1200000    1350000   800000   850000         1.2          1.35
+2 RetailCorp     850000     920000   600000   640000         0.85         0.92</code></pre>
+</div>
+</div>
+<p>The <code>.names</code> argument controls output column names. When you add <code>revenue_q3</code> later, it automatically gets converted too.</p>
+</section><section id="conditional-rounding" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="conditional-rounding">
+<span class="header-section-number">5.3</span> Conditional rounding</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mutate</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">across</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">where</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">any_of</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">measurements</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tibble</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    sample_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span>    temperature <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">98.6234</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">99.1456</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">97.8921</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">98.4567</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    pressure <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">120.456</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">118.234</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">122.789</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">119.123</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    ph_level <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7.4123</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7.3987</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7.4256</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7.4089</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">measurements</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">where</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">is.numeric</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">any_of</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sample_id"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">round</span>,</span>
+<span>            digits <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  sample_id temperature pressure ph_level
+      &lt;int&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1         1        98.6     120.     7.41
+2         2        99.2     118.     7.4 
+3         3        97.9     123.     7.43
+4         4        98.5     119.     7.41</code></pre>
+</div>
+</div>
+<p>This pattern scales: add new numeric columns and they’re automatically rounded. No need to update the rounding code.</p>
+</section></section><section id="joins-flavor-in-dplyr" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Joins flavor in dplyr</h1>
+<p>Since the stable version (1.1.x) release of <a href="https://dplyr.tidyverse.org">dplyr</a>, specification of joins is now more flexible, more explicit, and more “controlled” using <code><a href="https://dplyr.tidyverse.org/reference/join_by.html">dplyr::join_by()</a></code>. While the new API provides clearer complex “join” tasks, this also makes the operation less error-prone.</p>
+<section id="inequality-joins-for-binning" class="level2" data-number="6.1"><h2 data-number="6.1" class="anchored" data-anchor-id="inequality-joins-for-binning">
+<span class="header-section-number">6.1</span> Inequality joins for binning</h2>
+<p>Assign customer segments based on purchase totals:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">left_join</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">join_by</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">group_by</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">slice_max</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">ungroup</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">purchases</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tibble</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    customer_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,</span>
+<span>    total_spent <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">45</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">280</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">520</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">95</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1200</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">180</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">650</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">35</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">segments</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tibble</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    segment <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Bronze"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Silver"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Gold"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Platinum"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    min_spend <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">purchases</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">segments</span>, by <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">join_by</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">total_spent</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">min_spend</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">customer_id</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">slice_max</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">min_spend</span>, n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, with_ties <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ungroup</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 4
+  customer_id total_spent segment  min_spend
+        &lt;int&gt;       &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
+1           1          45 Bronze           0
+2           2         280 Silver         100
+3           3         520 Gold           500
+4           4          95 Bronze           0
+5           5        1200 Platinum      1000
+6           6         180 Silver         100
+7           7         650 Gold           500
+8           8          35 Bronze           0</code></pre>
+</div>
+</div>
+<p>The “greater than or equal to (<code>&gt;</code> + <code>=</code>)” operator finds all matching tiers, then we keep the highest one. Much clearer than manual conditional logic.</p>
+</section><section id="range-joins-for-time-based-matching" class="level2" data-number="6.2"><h2 data-number="6.2" class="anchored" data-anchor-id="range-joins-for-time-based-matching">
+<span class="header-section-number">6.2</span> Range joins for time-based matching</h2>
+<p>Match transactions to active promotions:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span>tbl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">tibble</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">inner_join</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">join_by</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">between</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">transmute</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">lubridate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">as_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">transactions</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tbl</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    tx_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>,</span>
+<span>    tx_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-01-20"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-02-15"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-03-25"</span>,</span>
+<span>        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-04-10"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-05-15"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-06-05"</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    amount <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">150</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">200</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">180</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">220</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">175</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">190</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">promos</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tbl</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    promo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"New Year"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Spring Sale"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Summer Blast"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    start <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-01-01"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-03-01"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-05-01"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    end <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as_date</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-01-31"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-04-30"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2024-06-30"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    discount <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.15</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.10</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.20</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">transactions</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">inner_join</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">promos</span>,</span>
+<span>        by <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">join_by</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">between</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">tx_date</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">start</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">end</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transmute</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">tx_id</span>,</span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">tx_date</span>,</span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">promo</span>, </span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">amount</span>,</span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">discount</span>, </span>
+<span>        savings <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">amount</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">discount</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 6
+  tx_id tx_date    promo        amount discount savings
+  &lt;int&gt; &lt;date&gt;     &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+1     1 2024-01-20 New Year        150     0.15    22.5
+2     3 2024-03-25 Spring Sale     180     0.1     18  
+3     4 2024-04-10 Spring Sale     220     0.1     22  
+4     5 2024-05-15 Summer Blast    175     0.2     35  
+5     6 2024-06-05 Summer Blast    190     0.2     38  </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="SQL Code Equivalent">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>SQL Code Equivalent
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Here’s the equivalent SQL code:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span></span>
+<span id="cb25-2">    tx_id,</span>
+<span id="cb25-3">    tx_date,</span>
+<span id="cb25-4">    promo,</span>
+<span id="cb25-5">    amount,</span>
+<span id="cb25-6">    discount,</span>
+<span id="cb25-7">    amount <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> discount <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> savings</span>
+<span id="cb25-8"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">FROM</span> (</span>
+<span id="cb25-9">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span> t.<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>, p.<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span>
+<span id="cb25-10">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">FROM</span> transactions <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> t</span>
+<span id="cb25-11">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">INNER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">JOIN</span> promos <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> p</span>
+<span id="cb25-12">        <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ON</span> (</span>
+<span id="cb25-13">            t.tx_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> p.<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">start</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AND</span></span>
+<span id="cb25-14">            t.tx_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> p.<span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">end</span></span>
+<span id="cb25-15">        )</span>
+<span id="cb25-16">) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> new_table</span></code></pre></div></div>
+</div>
+</div>
+</div>
+<p>This beats manually checking date ranges with <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>. The join expresses intent directly.</p>
+</section></section><section id="statistical-pitfalls-dont-trust-p-values-blindly" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Statistical pitfalls — don’t trust p-values blindly</h1>
+<p>Let’s say, you have a task that examines the relationship between variables. Linear regression &lt;…&gt;</p>
+<p>With <code>{mtcars}</code> dataset, I wanna examine the relationship between <code>wt</code> and <code>mpg</code> using <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mpg</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">wt</span>, data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">broom</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)    37.3      1.88      19.9  8.24e-19
+2 wt             -5.34     0.559     -9.56 1.29e-10</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">broom</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     0.753         0.745  3.05      91.4 1.29e-10     1  -80.0  166.  170.
+# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>After running both linear regression and correlation test at the same time, it rejects the null hypothesis of the test, implying that there are strong linear relationship between <code>wt</code> and <code>mpg</code>. Keep in mind that directly using “Null Hypothesis Significant Testing” (NHST) is a direct flaw for reproducibility.</p>
+<p>Let us examine the linear relationship by running exact model as above</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">group_by</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">reframe</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">reframe</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>         </span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">stats</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span>linear_reg <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">lm</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">coef</span>, pearson_r <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cor</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>, </span>
+<span>                <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">purrr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">imap_dfc</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">set_names</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>, </span>
+<span>                <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">tibble</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span>tbl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">tibble</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span>            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>            </span>
+<span>            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">linear_reg</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mpg</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">wt</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">coefs</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">coef_table</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">imap_dfc</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">coefs</span>, \<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">bi</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">nm</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>                <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">result</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tbl</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">bi</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>                <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set_names</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">result</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">nm</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>            </span>
+<span>            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">corr</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pearson_r</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">wt</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mpg</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>            </span>
+<span>            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">test</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tbl</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>                <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">coef_table</span>, </span>
+<span>                corr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">corr</span>, </span>
+<span>                rsq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">test</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">r.squared</span>,</span>
+<span>                adj_rsq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">test</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">adj.r.squared</span></span>
+<span>            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span>,</span>
+<span>        </span>
+<span>        .by <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cyl</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  cyl (Intercept)        wt       corr       rsq   adj_rsq
+1   6    28.40884 -2.780106 -0.6815498 0.4645102 0.3574122
+2   4    39.57120 -5.647025 -0.7131848 0.5086326 0.4540362
+3   8    23.86803 -2.192438 -0.6503580 0.4229655 0.3748793</code></pre>
+</div>
+</div>
+<p>Notice the problem? The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn’t because the relationship doesn’t exist – it’s because the sample size is too small to detect the effect reliably.</p>
+<p>This demonstrates why:</p>
+<ul>
+<li>
+<strong>Sample size matters</strong>: The 6-cylinder group lacks statistical power</li>
+<li>
+<strong>Effect sizes differ</strong>: The slope varies substantially across groups (-2.19 to -5.65), suggesting the relationship isn’t uniform</li>
+</ul>
+<p>That’s why when doing an analysis, it is better to run simulation before conducting the analysis and the sample size should be large enough.</p>
+<!-- # When using parallel mapping from {purrr} package -->
+<!-- Keep in mind that the `mutate()` function accepts bare expressions, and this is true if the expression you made allows vectorization — true for all the rows. What if it is not vectorized for all the rows?  -->
+<!-- Well, operations in `dplyr::rowwise()` does this, but my solution is, although verbose, it is more explicit, logical, and maintainable. Since it allows bare expression, directly using `purrr::pmap_*()` variants with `dplyr::pick()` are also valid within `mutate()`.  -->
+</section><section id="remarks-and-resources" class="level1" data-number="8"><h1 data-number="8">
+<span class="header-section-number">8</span> Remarks and Resources</h1>
+<p>Those are all my “simple annotation” on your fussy data work, potentially (hoping) will help in your future jobs.</p>
+<ul>
+<li><a href="https://r4ds.hadley.nz/">R for Data Science</a></li>
+<li><a href="https://modules-in-r.joshuamarie.com/">Box: Placing module system into R</a></li>
+<li><a href="https://klmr.me/box/">box: Write Reusable, Composable and Modular R Code</a></li>
+<li><a href="https://xcelab.net/rm/statistical-rethinking/">Statistical Rethinking</a></li>
+<li>
+<a href="https://www.tidyverse.org/blog/2023/01/dplyr-1-1-0-joins/">dplyr 1.1.0 blog post</a> - Deep dive on <code>join_by()</code>
+</li>
+<li>
+<a href="https://dplyr.tidyverse.org/articles/programming.html">Programming with dplyr</a> - When to use <code>.data$</code> and <code><a href="https://rdrr.io/r/base/Paren.html">{ }</a></code>
+</li>
+</ul>
+
+
+</section> ]]></description>
+  <category>R</category>
+  <category>data-science</category>
+  <category>analytics</category>
+  <category>tidyverse</category>
+  <guid>https://joshuamarie.com/posts/13-careful-data/</guid>
+  <pubDate>Sat, 27 Dec 2025 16:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Bother yourself writing reusable codes in R, not throwaway codes</title>
   <dc:creator>Joshua Marie</dc:creator>

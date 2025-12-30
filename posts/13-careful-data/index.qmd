@@ -1,0 +1,501 @@
+---
+title: "A 'careful' and small intro guide to data science with 'tidyverse'"
+subtitle: ""
+date: "2025-12-28"
+categories: [R, data-science, analytics, tidyverse]
+description: "Teaching you the things you can take advantage of, and things weren't taught by some tutorials you (potentially) know"
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+        code-annotations: hover
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/13-careful-data"
+    description: "Careful data science with tidyverse — Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+# Why "careful"? 
+
+As you read in the title, why "careful"? Using `{tidyverse}`, or any frameworks for data manipulation out there, is fine. Most introductory `{tidyverse}` tutorials teach you how to write code with it. Very few teach you when the nice-looking code becomes dangerous or unnecessarily painful six months later. 
+
+This short guide focuses on the second part — the things that experienced people wish they had known earlier.
+
+Before we start, here are the packages I'll be using:
+
+1.  Packages that are `{tidyverse}`. This includes the following specifics:
+
+    -   `{dplyr}`
+    -   `{tidyr}`
+    -   `{readr}`
+    -   `{lubridate}`
+    -   `{purrr}`
+
+2.  Packages that are not `{tidyverse}`. This includes the following specifics:
+
+    -   `{box}`
+    -   `{numberize}`
+    -   `{broom}`
+
+And they will be used much later on. 
+
+# Tidyverse is not just unquoted column names
+
+You thought the reason why `{tidyverse}` framework differ from other frameworks, e.g. Pandas, Polars, or `{data.table}`, comes from accepting "columns" argument not being quoted? I mean, yes, and `{data.table}` does this as well, but the syntax and some of the APIs are not the same. That's not what I am trying to convey here. 
+
+```{r}
+#| collapse: true
+#| comment: "#>>"
+# This fails R CMD check in a package
+mtcars |> dplyr::mutate(new = mpg / wt) |> head(5)
+
+# Package-safe alternatives
+mtcars |> dplyr::mutate(new = .data$mpg / .data$wt) |> head(5)
+```
+
+Why did I tell you this? Let's say you're planning to use this package as one of your package dependencies. Unfortunately, `R CMD CHECK` will throw an error if you are using bare column names, so instead use `.data$colname`. 
+
+# Never trust straight data imports
+
+Do not just import data (not limited to CSVs), most especially when the data wasn't collected in one pattern. For example, a CSV data that has "date" column(s), where it doesn't follow the right format, e.g. `%Y-%m-%d`. This is probably the #1 source of silent bugs in production data pipelines, especially if overlooked.
+
+But first, let me tell you something: 
+
+::: callout-note
+## When CSV file contains messy format in general
+
+-   If the data contains messy format in general, set all the columns into string type first
+
+```{r}
+#| eval: false
+box::use(readr[read_csv, cols, col_character])
+
+# Dangerous (very common in real life)
+read_csv("data.csv")
+
+# Much safer minimum
+read_csv(
+    "data.csv",
+    col_types = cols(
+        # force everything as text first
+        .default = col_character(),           
+    )
+)
+```
+
+Auto-guessing fails when:
+
+1.  First 1000 rows look clean, row 1001 doesn't
+2.  Excel exported dates as text in weird formats
+3.  IDs like "001234" get parsed as numbers (losing leading zeros)
+4.  Mix of `"N/A"`, `"null"`, `"NULL"`, `"-"`, `"nan"` all mean missing
+
+:::
+
+## Synthetic example: Dealing with dates
+
+Here, imagine you have this kind of data in a certain CSV, where it contains filedate/datetime columns that come:
+
+```{r}
+sample_csv = "
+date, readings, x, y, z\n
+\"Mar.23,2005\",0.02,3.3,1.1,5.7\n
+\"Feb.26,2005\",0.15,4.5,5.0,1.9\n
+\"Apr.5,2005\",0.2,7.2,2.8,5.2\n
+\"May.12,2005\", 0.5,4.9,1.3,6.8
+"
+```
+
+If you directly import this CSV data:
+
+```{r}
+readr::read_csv(I(sample_csv))
+```
+
+The problem arises when `readr::read_csv()` fails to parse the `"date"` column as an actual `date` type as you expect, instead it is parsed as a string type. 
+
+The `{readr}` package provides an API that can explicitly judge the column type. 
+
+Here's how you do it: 
+
+```{r}
+box::use(
+    readr[read_csv, cols, col_date]
+)
+
+read_csv(
+    I(sample_csv),
+    col_types = cols(
+        date = col_date("%b.%d,%Y")
+    )
+)
+```
+
+## Synthetic example: Multiple messy date formats in one column
+
+But, what if the `'date'` column doesn't follow 1 pattern? 
+
+```{r}
+box::use(
+    readr[read_csv, cols, col_character],
+    dplyr[mutate], 
+    lubridate[parse_date_time, as_date]
+)
+
+sample_csv = "
+date, readings, x, y, z\n
+\"Mar.23,2005\",0.02,3.3,1.1,5.7\n
+\"Feb 26, 2005\",0.15,4.5,5.0,1.9\n
+\"04-5-2005\",0.2,7.2,2.8,5.2\n
+\"May12,05\", 0.5,4.9,1.3,6.8\n
+\"Aug.17,2005\", 0.17,9.5,0.8,4.2
+"
+
+read_csv(
+    I(sample_csv),
+    col_types = cols(
+        date = col_character()
+    )
+) |> 
+    mutate(
+        date = 
+            parse_date_time(
+                date,
+                orders = c(
+                    "b.d,Y",
+                    "b d, Y",
+                    "m-d-Y",
+                    "bd,y"
+                )
+            ) |> 
+            as_date()
+    )
+```
+
+Unfortunately, right now, `readr::read_csv()` doesn't know how to parse CSV files with different data format, so I have to take some roundabouts to properly parse the `"date"` column. 
+
+# Use tidyverse aggressively for serious data cleaning
+
+Now you know how easy it get when importing the data with messed up pattern structure. Use `{tidyverse}` for data cleaning for f sake, trust me. Seriously, if you can do data cleaning from other tools, e.g. Excel or Python-Pandas (I know some companies you are working with will choose them), `{tidyverse}` makes things much easier, conventional, readable, and maintainable (arguable). Some practitioners actually use `{tidyverse}` for modeling and resort to base R loops or hacky solutions for cleaning. Don't be that person.
+
+Let us demonstrate with the [Messy HR Data](https://raw.githubusercontent.com/eyowhite/Messy-dataset/main/messy_HR_data.csv") dataset from this [repository](https://github.com/eyowhite/Messy-dataset). 
+
+```{r}
+hr_data = readr::read_csv(
+    "https://raw.githubusercontent.com/eyowhite/Messy-dataset/main/messy_HR_data.csv"
+)
+```
+
+If you glimpse this data:
+
+```{r}
+hr_data |> dplyr::glimpse()
+```
+
+You see how bad it is, even if you said it's not "dirty enough" or similar. The reason why `{tidyverse}` makes things "conventional" because in R, missing values has its own unique representation value, denoted by `NA`, not through `null`, `NULL`, or `NaN` / `nan`. 
+
+The data cleaning in R with `{tidyverse}` is much easier than you thought
+
+```{r}
+box::use(
+    dplyr[mutate, across, everything, if_else, case_when],
+    stringr[detect = str_detect, capitalize = str_to_sentence],
+    lubridate[parse_date_time, as_date]
+)
+
+hr_data |> 
+    mutate(
+        across(
+            everything(), 
+            \(col) if_else(detect(col, "^(?i)nan$"), NA, col)
+        ), 
+        `Joining Date` = parse_date_time(
+            `Joining Date`, c(
+                "%B %d, %Y",
+                "%Y/%m/%d", 
+                "%m-%d-%Y",
+                "%Y.%m.%d"
+            )
+        ) |> as_date(), 
+        Salary = numberize::numberize(Salary),
+        Name = capitalize(Name),
+        Age = numberize::numberize(Age)
+    )
+```
+
+You see how easy is this? The fact that `dplyr::mutate()` accepts bare expressions together with its bare column, you can easily use other functions, like `numberize::numberize()` to translate bare word value, i.e. `"thirty"` in `Age` column and `"SIXTY THOUSAND"` in `Salary` column. 
+
+# Use across() + <tidy-select> for safe type / role-based transformations
+
+One of `{tidyverse}`'s most underrated features is `across()` combined with `<tidy-select>` helpers, commonly used in "data masking" functions. This lets you apply transformations to multiple columns based on their type or name pattern, making your code both DRY and maintainable.
+
+## Clean all text columns at once
+
+```{r}
+box::use(
+    dplyr[mutate, across, where],
+    stringr[str_trim, str_to_upper]
+)
+
+survey = tibble::tibble(
+    resp_id = c(1, 2, 3),
+    name = c("  alice  ", "BOB", "  Charlie  "),
+    city = c("New York  ", "  Boston", "Chicago  "),
+    rating = c(4.2, 3.8, 4.5)
+)
+
+survey |>
+    mutate(
+        across(where(is.character), str_trim),
+        across(where(is.character) & !resp_id, str_to_upper)
+    )
+```
+
+The second `across()` shows combining conditions: all character columns *except* the ID field.
+
+## Scale financial columns
+
+```{r}
+box::use(dplyr[mutate, across, starts_with])
+
+financials = tibble::tibble(
+    company = c("TechCo", "RetailCorp"),
+    revenue_q1 = c(1200000, 850000),
+    revenue_q2 = c(1350000, 920000),
+    costs_q1 = c(800000, 600000),
+    costs_q2 = c(850000, 640000)
+)
+
+financials |>
+    mutate(
+        across(
+            starts_with("revenue"),
+            \(x) x / 1e6,
+            .names = "{.col}_M"
+        )
+    )
+```
+
+The `.names` argument controls output column names. When you add `revenue_q3` later, it automatically gets converted too.
+
+## Conditional rounding
+
+```{r}
+box::use(dplyr[mutate, across, where, any_of])
+
+measurements = tibble::tibble(
+    sample_id = 1:4,
+    temperature = c(98.6234, 99.1456, 97.8921, 98.4567),
+    pressure = c(120.456, 118.234, 122.789, 119.123),
+    ph_level = c(7.4123, 7.3987, 7.4256, 7.4089)
+)
+
+measurements |>
+    mutate(
+        across(
+            where(is.numeric) & !any_of("sample_id"),
+            round,
+            digits = 2
+        )
+    )
+```
+
+This pattern scales: add new numeric columns and they're automatically rounded. No need to update the rounding code.
+
+# Joins flavor in dplyr
+
+Since the stable version (1.1.x) release of `{dplyr}`, specification of joins is now more flexible, more explicit, and more "controlled" using `dplyr::join_by()`. While the new API provides clearer complex "join" tasks, this also makes the operation less error-prone.
+
+## Inequality joins for binning
+
+Assign customer segments based on purchase totals:
+
+```{r}
+box::use(dplyr[left_join, join_by, group_by, slice_max, ungroup])
+
+purchases = tibble::tibble(
+    customer_id = 1:8,
+    total_spent = c(45, 280, 520, 95, 1200, 180, 650, 35)
+)
+
+segments = tibble::tibble(
+    segment = c("Bronze", "Silver", "Gold", "Platinum"),
+    min_spend = c(0, 100, 500, 1000)
+)
+
+purchases |>
+    left_join(segments, by = join_by(total_spent >= min_spend)) |>
+    group_by(customer_id) |>
+    slice_max(min_spend, n = 1, with_ties = FALSE) |>
+    ungroup()
+```
+
+The "greater than or equal to (`>` + `=`)" operator finds all matching tiers, then we keep the highest one. Much clearer than manual conditional logic.
+
+## Range joins for time-based matching
+
+Match transactions to active promotions:
+
+```{r}
+box::use(
+    dplyr[tbl = tibble, inner_join, join_by, between, transmute],
+    lubridate[as_date]
+)
+
+transactions = tbl(
+    tx_id = 1:6,
+    tx_date = as_date(c(
+        "2024-01-20", "2024-02-15", "2024-03-25",
+        "2024-04-10", "2024-05-15", "2024-06-05"
+    )),
+    amount = c(150, 200, 180, 220, 175, 190)
+)
+
+promos = tbl(
+    promo = c("New Year", "Spring Sale", "Summer Blast"),
+    start = as_date(c("2024-01-01", "2024-03-01", "2024-05-01")),
+    end = as_date(c("2024-01-31", "2024-04-30", "2024-06-30")),
+    discount = c(0.15, 0.10, 0.20)
+)
+
+transactions |>
+    inner_join(
+        promos,
+        by = join_by(between(tx_date, start, end))
+    ) |>
+    transmute(
+        tx_id,
+        tx_date,
+        promo, 
+        amount,
+        discount, 
+        savings = amount * discount
+    )
+```
+
+::: {.callout-note title="SQL Code Equivalent" collapse="true"}
+Here's the equivalent SQL code:
+
+``` sql
+SELECT
+    tx_id,
+    tx_date,
+    promo,
+    amount,
+    discount,
+    amount * discount AS savings
+FROM (
+    SELECT t.*, p.*
+    FROM transactions AS t
+    INNER JOIN promos AS p
+        ON (
+            t.tx_date >= p.start AND
+            t.tx_date <= p.end
+        )
+) AS new_table
+```
+:::
+
+This beats manually checking date ranges with `filter()`. The join expresses intent directly.
+
+# Statistical pitfalls — don't trust p-values blindly
+
+Let's say, you have a task that examines the relationship between variables. Linear regression <...>
+
+With `{mtcars}` dataset, I wanna examine the relationship between `wt` and `mpg` using `lm()`
+
+```{r}
+model = lm(mpg ~ wt, data = mtcars)
+broom::tidy(model)
+broom::glance(model)
+```
+
+After running both linear regression and correlation test at the same time, it rejects the null hypothesis of the test, implying that there are strong linear relationship between `wt` and `mpg`. Keep in mind that directly using "Null Hypothesis Significant Testing" (NHST) is a direct flaw for reproducibility. 
+
+Let us examine the linear relationship by running exact model as above
+
+```{r}
+box::use(dplyr[group_by, reframe])
+
+mtcars |> 
+    reframe(
+        {         
+            box::use(
+                stats[linear_reg = lm, coef, pearson_r = cor], 
+                purrr[imap_dfc, set_names], 
+                tibble[tbl = tibble]
+            )
+            
+            model = linear_reg(mpg ~ wt)
+            coefs = coef(model)
+            coef_table = imap_dfc(coefs, \(bi, nm) {
+                result = tbl(bi)
+                set_names(result, nm)
+            })
+            
+            corr = pearson_r(wt, mpg)
+            
+            test = summary(model)
+            tbl(
+                coef_table, 
+                corr = corr, 
+                rsq = test$r.squared,
+                adj_rsq = test$adj.r.squared
+            )
+        },
+        
+        .by = cyl
+    )
+```
+
+Notice the problem? The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn't because the relationship doesn't exist – it's because the sample size is too small to detect the effect reliably.
+
+This demonstrates why:
+
+-   **Sample size matters**: The 6-cylinder group lacks statistical power
+-   **Effect sizes differ**: The slope varies substantially across groups (-2.19 to -5.65), suggesting the relationship isn't uniform
+
+That's why when doing an analysis, it is better to run simulation before conducting the analysis and the sample size should be large enough. 
+
+<!-- # When using parallel mapping from {purrr} package -->
+
+<!-- Keep in mind that the `mutate()` function accepts bare expressions, and this is true if the expression you made allows vectorization — true for all the rows. What if it is not vectorized for all the rows?  -->
+
+<!-- Well, operations in `dplyr::rowwise()` does this, but my solution is, although verbose, it is more explicit, logical, and maintainable. Since it allows bare expression, directly using `purrr::pmap_*()` variants with `dplyr::pick()` are also valid within `mutate()`.  -->
+
+# Remarks and Resources
+
+Those are all my "simple annotation" on your fussy data work, potentially (hoping) will help in your future jobs. 
+
+-   [R for Data Science](https://r4ds.hadley.nz/)
+-   [Box: Placing module system into R](https://modules-in-r.joshuamarie.com/)
+-   [box: Write Reusable, Composable and Modular R Code](https://klmr.me/box/)
+-   [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/)
+-   [dplyr 1.1.0 blog post](https://www.tidyverse.org/blog/2023/01/dplyr-1-1-0-joins/) - Deep dive on `join_by()`
+-   [Programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) - When to use `.data$` and `{{ }}`
+

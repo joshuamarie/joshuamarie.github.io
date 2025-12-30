@@ -1,0 +1,2692 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Joshua Marie">
+<meta name="dcterms.date" content="2025-12-28">
+<meta name="description" content="Teaching you the things you can take advantage of, and things weren’t taught by some tutorials you (potentially) know">
+<title>A ‘careful’ and small intro guide to data science with ‘tidyverse’ – Joshua Marie</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/jm-favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0a95de2c3be981c2e03029825b16c585.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-c2a4070949356990582fa11d5da3dd57.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/quarto-contrib/social-share-1.0.0/social-share.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/social-share-1.0.0/all.min.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script><link rel="stylesheet" href="../../styles/base.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/hero.css">
+<link rel="stylesheet" href="../../styles/cards.css">
+<link rel="stylesheet" href="../../styles/about.css">
+<link rel="stylesheet" href="../../styles/dark-mode.css">
+<link rel="stylesheet" href="../Theme/code.css">
+<link rel="stylesheet" href="../Theme/table.css">
+<meta name="twitter:title" content="A ‘careful’ and small intro guide to data science with ‘tidyverse’ – Joshua Marie">
+<meta name="twitter:description" content="Teaching you the things you can take advantage of, and things weren’t taught by some tutorials you (potentially) know">
+<meta name="twitter:card" content="summary">
+</head>
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Joshua Marie</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+<li class="nav-item">
+    <a class="nav-link" href="../../contacts.html"> 
+<span class="menu-text">Contact</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../resources.html"> 
+<span class="menu-text">My resources</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts/index.html"> 
+<span class="menu-text">Posts</span></a>
+  </li>  
+</ul>
+<ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/joshuamarie"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/joshuamarie/"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:joshua.marie.k@gmail.com"> <i class="bi bi-envelope" role="img" aria-label="Email">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS Feed">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+</div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav></header><!-- content --><header id="title-block-header" class="quarto-title-block default page-columns page-full"><div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">A ‘careful’ and small intro guide to data science with ‘tidyverse’</h1>
+                  <div>
+        <div class="description">
+          Teaching you the things you can take advantage of, and things weren’t taught by some tutorials you (potentially) know
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">data-science</div>
+                <div class="quarto-category">analytics</div>
+                <div class="quarto-category">tidyverse</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Joshua Marie </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 28, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#why-careful" id="toc-why-careful" class="nav-link active" data-scroll-target="#why-careful"><span class="header-section-number">1</span> Why “careful”?</a></li>
+  <li><a href="#tidyverse-is-not-just-unquoted-column-names" id="toc-tidyverse-is-not-just-unquoted-column-names" class="nav-link" data-scroll-target="#tidyverse-is-not-just-unquoted-column-names"><span class="header-section-number">2</span> Tidyverse is not just unquoted column names</a></li>
+  <li>
+<a href="#never-trust-straight-data-imports" id="toc-never-trust-straight-data-imports" class="nav-link" data-scroll-target="#never-trust-straight-data-imports"><span class="header-section-number">3</span> Never trust straight data imports</a>
+  <ul class="collapse">
+<li><a href="#synthetic-example-dealing-with-dates" id="toc-synthetic-example-dealing-with-dates" class="nav-link" data-scroll-target="#synthetic-example-dealing-with-dates"><span class="header-section-number">3.1</span> Synthetic example: Dealing with dates</a></li>
+  <li><a href="#synthetic-example-multiple-messy-date-formats-in-one-column" id="toc-synthetic-example-multiple-messy-date-formats-in-one-column" class="nav-link" data-scroll-target="#synthetic-example-multiple-messy-date-formats-in-one-column"><span class="header-section-number">3.2</span> Synthetic example: Multiple messy date formats in one column</a></li>
+  </ul>
+</li>
+  <li><a href="#use-tidyverse-aggressively-for-serious-data-cleaning" id="toc-use-tidyverse-aggressively-for-serious-data-cleaning" class="nav-link" data-scroll-target="#use-tidyverse-aggressively-for-serious-data-cleaning"><span class="header-section-number">4</span> Use tidyverse aggressively for serious data cleaning</a></li>
+  <li>
+<a href="#use-across-for-safe-type-role-based-transformations" id="toc-use-across-for-safe-type-role-based-transformations" class="nav-link" data-scroll-target="#use-across-for-safe-type-role-based-transformations"><span class="header-section-number">5</span> Use across() + <tidy-select> for safe type / role-based transformations</tidy-select></a>
+  <ul class="collapse">
+<li><a href="#clean-all-text-columns-at-once" id="toc-clean-all-text-columns-at-once" class="nav-link" data-scroll-target="#clean-all-text-columns-at-once"><span class="header-section-number">5.1</span> Clean all text columns at once</a></li>
+  <li><a href="#scale-financial-columns" id="toc-scale-financial-columns" class="nav-link" data-scroll-target="#scale-financial-columns"><span class="header-section-number">5.2</span> Scale financial columns</a></li>
+  <li><a href="#conditional-rounding" id="toc-conditional-rounding" class="nav-link" data-scroll-target="#conditional-rounding"><span class="header-section-number">5.3</span> Conditional rounding</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#joins-flavor-in-dplyr" id="toc-joins-flavor-in-dplyr" class="nav-link" data-scroll-target="#joins-flavor-in-dplyr"><span class="header-section-number">6</span> Joins flavor in dplyr</a>
+  <ul class="collapse">
+<li><a href="#inequality-joins-for-binning" id="toc-inequality-joins-for-binning" class="nav-link" data-scroll-target="#inequality-joins-for-binning"><span class="header-section-number">6.1</span> Inequality joins for binning</a></li>
+  <li><a href="#range-joins-for-time-based-matching" id="toc-range-joins-for-time-based-matching" class="nav-link" data-scroll-target="#range-joins-for-time-based-matching"><span class="header-section-number">6.2</span> Range joins for time-based matching</a></li>
+  </ul>
+</li>
+  <li><a href="#statistical-pitfalls-dont-trust-p-values-blindly" id="toc-statistical-pitfalls-dont-trust-p-values-blindly" class="nav-link" data-scroll-target="#statistical-pitfalls-dont-trust-p-values-blindly"><span class="header-section-number">7</span> Statistical pitfalls — don’t trust p-values blindly</a></li>
+  <li><a href="#remarks-and-resources" id="toc-remarks-and-resources" class="nav-link" data-scroll-target="#remarks-and-resources"><span class="header-section-number">8</span> Remarks and Resources</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/13-careful-data/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content"><div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/13-careful-data&amp;text=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/13-careful-data&amp;title=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/13-careful-data" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/13-careful-data" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/13-careful-data&amp;title=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/13-careful-data&amp;title=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/13-careful-data&amp;name=Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Careful data science with tidyverse — Joshua Marie https://joshuamarie.com/posts/13-careful-data'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/13-careful-data%20Careful%20data%20science%20with%20tidyverse%20%E2%80%94%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<section id="why-careful" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Why “careful”?</h1>
+<p>As you read in the title, why “careful”? Using <a href="https://tidyverse.tidyverse.org">tidyverse</a>, or any frameworks for data manipulation out there, is fine. Most introductory <a href="https://tidyverse.tidyverse.org">tidyverse</a> tutorials teach you how to write code with it. Very few teach you when the nice-looking code becomes dangerous or unnecessarily painful six months later.</p>
+<p>This short guide focuses on the second part — the things that experienced people wish they had known earlier.</p>
+<p>Before we start, here are the packages I’ll be using:</p>
+<ol type="1">
+<li>
+<p>Packages that are <a href="https://tidyverse.tidyverse.org">tidyverse</a>. This includes the following specifics:</p>
+<ul>
+<li><a href="https://dplyr.tidyverse.org">dplyr</a></li>
+<li><a href="https://tidyr.tidyverse.org">tidyr</a></li>
+<li><a href="https://readr.tidyverse.org">readr</a></li>
+<li><a href="https://lubridate.tidyverse.org">lubridate</a></li>
+<li><a href="https://purrr.tidyverse.org/">purrr</a></li>
+</ul>
+</li>
+<li>
+<p>Packages that are not <a href="https://tidyverse.tidyverse.org">tidyverse</a>. This includes the following specifics:</p>
+<ul>
+<li><a href="https://klmr.me/box/">box</a></li>
+<li><a href="https://github.com/epiverse-trace/numberize">numberize</a></li>
+<li><a href="https://broom.tidymodels.org/">broom</a></li>
+</ul>
+</li>
+</ol>
+<p>And they will be used much later on.</p>
+</section><section id="tidyverse-is-not-just-unquoted-column-names" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Tidyverse is not just unquoted column names</h1>
+<p>You thought the reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> framework differ from other frameworks, e.g.&nbsp;Pandas, Polars, or <a href="https://r-datatable.com">data.table</a>, comes from accepting “columns” argument not being quoted? I mean, yes, and <a href="https://r-datatable.com">data.table</a> does this as well, but the syntax and some of the APIs are not the same. That’s not what I am trying to convey here.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># This fails R CMD check in a package</span></span>
+<span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">mpg</span> <span class="op">/</span> <span class="va">wt</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;&gt;                    mpg cyl disp  hp drat    wt  qsec vs am gear carb      new</span></span>
+<span><span class="co">#&gt;&gt; Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 8.015267</span></span>
+<span><span class="co">#&gt;&gt; Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 7.304348</span></span>
+<span><span class="co">#&gt;&gt; Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 9.827586</span></span>
+<span><span class="co">#&gt;&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 6.656299</span></span>
+<span><span class="co">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 5.436047</span></span>
+<span></span>
+<span><span class="co"># Package-safe alternatives</span></span>
+<span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">.data</span><span class="op">$</span><span class="va">mpg</span> <span class="op">/</span> <span class="va">.data</span><span class="op">$</span><span class="va">wt</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;&gt;                    mpg cyl disp  hp drat    wt  qsec vs am gear carb      new</span></span>
+<span><span class="co">#&gt;&gt; Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 8.015267</span></span>
+<span><span class="co">#&gt;&gt; Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 7.304348</span></span>
+<span><span class="co">#&gt;&gt; Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 9.827586</span></span>
+<span><span class="co">#&gt;&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 6.656299</span></span>
+<span><span class="co">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 5.436047</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Why did I tell you this? Let’s say you’re planning to use this package as one of your package dependencies. Unfortunately, <code>R CMD CHECK</code> will throw an error if you are using bare column names, so instead use <code>.data$colname</code>.</p>
+</section><section id="never-trust-straight-data-imports" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Never trust straight data imports</h1>
+<p>Do not just import data (not limited to CSVs), most especially when the data wasn’t collected in one pattern. For example, a CSV data that has “date” column(s), where it doesn’t follow the right format, e.g.&nbsp;<code>%Y-%m-%d</code>. This is probably the #1 source of silent bugs in production data pipelines, especially if overlooked.</p>
+<p>But first, let me tell you something:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>When CSV file contains messy format in general
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>If the data contains messy format in general, set all the columns into string type first</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">readr</span><span class="op">[</span><span class="va">read_csv</span>, <span class="va">cols</span>, <span class="va">col_character</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Dangerous (very common in real life)</span></span>
+<span><span class="fu">read_csv</span><span class="op">(</span><span class="st">"data.csv"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Much safer minimum</span></span>
+<span><span class="fu">read_csv</span><span class="op">(</span></span>
+<span>    <span class="st">"data.csv"</span>,</span>
+<span>    col_types <span class="op">=</span> <span class="fu">cols</span><span class="op">(</span></span>
+<span>        <span class="co"># force everything as text first</span></span>
+<span>        .default <span class="op">=</span> <span class="fu">col_character</span><span class="op">(</span><span class="op">)</span>,           </span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Auto-guessing fails when:</p>
+<ol type="1">
+<li>First 1000 rows look clean, row 1001 doesn’t</li>
+<li>Excel exported dates as text in weird formats</li>
+<li>IDs like “001234” get parsed as numbers (losing leading zeros)</li>
+<li>Mix of <code>"N/A"</code>, <code>"null"</code>, <code>"NULL"</code>, <code>"-"</code>, <code>"nan"</code> all mean missing</li>
+</ol>
+</div>
+</div>
+<section id="synthetic-example-dealing-with-dates" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="synthetic-example-dealing-with-dates">
+<span class="header-section-number">3.1</span> Synthetic example: Dealing with dates</h2>
+<p>Here, imagine you have this kind of data in a certain CSV, where it contains filedate/datetime columns that come:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sample_csv</span> <span class="op">=</span> <span class="st">"</span></span>
+<span><span class="st">date, readings, x, y, z\n</span></span>
+<span><span class="st">\"Mar.23,2005\",0.02,3.3,1.1,5.7\n</span></span>
+<span><span class="st">\"Feb.26,2005\",0.15,4.5,5.0,1.9\n</span></span>
+<span><span class="st">\"Apr.5,2005\",0.2,7.2,2.8,5.2\n</span></span>
+<span><span class="st">\"May.12,2005\", 0.5,4.9,1.3,6.8</span></span>
+<span><span class="st">"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>If you directly import this CSV data:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">sample_csv</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  date        readings     x     y     z
+  &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Mar.23,2005     0.02   3.3   1.1   5.7
+2 Feb.26,2005     0.15   4.5   5     1.9
+3 Apr.5,2005      0.2    7.2   2.8   5.2
+4 May.12,2005     0.5    4.9   1.3   6.8</code></pre>
+</div>
+</div>
+<p>The problem arises when <code><a href="https://readr.tidyverse.org/reference/read_delim.html">readr::read_csv()</a></code> fails to parse the <code>"date"</code> column as an actual <code>date</code> type as you expect, instead it is parsed as a string type.</p>
+<p>The <a href="https://readr.tidyverse.org">readr</a> package provides an API that can explicitly judge the column type.</p>
+<p>Here’s how you do it:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">readr</span><span class="op">[</span><span class="va">read_csv</span>, <span class="va">cols</span>, <span class="va">col_date</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">read_csv</span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">sample_csv</span><span class="op">)</span>,</span>
+<span>    col_types <span class="op">=</span> <span class="fu">cols</span><span class="op">(</span></span>
+<span>        date <span class="op">=</span> <span class="fu">col_date</span><span class="op">(</span><span class="st">"%b.%d,%Y"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  date       readings     x     y     z
+  &lt;date&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 2005-03-23     0.02   3.3   1.1   5.7
+2 2005-02-26     0.15   4.5   5     1.9
+3 2005-04-05     0.2    7.2   2.8   5.2
+4 2005-05-12     0.5    4.9   1.3   6.8</code></pre>
+</div>
+</div>
+</section><section id="synthetic-example-multiple-messy-date-formats-in-one-column" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="synthetic-example-multiple-messy-date-formats-in-one-column">
+<span class="header-section-number">3.2</span> Synthetic example: Multiple messy date formats in one column</h2>
+<p>But, what if the <code>'date'</code> column doesn’t follow 1 pattern?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">readr</span><span class="op">[</span><span class="va">read_csv</span>, <span class="va">cols</span>, <span class="va">col_character</span><span class="op">]</span>,</span>
+<span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span><span class="op">]</span>, </span>
+<span>    <span class="va">lubridate</span><span class="op">[</span><span class="va">parse_date_time</span>, <span class="va">as_date</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sample_csv</span> <span class="op">=</span> <span class="st">"</span></span>
+<span><span class="st">date, readings, x, y, z\n</span></span>
+<span><span class="st">\"Mar.23,2005\",0.02,3.3,1.1,5.7\n</span></span>
+<span><span class="st">\"Feb 26, 2005\",0.15,4.5,5.0,1.9\n</span></span>
+<span><span class="st">\"04-5-2005\",0.2,7.2,2.8,5.2\n</span></span>
+<span><span class="st">\"May12,05\", 0.5,4.9,1.3,6.8\n</span></span>
+<span><span class="st">\"Aug.17,2005\", 0.17,9.5,0.8,4.2</span></span>
+<span><span class="st">"</span></span>
+<span></span>
+<span><span class="fu">read_csv</span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">sample_csv</span><span class="op">)</span>,</span>
+<span>    col_types <span class="op">=</span> <span class="fu">cols</span><span class="op">(</span></span>
+<span>        date <span class="op">=</span> <span class="fu">col_character</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">mutate</span><span class="op">(</span></span>
+<span>        date <span class="op">=</span> </span>
+<span>            <span class="fu">parse_date_time</span><span class="op">(</span></span>
+<span>                <span class="va">date</span>,</span>
+<span>                orders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>                    <span class="st">"b.d,Y"</span>,</span>
+<span>                    <span class="st">"b d, Y"</span>,</span>
+<span>                    <span class="st">"m-d-Y"</span>,</span>
+<span>                    <span class="st">"bd,y"</span></span>
+<span>                <span class="op">)</span></span>
+<span>            <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>            <span class="fu">as_date</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  date       readings     x     y     z
+  &lt;date&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 2005-03-23     0.02   3.3   1.1   5.7
+2 2005-02-26     0.15   4.5   5     1.9
+3 2005-04-05     0.2    7.2   2.8   5.2
+4 2005-05-12     0.5    4.9   1.3   6.8
+5 2005-08-17     0.17   9.5   0.8   4.2</code></pre>
+</div>
+</div>
+<p>Unfortunately, right now, <code><a href="https://readr.tidyverse.org/reference/read_delim.html">readr::read_csv()</a></code> doesn’t know how to parse CSV files with different data format, so I have to take some roundabouts to properly parse the <code>"date"</code> column.</p>
+</section></section><section id="use-tidyverse-aggressively-for-serious-data-cleaning" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Use tidyverse aggressively for serious data cleaning</h1>
+<p>Now you know how easy it get when importing the data with messed up pattern structure. Use <a href="https://tidyverse.tidyverse.org">tidyverse</a> for data cleaning for f sake, trust me. Seriously, if you can do data cleaning from other tools, e.g.&nbsp;Excel or Python-Pandas (I know some companies you are working with will choose them), <a href="https://tidyverse.tidyverse.org">tidyverse</a> makes things much easier, conventional, readable, and maintainable (arguable). Some practitioners actually use <a href="https://tidyverse.tidyverse.org">tidyverse</a> for modeling and resort to base R loops or hacky solutions for cleaning. Don’t be that person.</p>
+<p>Let us demonstrate with the <a href="https://raw.githubusercontent.com/eyowhite/Messy-dataset/main/messy_HR_data.csv%22">Messy HR Data</a> dataset from this <a href="https://github.com/eyowhite/Messy-dataset">repository</a>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hr_data</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span></span>
+<span>    <span class="st">"https://raw.githubusercontent.com/eyowhite/Messy-dataset/main/messy_HR_data.csv"</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>If you glimpse this data:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hr_data</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 10
+$ Name                &lt;chr&gt; "grace", "david", "hannah", "eve", "grace", "jack"…
+$ Age                 &lt;chr&gt; "25", "nan", "35", "nan", "nan", "nan", "nan", "40…
+$ Salary              &lt;chr&gt; "50000", "65000", "SIXTY THOUSAND", "50000", "NAN"…
+$ Gender              &lt;chr&gt; "Male", "Female", "Female", "Female", "Female", "O…
+$ Department          &lt;chr&gt; "HR", "Finance", "Sales", "IT", "Finance", "Market…
+$ Position            &lt;chr&gt; "Manager", "Director", "Director", "Manager", "Man…
+$ `Joining Date`      &lt;chr&gt; "April 5, 2018", "2020/02/20", "01/15/2020", "Apri…
+$ `Performance Score` &lt;chr&gt; "D", "F", "C", "A", "F", "F", "B", "C", "C", "A", …
+$ Email               &lt;chr&gt; "email@example.com", "user@domain.com", "email@exa…
+$ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "098-76…</code></pre>
+</div>
+</div>
+<p>You see how bad it is, even if you said it’s not “dirty enough” or similar. The reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> makes things “conventional” because in R, missing values has its own unique representation value, denoted by <code>NA</code>, not through <code>null</code>, <code>NULL</code>, or <code>NaN</code> / <code>nan</code>.</p>
+<p>The data cleaning in R with <a href="https://tidyverse.tidyverse.org">tidyverse</a> is much easier than you thought</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">everything</span>, <span class="va">if_else</span>, <span class="va">case_when</span><span class="op">]</span>,</span>
+<span>    <span class="va">stringr</span><span class="op">[</span>detect <span class="op">=</span> <span class="va">str_detect</span>, capitalize <span class="op">=</span> <span class="va">str_to_sentence</span><span class="op">]</span>,</span>
+<span>    <span class="va">lubridate</span><span class="op">[</span><span class="va">parse_date_time</span>, <span class="va">as_date</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">hr_data</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">mutate</span><span class="op">(</span></span>
+<span>        <span class="fu">across</span><span class="op">(</span></span>
+<span>            <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>            \<span class="op">(</span><span class="va">col</span><span class="op">)</span> <span class="fu">if_else</span><span class="op">(</span><span class="fu">detect</span><span class="op">(</span><span class="va">col</span>, <span class="st">"^(?i)nan$"</span><span class="op">)</span>, <span class="cn">NA</span>, <span class="va">col</span><span class="op">)</span></span>
+<span>        <span class="op">)</span>, </span>
+<span>        `Joining Date` <span class="op">=</span> <span class="fu">parse_date_time</span><span class="op">(</span></span>
+<span>            <span class="va">`Joining Date`</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>                <span class="st">"%B %d, %Y"</span>,</span>
+<span>                <span class="st">"%Y/%m/%d"</span>, </span>
+<span>                <span class="st">"%m-%d-%Y"</span>,</span>
+<span>                <span class="st">"%Y.%m.%d"</span></span>
+<span>            <span class="op">)</span></span>
+<span>        <span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">as_date</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>        Salary <span class="op">=</span> <span class="fu">numberize</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/numberize/man/numberize.html">numberize</a></span><span class="op">(</span><span class="va">Salary</span><span class="op">)</span>,</span>
+<span>        Name <span class="op">=</span> <span class="fu">capitalize</span><span class="op">(</span><span class="va">Name</span><span class="op">)</span>,</span>
+<span>        Age <span class="op">=</span> <span class="fu">numberize</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/numberize/man/numberize.html">numberize</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,000 × 10
+   Name      Age Salary Gender Department Position  `Joining Date`
+   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;     &lt;date&gt;        
+ 1 Grace      25  50000 Male   HR         Manager   2018-04-05    
+ 2 David      NA  65000 Female Finance    Director  2020-02-20    
+ 3 Hannah     35  60000 Female Sales      Director  2020-01-15    
+ 4 Eve        NA  50000 Female IT         Manager   2018-04-05    
+ 5 Grace      NA     NA Female Finance    Manager   2020-01-15    
+ 6 Jack       NA  65000 Other  Marketing  Director  2019-03-25    
+ 7 Charlie    NA  50000 Male   Marketing  Clerk     2019-12-01    
+ 8 Grace      40  50000 Other  HR         Director  2019-03-25    
+ 9 Hannah     40  60000 Female Marketing  Manager   2020-01-15    
+10 Eve        30     NA Other  Finance    Assistant 2020-02-20    
+# ℹ 990 more rows
+# ℹ 3 more variables: `Performance Score` &lt;chr&gt;, Email &lt;chr&gt;,
+#   `Phone Number` &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>You see how easy is this? The fact that <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">dplyr::mutate()</a></code> accepts bare expressions together with its bare column, you can easily use other functions, like <code><a href="https://rdrr.io/pkg/numberize/man/numberize.html">numberize::numberize()</a></code> to translate bare word value, i.e.&nbsp;<code>"thirty"</code> in <code>Age</code> column and <code>"SIXTY THOUSAND"</code> in <code>Salary</code> column.</p>
+</section><section id="use-across-for-safe-type-role-based-transformations" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Use across() + <tidy-select> for safe type / role-based transformations</tidy-select>
+</h1>
+<p>One of <a href="https://tidyverse.tidyverse.org">tidyverse</a>’s most underrated features is <code>across()</code> combined with <code>&lt;tidy-select&gt;</code> helpers, commonly used in “data masking” functions. This lets you apply transformations to multiple columns based on their type or name pattern, making your code both DRY and maintainable.</p>
+<section id="clean-all-text-columns-at-once" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="clean-all-text-columns-at-once">
+<span class="header-section-number">5.1</span> Clean all text columns at once</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">where</span><span class="op">]</span>,</span>
+<span>    <span class="va">stringr</span><span class="op">[</span><span class="va">str_trim</span>, <span class="va">str_to_upper</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">survey</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>    resp_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>    name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"  alice  "</span>, <span class="st">"BOB"</span>, <span class="st">"  Charlie  "</span><span class="op">)</span>,</span>
+<span>    city <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"New York  "</span>, <span class="st">"  Boston"</span>, <span class="st">"Chicago  "</span><span class="op">)</span>,</span>
+<span>    rating <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">3.8</span>, <span class="fl">4.5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">survey</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">mutate</span><span class="op">(</span></span>
+<span>        <span class="fu">across</span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="va">is.character</span><span class="op">)</span>, <span class="va">str_trim</span><span class="op">)</span>,</span>
+<span>        <span class="fu">across</span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="va">is.character</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="va">resp_id</span>, <span class="va">str_to_upper</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  resp_id name    city     rating
+    &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;
+1       1 ALICE   NEW YORK    4.2
+2       2 BOB     BOSTON      3.8
+3       3 CHARLIE CHICAGO     4.5</code></pre>
+</div>
+</div>
+<p>The second <code>across()</code> shows combining conditions: all character columns <em>except</em> the ID field.</p>
+</section><section id="scale-financial-columns" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="scale-financial-columns">
+<span class="header-section-number">5.2</span> Scale financial columns</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">starts_with</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">financials</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>    company <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"TechCo"</span>, <span class="st">"RetailCorp"</span><span class="op">)</span>,</span>
+<span>    revenue_q1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1200000</span>, <span class="fl">850000</span><span class="op">)</span>,</span>
+<span>    revenue_q2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1350000</span>, <span class="fl">920000</span><span class="op">)</span>,</span>
+<span>    costs_q1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">800000</span>, <span class="fl">600000</span><span class="op">)</span>,</span>
+<span>    costs_q2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">850000</span>, <span class="fl">640000</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">financials</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">mutate</span><span class="op">(</span></span>
+<span>        <span class="fu">across</span><span class="op">(</span></span>
+<span>            <span class="fu">starts_with</span><span class="op">(</span><span class="st">"revenue"</span><span class="op">)</span>,</span>
+<span>            \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">/</span> <span class="fl">1e6</span>,</span>
+<span>            .names <span class="op">=</span> <span class="st">"{.col}_M"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 7
+  company    revenue_q1 revenue_q2 costs_q1 costs_q2 revenue_q1_M revenue_q2_M
+  &lt;chr&gt;           &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+1 TechCo        1200000    1350000   800000   850000         1.2          1.35
+2 RetailCorp     850000     920000   600000   640000         0.85         0.92</code></pre>
+</div>
+</div>
+<p>The <code>.names</code> argument controls output column names. When you add <code>revenue_q3</code> later, it automatically gets converted too.</p>
+</section><section id="conditional-rounding" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="conditional-rounding">
+<span class="header-section-number">5.3</span> Conditional rounding</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">where</span>, <span class="va">any_of</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">measurements</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>    sample_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
+<span>    temperature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">98.6234</span>, <span class="fl">99.1456</span>, <span class="fl">97.8921</span>, <span class="fl">98.4567</span><span class="op">)</span>,</span>
+<span>    pressure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">120.456</span>, <span class="fl">118.234</span>, <span class="fl">122.789</span>, <span class="fl">119.123</span><span class="op">)</span>,</span>
+<span>    ph_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">7.4123</span>, <span class="fl">7.3987</span>, <span class="fl">7.4256</span>, <span class="fl">7.4089</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">measurements</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">mutate</span><span class="op">(</span></span>
+<span>        <span class="fu">across</span><span class="op">(</span></span>
+<span>            <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu">any_of</span><span class="op">(</span><span class="st">"sample_id"</span><span class="op">)</span>,</span>
+<span>            <span class="va">round</span>,</span>
+<span>            digits <span class="op">=</span> <span class="fl">2</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  sample_id temperature pressure ph_level
+      &lt;int&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1         1        98.6     120.     7.41
+2         2        99.2     118.     7.4 
+3         3        97.9     123.     7.43
+4         4        98.5     119.     7.41</code></pre>
+</div>
+</div>
+<p>This pattern scales: add new numeric columns and they’re automatically rounded. No need to update the rounding code.</p>
+</section></section><section id="joins-flavor-in-dplyr" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Joins flavor in dplyr</h1>
+<p>Since the stable version (1.1.x) release of <a href="https://dplyr.tidyverse.org">dplyr</a>, specification of joins is now more flexible, more explicit, and more “controlled” using <code><a href="https://dplyr.tidyverse.org/reference/join_by.html">dplyr::join_by()</a></code>. While the new API provides clearer complex “join” tasks, this also makes the operation less error-prone.</p>
+<section id="inequality-joins-for-binning" class="level2" data-number="6.1"><h2 data-number="6.1" class="anchored" data-anchor-id="inequality-joins-for-binning">
+<span class="header-section-number">6.1</span> Inequality joins for binning</h2>
+<p>Assign customer segments based on purchase totals:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">left_join</span>, <span class="va">join_by</span>, <span class="va">group_by</span>, <span class="va">slice_max</span>, <span class="va">ungroup</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">purchases</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>    customer_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span>,</span>
+<span>    total_spent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">45</span>, <span class="fl">280</span>, <span class="fl">520</span>, <span class="fl">95</span>, <span class="fl">1200</span>, <span class="fl">180</span>, <span class="fl">650</span>, <span class="fl">35</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">segments</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>    segment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Bronze"</span>, <span class="st">"Silver"</span>, <span class="st">"Gold"</span>, <span class="st">"Platinum"</span><span class="op">)</span>,</span>
+<span>    min_spend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">500</span>, <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">purchases</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">left_join</span><span class="op">(</span><span class="va">segments</span>, by <span class="op">=</span> <span class="fu">join_by</span><span class="op">(</span><span class="va">total_spent</span> <span class="op">&gt;=</span> <span class="va">min_spend</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">group_by</span><span class="op">(</span><span class="va">customer_id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">slice_max</span><span class="op">(</span><span class="va">min_spend</span>, n <span class="op">=</span> <span class="fl">1</span>, with_ties <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 4
+  customer_id total_spent segment  min_spend
+        &lt;int&gt;       &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
+1           1          45 Bronze           0
+2           2         280 Silver         100
+3           3         520 Gold           500
+4           4          95 Bronze           0
+5           5        1200 Platinum      1000
+6           6         180 Silver         100
+7           7         650 Gold           500
+8           8          35 Bronze           0</code></pre>
+</div>
+</div>
+<p>The “greater than or equal to (<code>&gt;</code> + <code>=</code>)” operator finds all matching tiers, then we keep the highest one. Much clearer than manual conditional logic.</p>
+</section><section id="range-joins-for-time-based-matching" class="level2" data-number="6.2"><h2 data-number="6.2" class="anchored" data-anchor-id="range-joins-for-time-based-matching">
+<span class="header-section-number">6.2</span> Range joins for time-based matching</h2>
+<p>Match transactions to active promotions:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">dplyr</span><span class="op">[</span>tbl <span class="op">=</span> <span class="va">tibble</span>, <span class="va">inner_join</span>, <span class="va">join_by</span>, <span class="va">between</span>, <span class="va">transmute</span><span class="op">]</span>,</span>
+<span>    <span class="va">lubridate</span><span class="op">[</span><span class="va">as_date</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">transactions</span> <span class="op">=</span> <span class="fu">tbl</span><span class="op">(</span></span>
+<span>    tx_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,</span>
+<span>    tx_date <span class="op">=</span> <span class="fu">as_date</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>        <span class="st">"2024-01-20"</span>, <span class="st">"2024-02-15"</span>, <span class="st">"2024-03-25"</span>,</span>
+<span>        <span class="st">"2024-04-10"</span>, <span class="st">"2024-05-15"</span>, <span class="st">"2024-06-05"</span></span>
+<span>    <span class="op">)</span><span class="op">)</span>,</span>
+<span>    amount <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">150</span>, <span class="fl">200</span>, <span class="fl">180</span>, <span class="fl">220</span>, <span class="fl">175</span>, <span class="fl">190</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">promos</span> <span class="op">=</span> <span class="fu">tbl</span><span class="op">(</span></span>
+<span>    promo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"New Year"</span>, <span class="st">"Spring Sale"</span>, <span class="st">"Summer Blast"</span><span class="op">)</span>,</span>
+<span>    start <span class="op">=</span> <span class="fu">as_date</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2024-01-01"</span>, <span class="st">"2024-03-01"</span>, <span class="st">"2024-05-01"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    end <span class="op">=</span> <span class="fu">as_date</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2024-01-31"</span>, <span class="st">"2024-04-30"</span>, <span class="st">"2024-06-30"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    discount <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="fl">0.10</span>, <span class="fl">0.20</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">transactions</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">inner_join</span><span class="op">(</span></span>
+<span>        <span class="va">promos</span>,</span>
+<span>        by <span class="op">=</span> <span class="fu">join_by</span><span class="op">(</span><span class="fu">between</span><span class="op">(</span><span class="va">tx_date</span>, <span class="va">start</span>, <span class="va">end</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">transmute</span><span class="op">(</span></span>
+<span>        <span class="va">tx_id</span>,</span>
+<span>        <span class="va">tx_date</span>,</span>
+<span>        <span class="va">promo</span>, </span>
+<span>        <span class="va">amount</span>,</span>
+<span>        <span class="va">discount</span>, </span>
+<span>        savings <span class="op">=</span> <span class="va">amount</span> <span class="op">*</span> <span class="va">discount</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 6
+  tx_id tx_date    promo        amount discount savings
+  &lt;int&gt; &lt;date&gt;     &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+1     1 2024-01-20 New Year        150     0.15    22.5
+2     3 2024-03-25 Spring Sale     180     0.1     18  
+3     4 2024-04-10 Spring Sale     220     0.1     22  
+4     5 2024-05-15 Summer Blast    175     0.2     35  
+5     6 2024-06-05 Summer Blast    190     0.2     38  </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="SQL Code Equivalent">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>SQL Code Equivalent
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Here’s the equivalent SQL code:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    tx_id,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    tx_date,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    promo,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    amount,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    discount,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    amount <span class="op">*</span> discount <span class="kw">AS</span> savings</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> t.<span class="op">*</span>, p.<span class="op">*</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> transactions <span class="kw">AS</span> t</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">INNER</span> <span class="kw">JOIN</span> promos <span class="kw">AS</span> p</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> (</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>            t.tx_date <span class="op">&gt;=</span> p.<span class="kw">start</span> <span class="kw">AND</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>            t.tx_date <span class="op">&lt;=</span> p.<span class="cf">end</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>) <span class="kw">AS</span> new_table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>This beats manually checking date ranges with <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>. The join expresses intent directly.</p>
+</section></section><section id="statistical-pitfalls-dont-trust-p-values-blindly" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Statistical pitfalls — don’t trust p-values blindly</h1>
+<p>Let’s say, you have a task that examines the relationship between variables. Linear regression &lt;…&gt;</p>
+<p>With <code>{mtcars}</code> dataset, I wanna examine the relationship between <code>wt</code> and <code>mpg</code> using <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)    37.3      1.88      19.9  8.24e-19
+2 wt             -5.34     0.559     -9.56 1.29e-10</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     0.753         0.745  3.05      91.4 1.29e-10     1  -80.0  166.  170.
+# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>After running both linear regression and correlation test at the same time, it rejects the null hypothesis of the test, implying that there are strong linear relationship between <code>wt</code> and <code>mpg</code>. Keep in mind that directly using “Null Hypothesis Significant Testing” (NHST) is a direct flaw for reproducibility.</p>
+<p>Let us examine the linear relationship by running exact model as above</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">group_by</span>, <span class="va">reframe</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mtcars</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">reframe</span><span class="op">(</span></span>
+<span>        <span class="op">{</span>         </span>
+<span>            <span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>                <span class="va">stats</span><span class="op">[</span>linear_reg <span class="op">=</span> <span class="va">lm</span>, <span class="va">coef</span>, pearson_r <span class="op">=</span> <span class="va">cor</span><span class="op">]</span>, </span>
+<span>                <span class="va">purrr</span><span class="op">[</span><span class="va">imap_dfc</span>, <span class="va">set_names</span><span class="op">]</span>, </span>
+<span>                <span class="va">tibble</span><span class="op">[</span>tbl <span class="op">=</span> <span class="va">tibble</span><span class="op">]</span></span>
+<span>            <span class="op">)</span></span>
+<span>            </span>
+<span>            <span class="va">model</span> <span class="op">=</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span><span class="op">)</span></span>
+<span>            <span class="va">coefs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span>            <span class="va">coef_table</span> <span class="op">=</span> <span class="fu">imap_dfc</span><span class="op">(</span><span class="va">coefs</span>, \<span class="op">(</span><span class="va">bi</span>, <span class="va">nm</span><span class="op">)</span> <span class="op">{</span></span>
+<span>                <span class="va">result</span> <span class="op">=</span> <span class="fu">tbl</span><span class="op">(</span><span class="va">bi</span><span class="op">)</span></span>
+<span>                <span class="fu">set_names</span><span class="op">(</span><span class="va">result</span>, <span class="va">nm</span><span class="op">)</span></span>
+<span>            <span class="op">}</span><span class="op">)</span></span>
+<span>            </span>
+<span>            <span class="va">corr</span> <span class="op">=</span> <span class="fu">pearson_r</span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span><span class="op">)</span></span>
+<span>            </span>
+<span>            <span class="va">test</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span>            <span class="fu">tbl</span><span class="op">(</span></span>
+<span>                <span class="va">coef_table</span>, </span>
+<span>                corr <span class="op">=</span> <span class="va">corr</span>, </span>
+<span>                rsq <span class="op">=</span> <span class="va">test</span><span class="op">$</span><span class="va">r.squared</span>,</span>
+<span>                adj_rsq <span class="op">=</span> <span class="va">test</span><span class="op">$</span><span class="va">adj.r.squared</span></span>
+<span>            <span class="op">)</span></span>
+<span>        <span class="op">}</span>,</span>
+<span>        </span>
+<span>        .by <span class="op">=</span> <span class="va">cyl</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  cyl (Intercept)        wt       corr       rsq   adj_rsq
+1   6    28.40884 -2.780106 -0.6815498 0.4645102 0.3574122
+2   4    39.57120 -5.647025 -0.7131848 0.5086326 0.4540362
+3   8    23.86803 -2.192438 -0.6503580 0.4229655 0.3748793</code></pre>
+</div>
+</div>
+<p>Notice the problem? The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn’t because the relationship doesn’t exist – it’s because the sample size is too small to detect the effect reliably.</p>
+<p>This demonstrates why:</p>
+<ul>
+<li>
+<strong>Sample size matters</strong>: The 6-cylinder group lacks statistical power</li>
+<li>
+<strong>Effect sizes differ</strong>: The slope varies substantially across groups (-2.19 to -5.65), suggesting the relationship isn’t uniform</li>
+</ul>
+<p>That’s why when doing an analysis, it is better to run simulation before conducting the analysis and the sample size should be large enough.</p>
+<!-- # When using parallel mapping from {purrr} package -->
+<!-- Keep in mind that the `mutate()` function accepts bare expressions, and this is true if the expression you made allows vectorization — true for all the rows. What if it is not vectorized for all the rows?  -->
+<!-- Well, operations in `dplyr::rowwise()` does this, but my solution is, although verbose, it is more explicit, logical, and maintainable. Since it allows bare expression, directly using `purrr::pmap_*()` variants with `dplyr::pick()` are also valid within `mutate()`.  -->
+</section><section id="remarks-and-resources" class="level1" data-number="8"><h1 data-number="8">
+<span class="header-section-number">8</span> Remarks and Resources</h1>
+<p>Those are all my “simple annotation” on your fussy data work, potentially (hoping) will help in your future jobs.</p>
+<ul>
+<li><a href="https://r4ds.hadley.nz/">R for Data Science</a></li>
+<li><a href="https://modules-in-r.joshuamarie.com/">Box: Placing module system into R</a></li>
+<li><a href="https://klmr.me/box/">box: Write Reusable, Composable and Modular R Code</a></li>
+<li><a href="https://xcelab.net/rm/statistical-rethinking/">Statistical Rethinking</a></li>
+<li>
+<a href="https://www.tidyverse.org/blog/2023/01/dplyr-1-1-0-joins/">dplyr 1.1.0 blog post</a> - Deep dive on <code>join_by()</code>
+</li>
+<li>
+<a href="https://dplyr.tidyverse.org/articles/programming.html">Programming with dplyr</a> - When to use <code>.data$</code> and <code><a href="https://rdrr.io/r/base/Paren.html">{ }</a></code>
+</li>
+</ul>
+
+
+</section></main><!-- /main --><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Light theme variables */
+:root {
+  --primary-color: #3b82f6;
+  --primary-dark: #2563eb;
+  --secondary-color: #64748b;
+  --accent-color: #06b6d4;
+  --background: #ffffff;
+  --surface: #f8fafc;
+  --surface-hover: #f1f5f9;
+  --surface-light: #e2e8f0;
+  --border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+  --primary-color: #60a5fa;
+  --primary-dark: #3b82f6;
+  --secondary-color: #94a3b8;
+  --accent-color: #22d3ee;
+  --background: #0f172a;
+  --surface: #1e293b;
+  --surface-hover: #334155;
+  --surface-light: #475569;
+  --border: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+}
+
+/* =========================
+   Navbar Theme Fix
+   ========================= */
+
+/* Target all navbar elements to use theme colors */
+.navbar,
+.navbar-default,
+.navbar-expand-lg,
+nav.navbar,
+header.navbar,
+#quarto-header,
+.quarto-navbar,
+nav[role="navigation"] {
+  background: var(--background) !important;
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* =========================
+   Title Block Banner Theme Fix
+   ========================= */
+
+/* Target title block banner area */
+#title-block-header,
+.quarto-title-block,
+header#title-block-header,
+.quarto-title-banner {
+  background: var(--background) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Title block container */
+.quarto-title-block .quarto-title,
+#title-block-header .quarto-title {
+  background: var(--background) !important;
+}
+
+/* =========================
+   Listing Controls Theme Fix (Sorter/Filter)
+   ========================= */
+
+/* Order By / Sort dropdown and Filter input */
+.listing-option-group,
+.listing-actions,
+.listing-controls,
+div[class*="listing"] {
+  background: var(--background) !important;
+}
+
+/* Dropdowns and inputs in listing controls */
+.listing-option-group select,
+.listing-option-group input,
+#listing-order-by,
+select,
+input[type="text"],
+input[type="search"] {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.listing-option-group select:hover,
+.listing-option-group input:hover,
+select:hover,
+input[type="text"]:hover,
+input[type="search"]:hover {
+  background: var(--surface-hover) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Labels in listing controls */
+.listing-option-group label,
+.listing-controls label {
+  color: var(--text-primary) !important;
+}
+
+/* =========================
+   Footer Theme Fix
+   ========================= */
+
+/* Footer area */
+footer,
+.footer,
+.nav-footer,
+.quarto-footer,
+body > footer,
+#quarto-footer {
+  background: var(--surface) !important;
+  color: var(--text-secondary) !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+/* Footer links */
+footer a,
+.footer a,
+.nav-footer a,
+.quarto-footer a {
+  color: var(--text-secondary) !important;
+}
+
+footer a:hover,
+.footer a:hover,
+.nav-footer a:hover,
+.quarto-footer a:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Footer text */
+footer p,
+footer div,
+.footer p,
+.footer div,
+.nav-footer p,
+.nav-footer div {
+  color: var(--text-secondary) !important;
+}
+
+/* Navbar brand/logo */
+.navbar-brand,
+.navbar-title,
+a.navbar-brand {
+  color: var(--text-primary) !important;
+}
+
+/* Navbar links */
+.navbar-nav .nav-link,
+.navbar .nav-link,
+.navbar a,
+.nav-link {
+  color: var(--text-secondary) !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar .nav-link:hover,
+.navbar a:hover,
+.nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Active navbar link */
+.navbar-nav .nav-link.active,
+.navbar .nav-link.active,
+.nav-link.active {
+  color: var(--primary-color) !important;
+}
+
+/* Navbar toggler*/
+.navbar-toggler {
+  border-color: var(--border) !important;
+  padding: 0.25rem 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+/* Create custom hamburger icon that respects theme */
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(71, 85, 105, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+}
+
+/* Dark theme hamburger icon */
+[data-theme="dark"] .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(203, 213, 225, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Search button and icons in navbar */
+.navbar .quarto-navbar-tools,
+.navbar-nav .nav-item i,
+.navbar i {
+  color: var(--text-secondary) !important;
+}
+
+.navbar .quarto-navbar-tools:hover,
+.navbar-nav .nav-item i:hover,
+.navbar i:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Theme toggle button - repositioned to avoid navbar overlap */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  background: var(--primary-dark);
+  transform: scale(1.1);
+  box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.3);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Base styles with smooth transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Remove automatic numbering for headings */
+body {
+  counter-reset: none;
+}
+
+h1::before,
+h2::before,
+h3::before,
+h4::before,
+h5::before,
+h6::before {
+  content: none !important;
+}
+
+/* Override any automatic numbering */
+.section .header-section-number {
+  display: none !important;
+}
+
+.header-section-number {
+  display: none !important;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background: var(--background);
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container styling */
+.container-fluid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  padding-top: 4rem; 
+}
+
+/* Header styling with enhanced animations */
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: slideInFromTop 0.8s ease-out;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-weight: 400;
+  animation: slideInFromTop 0.8s ease-out 0.2s both;
+}
+
+.author, .date {
+  color: var(--text-muted);
+  font-size: 1.325rem;
+  margin-bottom: 0.5rem;
+  animation: slideInFromTop 0.8s ease-out 0.4s both;
+}
+
+/* Animations */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================
+   Table of Contents
+   ========================= */
+
+#TOC {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+/* Force all TOC elements to use theme colors */
+#TOC,
+#TOC ul,
+#TOC li,
+#TOC div {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Hide "on this page" text in TOC - Multiple selectors for compatibility */
+body.quarto-post #TOC .toc-title,
+#TOC .toc-title,
+.toc-title,
+#quarto-margin-sidebar .toc-title,
+.sidebar nav[role="doc-toc"] > h2,
+.sidebar nav[role="doc-toc"] > .h2,
+#quarto-margin-sidebar h2,
+aside[role="complementary"] h2,
+nav[role="doc-toc"] h2 {
+  display: none !important;
+}
+
+#TOC ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: none;
+  background: var(--surface) !important;
+}
+
+#TOC > ul {
+  padding-left: 0;
+  background: var(--surface) !important;
+}
+
+#TOC li {
+  margin: 0.5rem 0;
+  position: relative;
+  transform: translateX(0);
+  transition: transform 0.2s ease;
+  background: var(--surface) !important;
+}
+
+#TOC li:hover {
+  transform: translateX(5px);
+  background: var(--surface) !important;
+}
+
+#TOC li::before {
+  content: "→";
+  color: var(--primary-color);
+  font-weight: bold;
+  position: absolute;
+  left: -1rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#TOC li:hover::before {
+  opacity: 1;
+}
+
+#TOC a {
+  color: var(--text-primary) !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: block;
+  padding: 0.25rem 0;
+  border-radius: var(--radius);
+  padding-left: 0.5rem;
+  background: transparent !important;
+}
+
+#TOC a:hover {
+  color: var(--primary-color) !important;
+  background: var(--surface-hover) !important;
+}
+
+/* Target specific R Markdown TOC structure */
+.tocify-wrapper,
+.tocify-extend-page {
+  background: var(--surface) !important;
+}
+
+/* Override any white backgrounds in TOC */
+#TOC * {
+  background-color: var(--surface) !important;
+}
+
+#TOC a * {
+  background-color: transparent !important;
+}
+
+/* Floating TOC with enhanced styling */
+.tocify {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.tocify-header {
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.tocify-item {
+  padding: 0.25rem 0;
+}
+
+.tocify-item a {
+  color: var(--text-secondary) !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  display: block;
+}
+
+.tocify-item a:hover,
+.tocify-item.active a {
+  color: var(--primary-color) !important;
+  background: var(--surface-hover) !important;
+}
+
+/* Headers styling */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2.25rem;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+h1::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: -100%;
+  right: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    left: -100%;
+    right: 100%;
+  }
+  50% {
+    left: 0%;
+    right: 0%;
+  }
+}
+
+h2 {
+  font-size: 1.875rem;
+  color: var(--primary-dark);
+  position: relative;
+  padding-left: 1rem;
+}
+
+h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+  border-radius: 2px;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.3s ease;
+}
+
+h2:hover::before {
+  transform: scaleY(1);
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
+h4 {
+  font-size: 1.25rem;
+  color: var(--secondary-color);
+}
+
+/* Interactive code folding button */
+.code-folding-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.code-folding-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.code-folding-btn:active {
+  transform: translateY(0);
+}
+
+.code-folding-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.code-folding-btn:hover::after {
+  left: 100%;
+}
+
+/* =========================
+   Callout title
+   ========================= */
+
+.callout-title-container {
+  color: #19183B !important;
+}
+
+/* =========================
+   Global hyperlink styling
+   ========================= */
+
+/* Global styling - Light mode */
+a:not(.quarto-category):not(.listing-category),
+a:visited:not(.quarto-category):not(.listing-category) {
+  color: #3A6F43 !important;
+  text-decoration: none;
+}
+
+a:hover:not(.quarto-category):not(.listing-category) {
+  color: #333333 !important;
+}
+
+/* Dark mode hyperlinks */
+[data-theme="dark"] a:not(.quarto-category):not(.listing-category),
+[data-theme="dark"] a:visited:not(.quarto-category):not(.listing-category) {
+  color: #8BAE66 !important;
+}
+
+[data-theme="dark"] a:hover:not(.quarto-category):not(.listing-category) {
+  color: #a8cc88 !important;
+}
+
+/* =========================
+   Category Links Fix
+   ========================= */
+
+/* Ensure category links remain functional */
+.quarto-category,
+a.quarto-category,
+.quarto-categories .quarto-category,
+.listing-category,
+a.listing-category {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.quarto-category:hover,
+.listing-category:hover {
+  opacity: 0.8 !important;
+  text-decoration: none !important;
+}
+
+/* =========================
+   Strong Global bold text
+   ========================= */
+
+strong, b {
+  font-weight: 700;
+}
+
+/* Enhanced blockquotes */
+blockquote {
+  border-left: 4px solid var(--accent-color);
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--text-secondary);
+  font-style: italic;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+blockquote::before {
+  content: """;
+  font-size: 3rem;
+  color: var(--accent-color);
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  opacity: 0.3;
+}
+
+/* Smooth scrolling and enhanced focus */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styling */
+::selection {
+  background: var(--primary-color);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Enhanced focus styles */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 6px;
+  border: 2px solid var(--surface);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .theme-toggle {
+    bottom: 15px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+  
+  .container-fluid {
+    padding: 1rem;
+    padding-top: 3rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1.725rem;
+  }
+  
+  h1 {
+    font-size: 1.875rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  pre {
+    padding: 1rem;
+  }
+  
+  pre code {
+    font-size: 0.9rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .theme-toggle {
+    display: none;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: black;
+    background: white;
+  }
+  
+  .title {
+    color: black;
+    -webkit-text-fill-color: black;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: black;
+    page-break-after: avoid;
+  }
+  
+  pre, blockquote {
+    page-break-inside: avoid;
+  }
+  
+  .tocify {
+    display: none;
+  }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const themeToggle = document.createElement('button');
+  themeToggle.className = 'theme-toggle';
+  themeToggle.innerHTML = '🌙';
+  themeToggle.setAttribute('aria-label', 'Toggle dark mode');
+  themeToggle.setAttribute('title', 'Toggle dark/light mode');
+  
+  document.body.appendChild(themeToggle);
+  
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeToggle.innerHTML = savedTheme === 'dark' ? '🌙' : '☀️';
+  
+  themeToggle.addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeToggle.innerHTML = newTheme === 'dark' ? '🌙' : '☀️';
+    
+    themeToggle.style.transform = 'rotate(360deg)';
+    setTimeout(() => {
+      themeToggle.style.transform = 'rotate(0deg)';
+    }, 300);
+  });
+  
+  setTimeout(function() {
+    const tocTitles = document.querySelectorAll('.toc-title, #quarto-margin-sidebar h2, nav[role="doc-toc"] h2');
+    tocTitles.forEach(function(title) {
+      title.style.display = 'none';
+    });
+  }, 100);
+  
+  const tocLinks = document.querySelectorAll('#TOC a, .tocify a');
+  tocLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }
+    });
+  });
+  
+  const images = document.querySelectorAll('img');
+  images.forEach(function(img) {
+    if (img.complete) {
+      img.style.opacity = '1';
+    } else {
+      img.style.opacity = '0';
+      img.style.transition = 'opacity 0.5s ease';
+      
+      img.addEventListener('load', function() {
+        this.style.opacity = '1';
+      });
+    }
+  });
+});
+</script><style>
+    /* Modal Styles */
+    .code-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+    }
+
+    .code-modal-content {
+        position: relative;
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 1200px;
+        max-height: 80vh;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .code-modal-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .code-modal-title {
+        font-size: 1.2em;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .code-modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+    }
+
+    .code-modal-close:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .code-modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+    }
+
+    .code-modal-section {
+        margin-bottom: 20px;
+    }
+
+    .code-modal-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .code-modal-section h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+        color: #333;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #1e3a8a;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .code-modal-code {
+        background-color: #0f172a;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 0.9em;
+        line-height: 1.4;
+        overflow-x: auto;
+        white-space: pre;
+        margin: 0;
+    }
+
+    .code-modal-output {
+        background-color: #fff;
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 0.9em;
+        line-height: 1.4;
+        white-space: pre-wrap;
+        margin: 0;
+        color: #2d3748;
+    }
+
+    /* Button to open modal */
+    .code-open-btn {
+        background: #0f172a;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85em;
+        font-weight: 500;
+        margin: 5px 0;
+        transition: all 0.3s ease;
+    }
+
+    .code-open-btn:hover {
+        background: #1e293b;
+        transform: translateY(-1px);
+    }
+
+    /* Copy button styles */
+    .copy-btn {
+        background: #1e3a8a;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.75em;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+        background: #1e40af;
+    }
+
+    .copy-btn.copied {
+        background: #059669;
+    }
+
+    .copy-icon {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
+    }
+
+    /* Hide original code blocks that have code-open */
+    .cell[data-code-open="true"] .sourceCode {
+        display: none;
+    }
+
+    .cell[data-code-open="true"] .cell-output {
+        display: none;
+    }
+
+    /* Animation */
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .code-modal.show .code-modal-content {
+        animation: modalFadeIn 0.3s ease-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .code-modal-content {
+            width: 95%;
+            margin: 2% auto;
+            max-height: 90vh;
+        }
+
+        .code-modal-header {
+            padding: 10px 15px;
+        }
+
+        .code-modal-body {
+            padding: 15px;
+        }
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to create modal
+        function createModal() {
+            const modal = document.createElement('div');
+            modal.className = 'code-modal';
+            document.body.appendChild(modal);
+            return modal;
+        }
+
+        // Create the modal
+        const modal = createModal();
+        const modalContent = modal.querySelector('.code-modal-content');
+        const closeBtn = modal.querySelector('.code-modal-close');
+        const codeElement = modal.querySelector('.code-modal-code');
+        const outputElement = modal.querySelector('.code-modal-output');
+
+        // Function to open modal
+        function openModal(codeText, outputText, title = 'Code & Output') {
+            modal.querySelector('.code-modal-title').textContent = title;
+            codeElement.textContent = codeText;
+            outputElement.textContent = outputText || 'No output';
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('show'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // Event listeners for modal
+        closeBtn.addEventListener('click', closeModal);
+
+        // Copy functionality
+        const copyCodeBtn = modal.querySelector('#copy-code-btn');
+        const copyOutputBtn = modal.querySelector('#copy-output-btn');
+
+        copyCodeBtn.addEventListener('click', async function() {
+            try {
+                await navigator.clipboard.writeText(codeElement.textContent);
+                copyCodeBtn.innerHTML = `
+                    <svg class="copy-icon" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Copied!
+                `;
+                copyCodeBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyCodeBtn.innerHTML = `
+                        <svg class="copy-icon" viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy
+                    `;
+                    copyCodeBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy code:', err);
+            }
+        });
+
+        copyOutputBtn.addEventListener('click', async function() {
+            try {
+                await navigator.clipboard.writeText(outputElement.textContent);
+                copyOutputBtn.innerHTML = `
+                    <svg class="copy-icon" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Copied!
+                `;
+                copyOutputBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyOutputBtn.innerHTML = `
+                        <svg class="copy-icon" viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy
+                    `;
+                    copyOutputBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy output:', err);
+            }
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+
+        // Function to extract title from Quarto cell metadata
+        function extractTitleFromCell(cell) {
+            // Look for code-modal-title in various places
+            let title = null;
+
+            // 1. Check for data attribute on the cell
+            if (cell.hasAttribute('data-code-modal-title')) {
+                title = cell.getAttribute('data-code-modal-title');
+            }
+
+            // 2. Check for code-modal-title in cell options (Quarto metadata)
+            const cellOptions = cell.querySelector('.cell-meta, .cell-code-meta');
+            if (cellOptions && !title) {
+                const optionsText = cellOptions.textContent;
+                const titleMatch = optionsText.match(/code-modal-title:\s*["']([^"']+)["']/);
+                if (titleMatch) {
+                    title = titleMatch[1];
+                }
+            }
+
+            // 3. Look for title in HTML comments (Quarto sometimes puts metadata there)
+            const htmlContent = cell.innerHTML;
+            const commentMatch = htmlContent.match(/<!--.*?code-modal-title:\s*["']([^"']+)["'].*?-->/s);
+            if (commentMatch && !title) {
+                title = commentMatch[1];
+            }
+
+            // 4. Look for title in the cell's script tags or data attributes
+            const scripts = cell.querySelectorAll('script[type="application/json"]');
+            scripts.forEach(script => {
+                if (!title) {
+                    try {
+                        const data = JSON.parse(script.textContent);
+                        if (data['code-modal-title']) {
+                            title = data['code-modal-title'];
+                        }
+                    } catch (e) {
+                        // Ignore JSON parse errors
+                    }
+                }
+            });
+
+            // 5. Look in the raw text content for the pattern
+            if (!title) {
+                const rawText = cell.textContent;
+                const rawMatch = rawText.match(/code-modal-title:\s*["']?([^"'\n]+)["']?/);
+                if (rawMatch) {
+                    title = rawMatch[1].trim().replace(/["']/g, '');
+                }
+            }
+
+            // 6. Alternative pattern matching for YAML-like syntax
+            if (!title) {
+                const yamlMatch = htmlContent.match(/code-modal-title:\s*(.+)/);
+                if (yamlMatch) {
+                    title = yamlMatch[1].trim().replace(/["']/g, '');
+                }
+            }
+
+            return title;
+        }
+
+        // Function to process code blocks with code-open attribute
+        function processCodeOpenBlocks() {
+            // Look for cells with code-open attribute in Quarto
+            const cells = document.querySelectorAll('.cell');
+
+            cells.forEach((cell, index) => {
+                // Skip if already processed
+                if (cell.hasAttribute('data-processed')) return;
+
+                // Check if this cell should have code-open functionality
+                const hasCodeOpen = cell.querySelector('[data-code-open="true"]') ||
+                    cell.hasAttribute('data-code-open') ||
+                    cell.innerHTML.includes('code-open: true') ||
+                    cell.textContent.includes('code-open: true');
+
+                if (hasCodeOpen) {
+                    // Mark the cell as processed
+                    cell.setAttribute('data-code-open', 'true');
+                    cell.setAttribute('data-processed', 'true');
+
+                    // Extract custom title
+                    const customTitle = extractTitleFromCell(cell);
+
+                    // Find source code
+                    const sourceCode = cell.querySelector('.sourceCode code, pre code, .r code');
+                    const codeText = sourceCode ? sourceCode.textContent : '';
+
+                    // Find output
+                    const outputElements = cell.querySelectorAll('.cell-output pre, .cell-output .output');
+                    let outputText = '';
+                    outputElements.forEach(output => {
+                        outputText += output.textContent + '\n';
+                    });
+
+                    // Create open button
+                    const openBtn = document.createElement('button');
+                    openBtn.className = 'code-open-btn';
+                    openBtn.textContent = 'View Code & Output';
+
+                    openBtn.addEventListener('click', function() {
+                        // Use custom title if available, otherwise default
+                        const title = customTitle || `Code Block ${index + 1}`;
+                        openModal(codeText, outputText.trim(), title);
+                    });
+
+                    // Insert button at the beginning of the cell
+                    cell.insertBefore(openBtn, cell.firstChild);
+                }
+            });
+        }
+
+        // Alternative approach for direct code blocks
+        function processDirectCodeBlocks() {
+            const codeBlocks = document.querySelectorAll('pre code');
+
+            codeBlocks.forEach(code => {
+                const preElement = code.parentElement;
+                const container = preElement.parentElement;
+
+                // Skip if already processed
+                if (container.hasAttribute('data-processed')) return;
+
+                // Check for code-open in various ways
+                if (container.hasAttribute('data-code-open') ||
+                    container.classList.contains('code-open') ||
+                    preElement.hasAttribute('data-code-open') ||
+                    container.innerHTML.includes('code-open: true')) {
+
+                    // Mark as processed
+                    container.setAttribute('data-processed', 'true');
+
+                    // Extract custom title
+                    const customTitle = extractTitleFromCell(container);
+
+                    const codeText = code.textContent;
+
+                    // Look for adjacent output
+                    let outputText = '';
+                    let nextElement = container.nextElementSibling;
+                    if (nextElement && (nextElement.tagName === 'PRE' || nextElement.classList.contains('output'))) {
+                        outputText = nextElement.textContent;
+                    }
+
+                    // Create and insert button
+                    const openBtn = document.createElement('button');
+                    openBtn.className = 'code-open-btn';
+                    openBtn.textContent = 'View Code & Output';
+
+                    openBtn.addEventListener('click', function() {
+                        const title = customTitle || 'Code Block';
+                        openModal(codeText, outputText, title);
+                    });
+
+                    // Hide original and add button
+                    container.style.display = 'none';
+                    if (nextElement && outputText) {
+                        nextElement.style.display = 'none';
+                    }
+
+                    container.parentElement.insertBefore(openBtn, container);
+                }
+            });
+        }
+
+        // Run processing functions
+        processCodeOpenBlocks();
+        processDirectCodeBlocks();
+
+        // Also run after a short delay to catch dynamically loaded content
+        setTimeout(() => {
+            processCodeOpenBlocks();
+            processDirectCodeBlocks();
+        }, 1000);
+
+        // Run again after a longer delay for slow-loading content
+        setTimeout(() => {
+            processCodeOpenBlocks();
+            processDirectCodeBlocks();
+        }, 3000);
+    });
+
+    // Manual function to add code-open functionality
+    function addCodeOpen(codeElement, outputElement, title) {
+        const openBtn = document.createElement('button');
+        openBtn.className = 'code-open-btn';
+        openBtn.textContent = 'View Code & Output';
+
+        openBtn.addEventListener('click', function() {
+            const codeText = codeElement.textContent;
+            const outputText = outputElement ? outputElement.textContent : '';
+
+            // Trigger the modal (assuming the modal is already created)
+            const modal = document.querySelector('.code-modal');
+            if (modal) {
+                const event = new CustomEvent('openCodeModal', {
+                    detail: { codeText, outputText, title }
+                });
+                document.dispatchEvent(event);
+            }
+        });
+
+        return openBtn;
+    }
+
+    // Listen for custom events
+    document.addEventListener('openCodeModal', function(e) {
+        const { codeText, outputText, title } = e.detail;
+        const modal = document.querySelector('.code-modal');
+        if (modal) {
+            modal.querySelector('.code-modal-title').textContent = title || 'Code & Output';
+            modal.querySelector('.code-modal-code').textContent = codeText;
+            modal.querySelector('.code-modal-output').textContent = outputText || 'No output';
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('show'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+    });
+</script><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/joshuamarie\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+        for (let i=0; i<annoteTargets.length; i++) {
+          const annoteTarget = annoteTargets[i];
+          const targetCell = annoteTarget.getAttribute("data-target-cell");
+          const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+          const contentFn = () => {
+            const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+            if (content) {
+              const tipContent = content.cloneNode(true);
+              tipContent.classList.add("code-annotation-tip-content");
+              return tipContent.outerHTML;
+            }
+          }
+          const config = {
+            allowHTML: true,
+            content: contentFn,
+            onShow: (instance) => {
+              selectCodeLines(instance.reference);
+              instance.reference.classList.add('code-annotation-active');
+              window.tippy.hideAll();
+            },
+            onHide: (instance) => {
+              unselectCodeLines();
+              instance.reference.classList.remove('code-annotation-active');
+            },
+            maxWidth: 300,
+            delay: [50, 0],
+            duration: [200, 0],
+            offset: [5, 10],
+            arrow: true,
+            appendTo: function(el) {
+              return el.parentElement.parentElement.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'quarto',
+            placement: 'right',
+            popperOptions: {
+              modifiers: [
+              {
+                name: 'flip',
+                options: {
+                  flipVariations: false, // true by default
+                  allowedAutoPlacements: ['right'],
+                  fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+                },
+              },
+              {
+                name: 'preventOverflow',
+                options: {
+                  mainAxis: false,
+                  altAxis: false
+                }
+              }
+              ]        
+            }      
+          };
+          window.tippy(annoteTarget, config); 
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><script src="https://utteranc.es/client.js" repo="joshuamarie/joshuamarie.github.io" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Design inspired by <a href="https://github.com/statichunt/geeky-hugo">Geeky Hugo</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/13-careful-data/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+</body></html>

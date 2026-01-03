@@ -1,5 +1,5 @@
 ---
-title: "A 'careful' and small intro guide to data science with 'tidyverse'"
+title: "A 'careful' and 'small' guide to data science with 'tidyverse'"
 subtitle: ""
 date: "2025-12-28"
 categories: [R, data-science, analytics, tidyverse]
@@ -46,7 +46,7 @@ As you read in the title, why "careful"? Using `{tidyverse}`, or any frameworks 
 
 This short guide focuses on the second part — the things that experienced people wish they had known earlier.
 
-Before we start, here are the packages I'll be using:
+Before we start, here are the packages I'll be using in this post:
 
 1.  Packages that are `{tidyverse}`. This includes the following specifics:
 
@@ -54,7 +54,7 @@ Before we start, here are the packages I'll be using:
     -   `{tidyr}`
     -   `{readr}`
     -   `{lubridate}`
-    -   `{purrr}`
+<!-- -   `{purrr}` -->
 
 2.  Packages that are not `{tidyverse}`. This includes the following specifics:
 
@@ -66,7 +66,7 @@ And they will be used much later on.
 
 # Tidyverse is not just unquoted column names
 
-You thought the reason why `{tidyverse}` framework differ from other frameworks, e.g. Pandas, Polars, or `{data.table}`, comes from accepting "columns" argument not being quoted? I mean, yes, and `{data.table}` does this as well, but the syntax and some of the APIs are not the same. That's not what I am trying to convey here. 
+You thought the reason why `{tidyverse}` framework differ from other frameworks, e.g. Pandas, Polars, or `{data.table}`, comes from accepting "columns" argument not being quoted? I mean, yes, and `{data.table}` does this as well, although the syntax and APIs are not completely the same. That's not what I am trying to convey here. 
 
 ```{r}
 #| collapse: true
@@ -74,11 +74,15 @@ You thought the reason why `{tidyverse}` framework differ from other frameworks,
 # This fails R CMD check in a package
 mtcars |> dplyr::mutate(new = mpg / wt) |> head(5)
 
-# Package-safe alternatives
+# `R CMD CHECK` friendly
 mtcars |> dplyr::mutate(new = .data$mpg / .data$wt) |> head(5)
 ```
 
-Why did I tell you this? Let's say you're planning to use this package as one of your package dependencies. Unfortunately, `R CMD CHECK` will throw an error if you are using bare column names, so instead use `.data$colname`. 
+Why did I tell you this? Let's say you're planning to use this package as one of your package dependencies. Unfortunately, `R CMD CHECK` will fail and will complain if you are using bare column names, so instead use `.data$colname`. 
+
+Another thing is the use of `{{ name }}` when used in a different context. 
+
+Click this [link](https://dplyr.tidyverse.org/articles/programming.html#indirection) for more details. 
 
 # Never trust straight data imports
 
@@ -423,26 +427,17 @@ FROM (
 
 This beats manually checking date ranges with `filter()`. The join expresses intent directly.
 
-# Statistical pitfalls — don't trust p-values blindly
+# Advanced tidyverse Tricks for Grouped Modeling
 
-Let's say, you have a task that examines the relationship between variables. Linear regression <...>
+What's so great about `{tidyverse}` is while easy to use, there are a lot of things you can take advantage of, such as the code below — it's far more flexible than you thought. In the example below, I take advantage of `dplyr::reframe()` to generate a new data frame with a variable number of rows directly from grouped operations on the original data.
 
-With `{mtcars}` dataset, I wanna examine the relationship between `wt` and `mpg` using `lm()`
-
-```{r}
-model = lm(mpg ~ wt, data = mtcars)
-broom::tidy(model)
-broom::glance(model)
-```
-
-After running both linear regression and correlation test at the same time, it rejects the null hypothesis of the test, implying that there are strong linear relationship between `wt` and `mpg`. Keep in mind that directly using "Null Hypothesis Significant Testing" (NHST) is a direct flaw for reproducibility. 
-
-Let us examine the linear relationship by running exact model as above
+In this case, we're exploring the linear relationship between vehicle weight (`wt`) and fuel efficiency (`mpg`) in the classic `{mtcars}` dataset, stratified by the number of cylinders (`cyl`). The code below computes key summary statistics — including regression coefficients, Pearson correlation, R-squared, and adjusted R-squared—for each cylinder group.
 
 ```{r}
 box::use(dplyr[group_by, reframe])
 
 mtcars |> 
+    group_by(cyl) |> 
     reframe(
         {         
             box::use(
@@ -467,20 +462,38 @@ mtcars |>
                 rsq = test$r.squared,
                 adj_rsq = test$adj.r.squared
             )
-        },
+        }
         
-        .by = cyl
+        # , .by = cyl
     )
 ```
 
-Notice the problem? The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn't because the relationship doesn't exist – it's because the sample size is too small to detect the effect reliably.
+The code cleverly uses `dplyr::reframe()` with an anonymous block `{} `to run a complete mini-analysis per cylinder group in `mtcars` dataset. Inside the block, it loads just the needed functions via `box::use()`, fits a linear model of `mpg ~ wt` on the current group, extracts coefficients into a tidy one-row table, computes Pearson correlation, and grabs $R^2$ and adjusted $R^2$ from the model summary. Everything is then combined into a single row per group. This compact, namespace-safe pattern lets you perform fairly complex grouped modeling without cluttering the environment with temporary objects.
 
-This demonstrates why:
+::: {.callout-note collapse="true"}
+## Beyond p-Values: Why Effect Size and Power Matter
 
--   **Sample size matters**: The 6-cylinder group lacks statistical power
--   **Effect sizes differ**: The slope varies substantially across groups (-2.19 to -5.65), suggesting the relationship isn't uniform
+I chose this scenario to somehow demonstrate the flaw of NHST, at least part of this "careful" data science guide with `{tidyverse}`. Here are some insights of the results above why I chose this scenario: 
+
+-   When investigating relationships between variables, it's tempting to rely solely on p-values from null hypothesis significance testing (NHST). For instance, a simple linear regression on the full `mtcars` dataset shows a highly significant relationship between `wt` and `mpg`:
+
+    ```{r}
+    model = lm(mpg ~ wt, data = mtcars)
+    broom::tidy(model)
+    broom::glance(model)
+    ```
+
+-   After running both linear regression and correlation test at the same time, you can say it rejects the null hypothesis of the test, implying that there are strong linear relationship between `wt` and `mpg`. Keep in mind that directly using "Null Hypothesis Significant Testing" (NHST) is a direct flaw for reproducibility. The low p-value (< 0.001) and strong correlation suggest a clear negative linear association—higher weight predicts lower mileage.
+
+-   However, stratifying by cylinder count reveals a more nuanced picture. The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn't because the relationship doesn't exist – it's because the sample size is too small to detect the effect reliably.
+
+    This demonstrates why:
+    
+    -   **Sample size matters**: The 6-cylinder group lacks statistical power
+    -   **Effect sizes differ**: The slope varies substantially across groups (-2.19 to -5.65), suggesting the relationship isn't uniform
 
 That's why when doing an analysis, it is better to run simulation before conducting the analysis and the sample size should be large enough. 
+:::
 
 <!-- # When using parallel mapping from {purrr} package -->
 

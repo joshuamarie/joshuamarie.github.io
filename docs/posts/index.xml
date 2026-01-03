@@ -10,9 +10,40 @@
 <atom:link href="https://joshuamarie.com/posts/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Sat, 27 Dec 2025 16:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 02 Jan 2026 16:00:00 GMT</lastBuildDate>
 <item>
-  <title>A ‘careful’ and small intro guide to data science with ‘tidyverse’</title>
+  <title>Interesting thoughts about aesthetics aes() in ggplot2</title>
+  <dc:creator>Joshua Marie</dc:creator>
+  <link>https://joshuamarie.com/posts/14-aes-ggplot2/</link>
+  <description><![CDATA[ <div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;text=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/14-aes-ggplot2" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/14-aes-ggplot2" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;name=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Aesthetics in ggplot2 — Joshua Marie https://joshuamarie.com/posts/14-aes-ggplot2'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/14-aes-ggplot2%20Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<p><em>This post is under construction</em></p>
+<section id="what-do-i-like-about" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> What do I like about</h1>
+<p>What do I like about aesthetics in <a href="https://ggplot2.tidyverse.org">ggplot2</a>?</p>
+<p>Explaining how <code>aes()</code> was implemented is gonna take a lot, and I’ll briefly explain about it.</p>
+</section><section id="my-argument-regarding-ggplot2-implementation" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> My argument regarding ggplot2 implementation</h1>
+<p>I have argued this somebody that uses Python for data viz, saying “there’s <code>{plotnine}</code> in Python and you have all the features in <a href="https://ggplot2.tidyverse.org">ggplot2</a> and you can’t look back”. I argued that it’s just a pale imitation: you can’t really fully replicate this package, it’ll take a lot to FULLY replicate it, and it’s TOO complicated for Python to replicate.</p>
+<!-- # ```{r} -->
+<!-- #  -->
+<!-- # ``` -->
+<p>The thing is, R in general is functional; the arguments are <em>lazily evaluated</em> by default and way similar to Lisp macros, where the AST can be transformed / modify during compile-time — you can pretty much .</p>
+
+
+</section> ]]></description>
+  <category>R</category>
+  <category>ggplot2</category>
+  <category>visualization</category>
+  <category>tidyverse</category>
+  <guid>https://joshuamarie.com/posts/14-aes-ggplot2/</guid>
+  <pubDate>Fri, 02 Jan 2026 16:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>A ‘careful’ and ‘small’ guide to data science with ‘tidyverse’</title>
   <dc:creator>Joshua Marie</dc:creator>
   <link>https://joshuamarie.com/posts/13-careful-data/</link>
   <description><![CDATA[ <div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
@@ -24,7 +55,7 @@
 <span class="header-section-number">1</span> Why “careful”?</h1>
 <p>As you read in the title, why “careful”? Using <a href="https://tidyverse.tidyverse.org">tidyverse</a>, or any frameworks for data manipulation out there, is fine. Most introductory <a href="https://tidyverse.tidyverse.org">tidyverse</a> tutorials teach you how to write code with it. Very few teach you when the nice-looking code becomes dangerous or unnecessarily painful six months later.</p>
 <p>This short guide focuses on the second part — the things that experienced people wish they had known earlier.</p>
-<p>Before we start, here are the packages I’ll be using:</p>
+<p>Before we start, here are the packages I’ll be using in this post:</p>
 <ol type="1">
 <li>
 <p>Packages that are <a href="https://tidyverse.tidyverse.org">tidyverse</a>. This includes the following specifics:</p>
@@ -32,8 +63,9 @@
 <li><a href="https://dplyr.tidyverse.org">dplyr</a></li>
 <li><a href="https://tidyr.tidyverse.org">tidyr</a></li>
 <li><a href="https://readr.tidyverse.org">readr</a></li>
-<li><a href="https://lubridate.tidyverse.org">lubridate</a></li>
-<li><a href="https://purrr.tidyverse.org/">purrr</a></li>
+<li>
+<a href="https://lubridate.tidyverse.org">lubridate</a> <!-- -   `{purrr}` -->
+</li>
 </ul>
 </li>
 <li>
@@ -48,7 +80,7 @@
 <p>And they will be used much later on.</p>
 </section><section id="tidyverse-is-not-just-unquoted-column-names" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Tidyverse is not just unquoted column names</h1>
-<p>You thought the reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> framework differ from other frameworks, e.g.&nbsp;Pandas, Polars, or <a href="https://r-datatable.com">data.table</a>, comes from accepting “columns” argument not being quoted? I mean, yes, and <a href="https://r-datatable.com">data.table</a> does this as well, but the syntax and some of the APIs are not the same. That’s not what I am trying to convey here.</p>
+<p>You thought the reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> framework differ from other frameworks, e.g.&nbsp;Pandas, Polars, or <a href="https://r-datatable.com">data.table</a>, comes from accepting “columns” argument not being quoted? I mean, yes, and <a href="https://r-datatable.com">data.table</a> does this as well, although the syntax and APIs are not completely the same. That’s not what I am trying to convey here.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -107,7 +139,7 @@ font-style: inherit;">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 1
 <span></span>
 <span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Package-safe alternatives</span></span>
+font-style: inherit;"># `R CMD CHECK` friendly</span></span>
 <span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
@@ -168,7 +200,9 @@ font-style: inherit;">#&gt;&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 1
 background-color: null;
 font-style: inherit;">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 5.436047</span></span></code></pre></div></div>
 </div>
-<p>Why did I tell you this? Let’s say you’re planning to use this package as one of your package dependencies. Unfortunately, <code>R CMD CHECK</code> will throw an error if you are using bare column names, so instead use <code>.data$colname</code>.</p>
+<p>Why did I tell you this? Let’s say you’re planning to use this package as one of your package dependencies. Unfortunately, <code>R CMD CHECK</code> will fail and will complain if you are using bare column names, so instead use <code>.data$colname</code>.</p>
+<p>Another thing is the use of <code>{ name }</code> when used in a different context.</p>
+<p>Click this <a href="https://dplyr.tidyverse.org/articles/programming.html#indirection">link</a> for more details.</p>
 </section><section id="never-trust-straight-data-imports" class="level1" data-number="3"><h1 data-number="3">
 <span class="header-section-number">3</span> Never trust straight data imports</h1>
 <p>Do not just import data (not limited to CSVs), most especially when the data wasn’t collected in one pattern. For example, a CSV data that has “date” column(s), where it doesn’t follow the right format, e.g.&nbsp;<code>%Y-%m-%d</code>. This is probably the #1 source of silent bugs in production data pipelines, especially if overlooked.</p>
@@ -1969,77 +2003,12 @@ font-style: inherit;">AS</span> new_table</span></code></pre></div></div>
 </div>
 </div>
 <p>This beats manually checking date ranges with <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>. The join expresses intent directly.</p>
-</section></section><section id="statistical-pitfalls-dont-trust-p-values-blindly" class="level1" data-number="7"><h1 data-number="7">
-<span class="header-section-number">7</span> Statistical pitfalls — don’t trust p-values blindly</h1>
-<p>Let’s say, you have a task that examines the relationship between variables. Linear regression &lt;…&gt;</p>
-<p>With <code>{mtcars}</code> dataset, I wanna examine the relationship between <code>wt</code> and <code>mpg</code> using <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code></p>
+</section></section><section id="advanced-tidyverse-tricks-for-grouped-modeling" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Advanced tidyverse Tricks for Grouped Modeling</h1>
+<p>What’s so great about <a href="https://tidyverse.tidyverse.org">tidyverse</a> is while easy to use, there are a lot of things you can take advantage of, such as the code below — it’s far more flexible than you thought. In the example below, I take advantage of <code><a href="https://dplyr.tidyverse.org/reference/reframe.html">dplyr::reframe()</a></code> to generate a new data frame with a variable number of rows directly from grouped operations on the original data.</p>
+<p>In this case, we’re exploring the linear relationship between vehicle weight (<code>wt</code>) and fuel efficiency (<code>mpg</code>) in the classic <code>{mtcars}</code> dataset, stratified by the number of cylinders (<code>cyl</code>). The code below computes key summary statistics — including regression coefficients, Pearson correlation, R-squared, and adjusted R-squared—for each cylinder group.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">model</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">mpg</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">wt</span>, data <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">mtcars</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span></span>
-<span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">broom</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">model</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span></span></code></pre></div></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 5
-  term        estimate std.error statistic  p.value
-  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1 (Intercept)    37.3      1.88      19.9  8.24e-19
-2 wt             -5.34     0.559     -9.56 1.29e-10</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">broom</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">model</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">)</span></span></code></pre></div></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 12
-  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1     0.753         0.745  3.05      91.4 1.29e-10     1  -80.0  166.  170.
-# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
-</div>
-</div>
-<p>After running both linear regression and correlation test at the same time, it rejects the null hypothesis of the test, implying that there are strong linear relationship between <code>wt</code> and <code>mpg</code>. Keep in mind that directly using “Null Hypothesis Significant Testing” (NHST) is a direct flaw for reproducibility.</p>
-<p>Let us examine the linear relationship by running exact model as above</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -2064,6 +2033,17 @@ font-style: inherit;">)</span></span>
 <span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">mtcars</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">cyl</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">|&gt;</span> </span>
 <span>    <span class="fu" style="color: #4758AB;
@@ -2272,24 +2252,107 @@ background-color: null;
 font-style: inherit;">)</span></span>
 <span>        <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">}</span>,</span>
+font-style: inherit;">}</span></span>
 <span>        </span>
-<span>        .by <span class="op" style="color: #5E5E5E;
+<span>        <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">cyl</span></span>
+font-style: inherit;"># , .by = cyl</span></span>
 <span>    <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">)</span></span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  cyl (Intercept)        wt       corr       rsq   adj_rsq
-1   6    28.40884 -2.780106 -0.6815498 0.4645102 0.3574122
-2   4    39.57120 -5.647025 -0.7131848 0.5086326 0.4540362
-3   8    23.86803 -2.192438 -0.6503580 0.4229655 0.3748793</code></pre>
+<pre><code># A tibble: 3 × 6
+    cyl `(Intercept)`    wt   corr   rsq adj_rsq
+  &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1     4          39.6 -5.65 -0.713 0.509   0.454
+2     6          28.4 -2.78 -0.682 0.465   0.357
+3     8          23.9 -2.19 -0.650 0.423   0.375</code></pre>
 </div>
 </div>
-<p>Notice the problem? The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn’t because the relationship doesn’t exist – it’s because the sample size is too small to detect the effect reliably.</p>
+<p>The code cleverly uses <code><a href="https://dplyr.tidyverse.org/reference/reframe.html">dplyr::reframe()</a></code> with an anonymous block <code><a href="https://rdrr.io/r/base/Paren.html">{}</a></code>to run a complete mini-analysis per cylinder group in <code>mtcars</code> dataset. Inside the block, it loads just the needed functions via <code><a href="http://klmr.me/box/reference/use.html">box::use()</a></code>, fits a linear model of <code>mpg ~ wt</code> on the current group, extracts coefficients into a tidy one-row table, computes Pearson correlation, and grabs <img src="https://latex.codecogs.com/png.latex?R%5E2"> and adjusted <img src="https://latex.codecogs.com/png.latex?R%5E2"> from the model summary. Everything is then combined into a single row per group. This compact, namespace-safe pattern lets you perform fairly complex grouped modeling without cluttering the environment with temporary objects.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Beyond p-Values: Why Effect Size and Power Matter
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I chose this scenario to somehow demonstrate the flaw of NHST, at least part of this “careful” data science guide with <a href="https://tidyverse.tidyverse.org">tidyverse</a>. Here are some insights of the results above why I chose this scenario:</p>
+<ul>
+<li>
+<p>When investigating relationships between variables, it’s tempting to rely solely on p-values from null hypothesis significance testing (NHST). For instance, a simple linear regression on the full <code>mtcars</code> dataset shows a highly significant relationship between <code>wt</code> and <code>mpg</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mpg</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">wt</span>, data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mtcars</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">broom</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)    37.3      1.88      19.9  8.24e-19
+2 wt             -5.34     0.559     -9.56 1.29e-10</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">broom</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     0.753         0.745  3.05      91.4 1.29e-10     1  -80.0  166.  170.
+# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+</div>
+</li>
+<li><p>After running both linear regression and correlation test at the same time, you can say it rejects the null hypothesis of the test, implying that there are strong linear relationship between <code>wt</code> and <code>mpg</code>. Keep in mind that directly using “Null Hypothesis Significant Testing” (NHST) is a direct flaw for reproducibility. The low p-value (&lt; 0.001) and strong correlation suggest a clear negative linear association—higher weight predicts lower mileage.</p></li>
+<li>
+<p>However, stratifying by cylinder count reveals a more nuanced picture. The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn’t because the relationship doesn’t exist – it’s because the sample size is too small to detect the effect reliably.</p>
 <p>This demonstrates why:</p>
 <ul>
 <li>
@@ -2297,7 +2360,12 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 <li>
 <strong>Effect sizes differ</strong>: The slope varies substantially across groups (-2.19 to -5.65), suggesting the relationship isn’t uniform</li>
 </ul>
+</li>
+</ul>
 <p>That’s why when doing an analysis, it is better to run simulation before conducting the analysis and the sample size should be large enough.</p>
+</div>
+</div>
+</div>
 <!-- # When using parallel mapping from {purrr} package -->
 <!-- Keep in mind that the `mutate()` function accepts bare expressions, and this is true if the expression you made allows vectorization — true for all the rows. What if it is not vectorized for all the rows?  -->
 <!-- Well, operations in `dplyr::rowwise()` does this, but my solution is, although verbose, it is more explicit, logical, and maintainable. Since it allows bare expression, directly using `purrr::pmap_*()` variants with `dplyr::pick()` are also valid within `mutate()`.  -->

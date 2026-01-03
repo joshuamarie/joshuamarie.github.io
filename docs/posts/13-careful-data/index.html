@@ -7,7 +7,7 @@
 <meta name="author" content="Joshua Marie">
 <meta name="dcterms.date" content="2025-12-28">
 <meta name="description" content="Teaching you the things you can take advantage of, and things weren’t taught by some tutorials you (potentially) know">
-<title>A ‘careful’ and small intro guide to data science with ‘tidyverse’ – Joshua Marie</title>
+<title>A ‘careful’ and ‘small’ guide to data science with ‘tidyverse’ – Joshua Marie</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -103,7 +103,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script><link rel="stylesheet" href="../../styles/base.css">
+}</script><script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script><link rel="stylesheet" href="../../styles/base.css">
 <link rel="stylesheet" href="../../styles/layout.css">
 <link rel="stylesheet" href="../../styles/hero.css">
 <link rel="stylesheet" href="../../styles/cards.css">
@@ -111,7 +136,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles/dark-mode.css">
 <link rel="stylesheet" href="../Theme/code.css">
 <link rel="stylesheet" href="../Theme/table.css">
-<meta name="twitter:title" content="A ‘careful’ and small intro guide to data science with ‘tidyverse’ – Joshua Marie">
+<meta name="twitter:title" content="A ‘careful’ and ‘small’ guide to data science with ‘tidyverse’ – Joshua Marie">
 <meta name="twitter:description" content="Teaching you the things you can take advantage of, and things weren’t taught by some tutorials you (potentially) know">
 <meta name="twitter:card" content="summary">
 </head>
@@ -171,7 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </div> <!-- /container-fluid -->
     </nav></header><!-- content --><header id="title-block-header" class="quarto-title-block default page-columns page-full"><div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">A ‘careful’ and small intro guide to data science with ‘tidyverse’</h1>
+      <h1 class="title">A ‘careful’ and ‘small’ guide to data science with ‘tidyverse’</h1>
                   <div>
         <div class="description">
           Teaching you the things you can take advantage of, and things weren’t taught by some tutorials you (potentially) know
@@ -239,7 +264,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#range-joins-for-time-based-matching" id="toc-range-joins-for-time-based-matching" class="nav-link" data-scroll-target="#range-joins-for-time-based-matching"><span class="header-section-number">6.2</span> Range joins for time-based matching</a></li>
   </ul>
 </li>
-  <li><a href="#statistical-pitfalls-dont-trust-p-values-blindly" id="toc-statistical-pitfalls-dont-trust-p-values-blindly" class="nav-link" data-scroll-target="#statistical-pitfalls-dont-trust-p-values-blindly"><span class="header-section-number">7</span> Statistical pitfalls — don’t trust p-values blindly</a></li>
+  <li><a href="#advanced-tidyverse-tricks-for-grouped-modeling" id="toc-advanced-tidyverse-tricks-for-grouped-modeling" class="nav-link" data-scroll-target="#advanced-tidyverse-tricks-for-grouped-modeling"><span class="header-section-number">7</span> Advanced tidyverse Tricks for Grouped Modeling</a></li>
   <li><a href="#remarks-and-resources" id="toc-remarks-and-resources" class="nav-link" data-scroll-target="#remarks-and-resources"><span class="header-section-number">8</span> Remarks and Resources</a></li>
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/13-careful-data/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -253,7 +278,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="header-section-number">1</span> Why “careful”?</h1>
 <p>As you read in the title, why “careful”? Using <a href="https://tidyverse.tidyverse.org">tidyverse</a>, or any frameworks for data manipulation out there, is fine. Most introductory <a href="https://tidyverse.tidyverse.org">tidyverse</a> tutorials teach you how to write code with it. Very few teach you when the nice-looking code becomes dangerous or unnecessarily painful six months later.</p>
 <p>This short guide focuses on the second part — the things that experienced people wish they had known earlier.</p>
-<p>Before we start, here are the packages I’ll be using:</p>
+<p>Before we start, here are the packages I’ll be using in this post:</p>
 <ol type="1">
 <li>
 <p>Packages that are <a href="https://tidyverse.tidyverse.org">tidyverse</a>. This includes the following specifics:</p>
@@ -261,8 +286,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><a href="https://dplyr.tidyverse.org">dplyr</a></li>
 <li><a href="https://tidyr.tidyverse.org">tidyr</a></li>
 <li><a href="https://readr.tidyverse.org">readr</a></li>
-<li><a href="https://lubridate.tidyverse.org">lubridate</a></li>
-<li><a href="https://purrr.tidyverse.org/">purrr</a></li>
+<li>
+<a href="https://lubridate.tidyverse.org">lubridate</a> <!-- -   `{purrr}` -->
+</li>
 </ul>
 </li>
 <li>
@@ -277,7 +303,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>And they will be used much later on.</p>
 </section><section id="tidyverse-is-not-just-unquoted-column-names" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Tidyverse is not just unquoted column names</h1>
-<p>You thought the reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> framework differ from other frameworks, e.g.&nbsp;Pandas, Polars, or <a href="https://r-datatable.com">data.table</a>, comes from accepting “columns” argument not being quoted? I mean, yes, and <a href="https://r-datatable.com">data.table</a> does this as well, but the syntax and some of the APIs are not the same. That’s not what I am trying to convey here.</p>
+<p>You thought the reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> framework differ from other frameworks, e.g.&nbsp;Pandas, Polars, or <a href="https://r-datatable.com">data.table</a>, comes from accepting “columns” argument not being quoted? I mean, yes, and <a href="https://r-datatable.com">data.table</a> does this as well, although the syntax and APIs are not completely the same. That’s not what I am trying to convey here.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># This fails R CMD check in a package</span></span>
 <span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">mpg</span> <span class="op">/</span> <span class="va">wt</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
@@ -288,7 +314,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="co">#&gt;&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 6.656299</span></span>
 <span><span class="co">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 5.436047</span></span>
 <span></span>
-<span><span class="co"># Package-safe alternatives</span></span>
+<span><span class="co"># `R CMD CHECK` friendly</span></span>
 <span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">.data</span><span class="op">$</span><span class="va">mpg</span> <span class="op">/</span> <span class="va">.data</span><span class="op">$</span><span class="va">wt</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt;&gt;                    mpg cyl disp  hp drat    wt  qsec vs am gear carb      new</span></span>
 <span><span class="co">#&gt;&gt; Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 8.015267</span></span>
@@ -297,7 +323,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="co">#&gt;&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 6.656299</span></span>
 <span><span class="co">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 5.436047</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Why did I tell you this? Let’s say you’re planning to use this package as one of your package dependencies. Unfortunately, <code>R CMD CHECK</code> will throw an error if you are using bare column names, so instead use <code>.data$colname</code>.</p>
+<p>Why did I tell you this? Let’s say you’re planning to use this package as one of your package dependencies. Unfortunately, <code>R CMD CHECK</code> will fail and will complain if you are using bare column names, so instead use <code>.data$colname</code>.</p>
+<p>Another thing is the use of <code>{ name }</code> when used in a different context.</p>
+<p>Click this <a href="https://dplyr.tidyverse.org/articles/programming.html#indirection">link</a> for more details.</p>
 </section><section id="never-trust-straight-data-imports" class="level1" data-number="3"><h1 data-number="3">
 <span class="header-section-number">3</span> Never trust straight data imports</h1>
 <p>Do not just import data (not limited to CSVs), most especially when the data wasn’t collected in one pattern. For example, a CSV data that has “date” column(s), where it doesn’t follow the right format, e.g.&nbsp;<code>%Y-%m-%d</code>. This is probably the #1 source of silent bugs in production data pipelines, especially if overlooked.</p>
@@ -728,35 +756,15 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 </div>
 </div>
 <p>This beats manually checking date ranges with <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>. The join expresses intent directly.</p>
-</section></section><section id="statistical-pitfalls-dont-trust-p-values-blindly" class="level1" data-number="7"><h1 data-number="7">
-<span class="header-section-number">7</span> Statistical pitfalls — don’t trust p-values blindly</h1>
-<p>Let’s say, you have a task that examines the relationship between variables. Linear regression &lt;…&gt;</p>
-<p>With <code>{mtcars}</code> dataset, I wanna examine the relationship between <code>wt</code> and <code>mpg</code> using <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code></p>
+</section></section><section id="advanced-tidyverse-tricks-for-grouped-modeling" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Advanced tidyverse Tricks for Grouped Modeling</h1>
+<p>What’s so great about <a href="https://tidyverse.tidyverse.org">tidyverse</a> is while easy to use, there are a lot of things you can take advantage of, such as the code below — it’s far more flexible than you thought. In the example below, I take advantage of <code><a href="https://dplyr.tidyverse.org/reference/reframe.html">dplyr::reframe()</a></code> to generate a new data frame with a variable number of rows directly from grouped operations on the original data.</p>
+<p>In this case, we’re exploring the linear relationship between vehicle weight (<code>wt</code>) and fuel efficiency (<code>mpg</code>) in the classic <code>{mtcars}</code> dataset, stratified by the number of cylinders (<code>cyl</code>). The code below computes key summary statistics — including regression coefficients, Pearson correlation, R-squared, and adjusted R-squared—for each cylinder group.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 5
-  term        estimate std.error statistic  p.value
-  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1 (Intercept)    37.3      1.88      19.9  8.24e-19
-2 wt             -5.34     0.559     -9.56 1.29e-10</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 12
-  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1     0.753         0.745  3.05      91.4 1.29e-10     1  -80.0  166.  170.
-# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
-</div>
-</div>
-<p>After running both linear regression and correlation test at the same time, it rejects the null hypothesis of the test, implying that there are strong linear relationship between <code>wt</code> and <code>mpg</code>. Keep in mind that directly using “Null Hypothesis Significant Testing” (NHST) is a direct flaw for reproducibility.</p>
-<p>Let us examine the linear relationship by running exact model as above</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">group_by</span>, <span class="va">reframe</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">group_by</span>, <span class="va">reframe</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mtcars</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">group_by</span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu">reframe</span><span class="op">(</span></span>
 <span>        <span class="op">{</span>         </span>
 <span>            <span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
@@ -781,18 +789,59 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <span>                rsq <span class="op">=</span> <span class="va">test</span><span class="op">$</span><span class="va">r.squared</span>,</span>
 <span>                adj_rsq <span class="op">=</span> <span class="va">test</span><span class="op">$</span><span class="va">adj.r.squared</span></span>
 <span>            <span class="op">)</span></span>
-<span>        <span class="op">}</span>,</span>
+<span>        <span class="op">}</span></span>
 <span>        </span>
-<span>        .by <span class="op">=</span> <span class="va">cyl</span></span>
+<span>        <span class="co"># , .by = cyl</span></span>
 <span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  cyl (Intercept)        wt       corr       rsq   adj_rsq
-1   6    28.40884 -2.780106 -0.6815498 0.4645102 0.3574122
-2   4    39.57120 -5.647025 -0.7131848 0.5086326 0.4540362
-3   8    23.86803 -2.192438 -0.6503580 0.4229655 0.3748793</code></pre>
+<pre><code># A tibble: 3 × 6
+    cyl `(Intercept)`    wt   corr   rsq adj_rsq
+  &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1     4          39.6 -5.65 -0.713 0.509   0.454
+2     6          28.4 -2.78 -0.682 0.465   0.357
+3     8          23.9 -2.19 -0.650 0.423   0.375</code></pre>
 </div>
 </div>
-<p>Notice the problem? The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn’t because the relationship doesn’t exist – it’s because the sample size is too small to detect the effect reliably.</p>
+<p>The code cleverly uses <code><a href="https://dplyr.tidyverse.org/reference/reframe.html">dplyr::reframe()</a></code> with an anonymous block <code><a href="https://rdrr.io/r/base/Paren.html">{}</a></code>to run a complete mini-analysis per cylinder group in <code>mtcars</code> dataset. Inside the block, it loads just the needed functions via <code><a href="http://klmr.me/box/reference/use.html">box::use()</a></code>, fits a linear model of <code>mpg ~ wt</code> on the current group, extracts coefficients into a tidy one-row table, computes Pearson correlation, and grabs <span class="math inline">\(R^2\)</span> and adjusted <span class="math inline">\(R^2\)</span> from the model summary. Everything is then combined into a single row per group. This compact, namespace-safe pattern lets you perform fairly complex grouped modeling without cluttering the environment with temporary objects.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Beyond p-Values: Why Effect Size and Power Matter
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I chose this scenario to somehow demonstrate the flaw of NHST, at least part of this “careful” data science guide with <a href="https://tidyverse.tidyverse.org">tidyverse</a>. Here are some insights of the results above why I chose this scenario:</p>
+<ul>
+<li>
+<p>When investigating relationships between variables, it’s tempting to rely solely on p-values from null hypothesis significance testing (NHST). For instance, a simple linear regression on the full <code>mtcars</code> dataset shows a highly significant relationship between <code>wt</code> and <code>mpg</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)    37.3      1.88      19.9  8.24e-19
+2 wt             -5.34     0.559     -9.56 1.29e-10</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     0.753         0.745  3.05      91.4 1.29e-10     1  -80.0  166.  170.
+# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+</div>
+</li>
+<li><p>After running both linear regression and correlation test at the same time, you can say it rejects the null hypothesis of the test, implying that there are strong linear relationship between <code>wt</code> and <code>mpg</code>. Keep in mind that directly using “Null Hypothesis Significant Testing” (NHST) is a direct flaw for reproducibility. The low p-value (&lt; 0.001) and strong correlation suggest a clear negative linear association—higher weight predicts lower mileage.</p></li>
+<li>
+<p>However, stratifying by cylinder count reveals a more nuanced picture. The 6-cylinder group with only 7 observations fails to reject the null hypothesis (p = 0.092), despite having a similar effect size to the other groups. This isn’t because the relationship doesn’t exist – it’s because the sample size is too small to detect the effect reliably.</p>
 <p>This demonstrates why:</p>
 <ul>
 <li>
@@ -800,7 +849,12 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <li>
 <strong>Effect sizes differ</strong>: The slope varies substantially across groups (-2.19 to -5.65), suggesting the relationship isn’t uniform</li>
 </ul>
+</li>
+</ul>
 <p>That’s why when doing an analysis, it is better to run simulation before conducting the analysis and the sample size should be large enough.</p>
+</div>
+</div>
+</div>
 <!-- # When using parallel mapping from {purrr} package -->
 <!-- Keep in mind that the `mutate()` function accepts bare expressions, and this is true if the expression you made allows vectorization — true for all the rows. What if it is not vectorized for all the rows?  -->
 <!-- Well, operations in `dplyr::rowwise()` does this, but my solution is, although verbose, it is more explicit, logical, and maintainable. Since it allows bare expression, directly using `purrr::pmap_*()` variants with `dplyr::pick()` are also valid within `mutate()`.  -->

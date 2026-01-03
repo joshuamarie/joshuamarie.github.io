@@ -2,6 +2,7 @@
   {
     "listing": "/posts/index.html",
     "items": [
+      "/posts/14-aes-ggplot2/index.html",
       "/posts/13-careful-data/index.html",
       "/posts/12-reusable-r-code/index.html",
       "/posts/11-composing-r-function/index.html",
@@ -20,6 +21,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/14-aes-ggplot2/index.html",
       "/posts/13-careful-data/index.html",
       "/posts/12-reusable-r-code/index.html",
       "/posts/11-composing-r-function/index.html",

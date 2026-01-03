@@ -51,16 +51,17 @@ Before we start, here are the packages I'll be using in this post:
 1.  Packages that are `{tidyverse}`. This includes the following specifics:
 
     -   `{dplyr}`
-    <!-- -   `{tidyr}` -->
+    -   `{tidyr}`
     -   `{readr}`
     -   `{lubridate}`
-    <!-- -   `{purrr}` -->
+    -   `{purrr}`
 
 2.  Packages that are not `{tidyverse}`. This includes the following specifics:
 
     -   `{box}`
     -   `{numberize}`
     -   `{broom}`
+    -   `{e1071}`
 
 And they will be used much later on. 
 
@@ -80,17 +81,47 @@ mtcars |> dplyr::mutate(new = .data$mpg / .data$wt) |> head(5)
 
 Why did I tell you this? Let's say you're planning to use this package as one of your package dependencies. Unfortunately, `R CMD CHECK` will fail and will complain if you are using bare column names, so instead use `.data$colname`. 
 
-Another thing is the use of `{{ name }}` when used in a different context. 
+Another method is the use of `{{ name }}` when used in a different context. The most optimal application is when you’re writing functions that takes column names as arguments.
+
+```{r}
+my_summarise1 = function(data, col) {
+    data |> 
+        dplyr::summarise(mean_col := mean({{ col }}, na.rm = TRUE))
+}
+
+iris |> my_summarise1(Sepal.Length)
+```
+
+Here's more complex as it uses `!!` (pronounced as "bang-bang") operator: 
+
+```{r}
+my_summarise2 = function(data, col) {
+    box::use(
+        dplyr[summarise],
+        glue[glue],
+        rlang[ensym, as_string]
+    )
+    
+    capt_col = ensym(col)
+    name_col = glue("mean_{as_string(capt_col)}")
+    
+    data |> 
+        summarise(!!name_col := mean({{ col }}, na.rm = TRUE))
+}
+
+iris |> my_summarise2(Sepal.Length)
+```
 
 Click this [link](https://dplyr.tidyverse.org/articles/programming.html#indirection) for more details. 
 
-# Never trust straight data imports
+# Don't just straight data imports
 
-Do not just import data (not limited to CSVs), most especially when the data wasn't collected in one pattern. For example, a CSV data that has "date" column(s), where it doesn't follow the right format, e.g. `%Y-%m-%d`. This is probably the #1 source of silent bugs in production data pipelines, especially if overlooked.
+Do not just import data (not limited to CSVs), most especially when the data wasn't collected in one pattern. For example, a CSV data that has "date" column(s), where it doesn't follow the right format, e.g. `%Y-%m-%d` (translated as "2005-01-29" for example). This is probably the #1 source of silent bugs in production data pipelines, especially if overlooked.
 
 But first, let me tell you something: 
 
 ::: callout-note
+
 ## When CSV file contains messy format in general
 
 -   If the data contains messy format in general, set all the columns into string type first
@@ -256,7 +287,7 @@ You see how easy is this? The fact that `dplyr::mutate()` accepts bare expressio
 
 # Use across() + <tidy-select> for safe type / role-based transformations
 
-One of `{tidyverse}`'s most underrated features is `across()` combined with `<tidy-select>` helpers, commonly used in "data masking" functions. This lets you apply transformations to multiple columns based on their type or name pattern, making your code both DRY and maintainable.
+You see how I clean the data above, right? I use one of `{tidyverse}`'s most underrated features: `across()` combined with `<tidy-select>` helpers, commonly used in "data masking" functions, where the operation is applied _across_ multiple columns. This lets you apply transformations to multiple columns based on their type or name pattern, making your code both DRY and maintainable.
 
 ## Clean all text columns at once
 
@@ -330,6 +361,54 @@ measurements |>
 ```
 
 This pattern scales: add new numeric columns and they're automatically rounded. No need to update the rounding code.
+
+## Multiple functions and their "names"
+
+The `.fns` parameter from `dplyr::across()` function allows multiple functions, stored in a list, and name them (I strongly recommend naming them). They could be a known function, a lambda / anonymous function (written through `function()` keyword or its short-hand `\()`), a purrr-style lambda function, or a mix of them — as long as they are "function" objects, nothing else.  
+
+My most used scenario is when you want to calculate the descriptive statistics for all numeric columns: 
+
+```{r}
+box::use(
+    tidyselect[where, matches], 
+    dplyr[summarise, across],
+    tidyr[long = pivot_longer, wide = pivot_wider],
+    purrr[compose, partial], 
+    stats[sd, quantile],
+    e1071[skewness, kurtosis]
+)
+
+iris |> 
+    summarise(
+        across(
+            where(is.numeric), 
+            list(
+                n_missing = compose(sum, is.na), # Since compose() returns a function
+                mean = ~ mean(., na.rm = TRUE), 
+                sd = \(col) sd(col, na.rm = TRUE), 
+                min = min, 
+                q1 = ~ quantile(., prob = 0.25, na.rm = TRUE), 
+                md = \(col) median(col, na.rm = TRUE), 
+                q3 = ~ quantile(., prob = 0.75, na.rm = TRUE), 
+                max = \(col) max(col, na.rm = TRUE),
+                skew = skewness,
+                kurt = partial(kurtosis, na.rm = TRUE) # Since partial() returns a function
+            ), 
+            
+            .names = "{.col}..{.fn}"
+        )
+    ) |> 
+    long(
+        cols = matches("\\.\\."), 
+        names_pattern = "(.+)\\.\\.(.+)",  
+        names_to = c("variable", "statistic"),
+        values_to = "est"
+    ) |> 
+    wide(
+        names_from = statistic,
+        values_from = est
+    ) 
+```
 
 # Joins flavor in dplyr
 

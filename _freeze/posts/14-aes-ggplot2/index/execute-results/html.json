@@ -1,0 +1,15 @@
+{
+  "hash": "080e0c162494d18f89e2b8a18959e57d",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Interesting thoughts about aesthetics `aes()` in ggplot2\"\n# subtitle: \"\"\ndate: \"2026-01-03\"\ncategories: [R, ggplot2, visualization, tidyverse]\n# description: \"Teaching you the things you can take advantage of, and things weren't taught by some tutorials you (potentially) know\"\nformat:\n    html:\n        toc: true\n        toc-float: true\n        toc-depth: 3\n        number-sections: true\n        code-fold: false\n        code-tools: false\n        theme: default\n        fig-width: 10\n        fig-height: 6\n        fig-cap-location: bottom\n        code-annotations: hover\nexecute:\n    echo: true\n    warning: false\n    message: false\nfilters:\n    - social-share\n    - collapse-output\nshare:\n    permalink: \"https://joshuamarie.com/posts/14-aes-ggplot2\"\n    description: \"Aesthetics in ggplot2 — Joshua Marie\"\n    twitter: true\n    facebook: true\n    reddit: true\n    stumble: true\n    tumblr: true\n    linkedin: true\n    email: true\n    mastodon: true\n    bsky: true\n    location: \"before-body\"\nengine: knitr\n---\n\n_This post is under construction_\n\n# What do I like about\n\nWhat do I like about aesthetics in `{ggplot2}`? \n\nExplaining how `aes()` was implemented is gonna take a lot, and I'll briefly explain about it. \n\n# My argument regarding ggplot2 implementation\n\nI have argued this somebody that uses Python for data viz, saying \"there's `{plotnine}` in Python and you have all the features in `{ggplot2}` and you can't look back\". I argued that it's just a pale imitation: you can't really fully replicate this package, it'll take a lot to FULLY replicate it, and it's TOO complicated for Python to replicate. \n\n<!-- # ```{r} -->\n<!-- #  -->\n<!-- # ``` -->\n\nThe thing is, R in general is functional; the arguments are _lazily evaluated_ by default and way similar to Lisp macros, where the AST can be transformed / modify during compile-time — you can pretty much . \n\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

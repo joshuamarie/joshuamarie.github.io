@@ -1,0 +1,61 @@
+---
+title: "Interesting thoughts about aesthetics `aes()` in ggplot2"
+# subtitle: ""
+date: "2026-01-03"
+categories: [R, ggplot2, visualization, tidyverse]
+# description: "Teaching you the things you can take advantage of, and things weren't taught by some tutorials you (potentially) know"
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+        code-annotations: hover
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/14-aes-ggplot2"
+    description: "Aesthetics in ggplot2 — Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+_This post is under construction_
+
+# What do I like about
+
+What do I like about aesthetics in `{ggplot2}`? 
+
+Explaining how `aes()` was implemented is gonna take a lot, and I'll briefly explain about it. 
+
+# My argument regarding ggplot2 implementation
+
+I have argued this somebody that uses Python for data viz, saying "there's `{plotnine}` in Python and you have all the features in `{ggplot2}` and you can't look back". I argued that it's just a pale imitation: you can't really fully replicate this package, it'll take a lot to FULLY replicate it, and it's TOO complicated for Python to replicate. 
+
+<!-- # ```{r} -->
+<!-- #  -->
+<!-- # ``` -->
+
+The thing is, R in general is functional; the arguments are _lazily evaluated_ by default and way similar to Lisp macros, where the AST can be transformed / modify during compile-time — you can pretty much . 
+
+

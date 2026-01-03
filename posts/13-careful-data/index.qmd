@@ -51,10 +51,10 @@ Before we start, here are the packages I'll be using in this post:
 1.  Packages that are `{tidyverse}`. This includes the following specifics:
 
     -   `{dplyr}`
-    -   `{tidyr}`
+    <!-- -   `{tidyr}` -->
     -   `{readr}`
     -   `{lubridate}`
-<!-- -   `{purrr}` -->
+    <!-- -   `{purrr}` -->
 
 2.  Packages that are not `{tidyverse}`. This includes the following specifics:
 
@@ -501,7 +501,7 @@ That's why when doing an analysis, it is better to run simulation before conduct
 
 <!-- Well, operations in `dplyr::rowwise()` does this, but my solution is, although verbose, it is more explicit, logical, and maintainable. Since it allows bare expression, directly using `purrr::pmap_*()` variants with `dplyr::pick()` are also valid within `mutate()`.  -->
 
-# Remarks and Resources
+# Closing Remarks and Resources
 
 Those are all my "simple annotation" on your fussy data work, potentially (hoping) will help in your future jobs. 
 

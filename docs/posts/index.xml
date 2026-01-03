@@ -60,8 +60,9 @@
 <li>
 <p>Packages that are <a href="https://tidyverse.tidyverse.org">tidyverse</a>. This includes the following specifics:</p>
 <ul>
-<li><a href="https://dplyr.tidyverse.org">dplyr</a></li>
-<li><a href="https://tidyr.tidyverse.org">tidyr</a></li>
+<li>
+<a href="https://dplyr.tidyverse.org">dplyr</a> <!-- -   `{tidyr}` -->
+</li>
 <li><a href="https://readr.tidyverse.org">readr</a></li>
 <li>
 <a href="https://lubridate.tidyverse.org">lubridate</a> <!-- -   `{purrr}` -->
@@ -2369,8 +2370,8 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 <!-- # When using parallel mapping from {purrr} package -->
 <!-- Keep in mind that the `mutate()` function accepts bare expressions, and this is true if the expression you made allows vectorization — true for all the rows. What if it is not vectorized for all the rows?  -->
 <!-- Well, operations in `dplyr::rowwise()` does this, but my solution is, although verbose, it is more explicit, logical, and maintainable. Since it allows bare expression, directly using `purrr::pmap_*()` variants with `dplyr::pick()` are also valid within `mutate()`.  -->
-</section><section id="remarks-and-resources" class="level1" data-number="8"><h1 data-number="8">
-<span class="header-section-number">8</span> Remarks and Resources</h1>
+</section><section id="closing-remarks-and-resources" class="level1" data-number="8"><h1 data-number="8">
+<span class="header-section-number">8</span> Closing Remarks and Resources</h1>
 <p>Those are all my “simple annotation” on your fussy data work, potentially (hoping) will help in your future jobs.</p>
 <ul>
 <li><a href="https://r4ds.hadley.nz/">R for Data Science</a></li>

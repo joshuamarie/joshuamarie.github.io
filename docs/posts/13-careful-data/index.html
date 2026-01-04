@@ -325,9 +325,38 @@ window.Quarto = {
 <span><span class="co">#&gt;&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 5.436047</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Why did I tell you this? Let’s say you’re planning to use this package as one of your package dependencies. Unfortunately, <code>R CMD CHECK</code> will fail and will complain if you are using bare column names, so instead use <code>.data$colname</code>.</p>
+<p>Update: Thanks to <a href="https://www.reddit.com/user/Sufficient_Meet6836/">u/Sufficient_Meet6836</a> from this <a href="https://www.reddit.com/r/rstats/comments/1q2vagq/comment/nxkp6ov/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">thread</a> for pointing it out, and Hadley Wickham respectfully recommends <code>.data[[colname]]</code>, rather than <code>.data$colname</code>.</p>
+<p>Here’s why:</p>
+<ol type="1">
+<li>
+<p><code>.data$colname</code> will throws an error once used in a closure:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_col</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">var1</span>, <span class="va">var2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">data</span> <span class="op">|&gt;</span> </span>
+<span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">.data</span><span class="op">$</span><span class="va">var1</span> <span class="op">/</span> <span class="va">.data</span><span class="op">$</span><span class="va">var2</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu">new_col</span><span class="op">(</span><span class="va">mpg</span>, <span class="va">wt</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</li>
+<li>
+<p><code>.data[[colname]]</code> with <code>ensym()</code> is less painful and accepts both bare columns and stringed columns:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_col</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">var1</span>, <span class="va">var2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">rlang</span><span class="op">[</span><span class="va">ensym</span>, <span class="va">as_string</span><span class="op">]</span>, <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="va">var1</span> <span class="op">=</span> <span class="fu">as_string</span><span class="op">(</span><span class="fu">ensym</span><span class="op">(</span><span class="va">var1</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">var2</span> <span class="op">=</span> <span class="fu">as_string</span><span class="op">(</span><span class="fu">ensym</span><span class="op">(</span><span class="va">var2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">data</span> <span class="op">|&gt;</span> </span>
+<span>        <span class="fu">mutate</span><span class="op">(</span>new <span class="op">=</span> <span class="va">.data</span><span class="op">[[</span><span class="va">var1</span><span class="op">]</span><span class="op">]</span> <span class="op">/</span> <span class="va">.data</span><span class="op">[[</span><span class="va">var2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu">new_col</span><span class="op">(</span><span class="va">mpg</span>, <span class="va">wt</span><span class="op">)</span></span>
+<span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu">new_col</span><span class="op">(</span><span class="st">'mpg'</span>, <span class="st">'wt'</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</li>
+</ol>
 <p>Another method is the use of <code>{ name }</code> when used in a different context. The most optimal application is when you’re writing functions that takes column names as arguments.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_summarise1</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">col</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_summarise1</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">col</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">data</span> <span class="op">|&gt;</span> </span>
 <span>        <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span><span class="va">mean_col</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">{</span><span class="op">{</span> <span class="va">col</span> <span class="op">}</span><span class="op">}</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -340,7 +369,7 @@ window.Quarto = {
 </div>
 <p>Here’s more complex as it uses <code>!!</code> (pronounced as “bang-bang”) operator:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_summarise2</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">col</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_summarise2</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">col</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>        <span class="va">dplyr</span><span class="op">[</span><span class="va">summarise</span><span class="op">]</span>,</span>
 <span>        <span class="va">glue</span><span class="op">[</span><span class="va">glue</span><span class="op">]</span>,</span>
@@ -379,7 +408,7 @@ window.Quarto = {
 <li>If the data contains messy format in general, set all the columns into string type first</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">readr</span><span class="op">[</span><span class="va">read_csv</span>, <span class="va">cols</span>, <span class="va">col_character</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">readr</span><span class="op">[</span><span class="va">read_csv</span>, <span class="va">cols</span>, <span class="va">col_character</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Dangerous (very common in real life)</span></span>
 <span><span class="fu">read_csv</span><span class="op">(</span><span class="st">"data.csv"</span><span class="op">)</span></span>
@@ -388,8 +417,7 @@ window.Quarto = {
 <span><span class="fu">read_csv</span><span class="op">(</span></span>
 <span>    <span class="st">"data.csv"</span>,</span>
 <span>    col_types <span class="op">=</span> <span class="fu">cols</span><span class="op">(</span></span>
-<span>        <span class="co"># force everything as text first</span></span>
-<span>        .default <span class="op">=</span> <span class="fu">col_character</span><span class="op">(</span><span class="op">)</span>,           </span>
+<span>        .default <span class="op">=</span> <span class="fu">col_character</span><span class="op">(</span><span class="op">)</span>, <span class="co"># This force everything as text first </span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -406,7 +434,7 @@ window.Quarto = {
 <span class="header-section-number">3.1</span> Synthetic example: Dealing with dates</h2>
 <p>Here, imagine you have this kind of data in a certain CSV, where it contains filedate/datetime columns that come:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sample_csv</span> <span class="op">=</span> <span class="st">"</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sample_csv</span> <span class="op">=</span> <span class="st">"</span></span>
 <span><span class="st">date, readings, x, y, z\n</span></span>
 <span><span class="st">\"Mar.23,2005\",0.02,3.3,1.1,5.7\n</span></span>
 <span><span class="st">\"Feb.26,2005\",0.15,4.5,5.0,1.9\n</span></span>
@@ -416,7 +444,7 @@ window.Quarto = {
 </div>
 <p>If you directly import this CSV data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">sample_csv</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">sample_csv</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 5
   date        readings     x     y     z
@@ -431,7 +459,7 @@ window.Quarto = {
 <p>The <a href="https://readr.tidyverse.org">readr</a> package provides an API that can explicitly judge the column type.</p>
 <p>Here’s how you do it:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="va">readr</span><span class="op">[</span><span class="va">read_csv</span>, <span class="va">cols</span>, <span class="va">col_date</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -455,7 +483,7 @@ window.Quarto = {
 <span class="header-section-number">3.2</span> Synthetic example: Multiple messy date formats in one column</h2>
 <p>But, what if the <code>'date'</code> column doesn’t follow 1 pattern?</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="va">readr</span><span class="op">[</span><span class="va">read_csv</span>, <span class="va">cols</span>, <span class="va">col_character</span><span class="op">]</span>,</span>
 <span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span><span class="op">]</span>, </span>
 <span>    <span class="va">lubridate</span><span class="op">[</span><span class="va">parse_date_time</span>, <span class="va">as_date</span><span class="op">]</span></span>
@@ -506,13 +534,13 @@ window.Quarto = {
 <p>Now you know how easy it get when importing the data with messed up pattern structure. Use <a href="https://tidyverse.tidyverse.org">tidyverse</a> for data cleaning for f sake, trust me. Seriously, if you can do data cleaning from other tools, e.g.&nbsp;Excel or Python-Pandas (I know some companies you are working with will choose them), <a href="https://tidyverse.tidyverse.org">tidyverse</a> makes things much easier, conventional, readable, and maintainable (arguable). Some practitioners actually use <a href="https://tidyverse.tidyverse.org">tidyverse</a> for modeling and resort to base R loops or hacky solutions for cleaning. Don’t be that person.</p>
 <p>Let us demonstrate with the <a href="https://raw.githubusercontent.com/eyowhite/Messy-dataset/main/messy_HR_data.csv%22">Messy HR Data</a> dataset from this <a href="https://github.com/eyowhite/Messy-dataset">repository</a>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hr_data</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hr_data</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span></span>
 <span>    <span class="st">"https://raw.githubusercontent.com/eyowhite/Messy-dataset/main/messy_HR_data.csv"</span></span>
 <span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>If you glimpse this data:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hr_data</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hr_data</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 1,000
 Columns: 10
@@ -531,7 +559,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <p>You see how bad it is, even if you said it’s not “dirty enough” or similar. The reason why <a href="https://tidyverse.tidyverse.org">tidyverse</a> makes things “conventional” because in R, missing values has its own unique representation value, denoted by <code>NA</code>, not through <code>null</code>, <code>NULL</code>, or <code>NaN</code> / <code>nan</code>.</p>
 <p>The data cleaning in R with <a href="https://tidyverse.tidyverse.org">tidyverse</a> is much easier than you thought</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">everything</span>, <span class="va">if_else</span>, <span class="va">case_when</span><span class="op">]</span>,</span>
 <span>    <span class="va">stringr</span><span class="op">[</span>detect <span class="op">=</span> <span class="va">str_detect</span>, capitalize <span class="op">=</span> <span class="va">str_to_sentence</span><span class="op">]</span>,</span>
 <span>    <span class="va">lubridate</span><span class="op">[</span><span class="va">parse_date_time</span>, <span class="va">as_date</span><span class="op">]</span></span>
@@ -582,7 +610,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <section id="clean-all-text-columns-at-once" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="clean-all-text-columns-at-once">
 <span class="header-section-number">5.1</span> Clean all text columns at once</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">where</span><span class="op">]</span>,</span>
 <span>    <span class="va">stringr</span><span class="op">[</span><span class="va">str_trim</span>, <span class="va">str_to_upper</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
@@ -612,7 +640,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 </section><section id="scale-financial-columns" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="scale-financial-columns">
 <span class="header-section-number">5.2</span> Scale financial columns</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">starts_with</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">starts_with</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">financials</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
 <span>    company <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"TechCo"</span>, <span class="st">"RetailCorp"</span><span class="op">)</span>,</span>
@@ -642,7 +670,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 </section><section id="conditional-rounding" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="conditional-rounding">
 <span class="header-section-number">5.3</span> Conditional rounding</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">where</span>, <span class="va">any_of</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">across</span>, <span class="va">where</span>, <span class="va">any_of</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">measurements</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
 <span>    sample_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
@@ -675,7 +703,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <p>The <code>.fns</code> parameter from <code><a href="https://dplyr.tidyverse.org/reference/across.html">dplyr::across()</a></code> function allows multiple functions, stored in a list, and name them (I strongly recommend naming them). They could be a known function, a lambda / anonymous function (written through <code>function()</code> keyword or its short-hand <code>\()</code>), a purrr-style lambda function, or a mix of them — as long as they are “function” objects, nothing else.</p>
 <p>My most used scenario is when you want to calculate the descriptive statistics for all numeric columns:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="va">tidyselect</span><span class="op">[</span><span class="va">where</span>, <span class="va">matches</span><span class="op">]</span>, </span>
 <span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">summarise</span>, <span class="va">across</span><span class="op">]</span>,</span>
 <span>    <span class="va">tidyr</span><span class="op">[</span>long <span class="op">=</span> <span class="va">pivot_longer</span>, wide <span class="op">=</span> <span class="va">pivot_wider</span><span class="op">]</span>,</span>
@@ -731,7 +759,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <span class="header-section-number">6.1</span> Inequality joins for binning</h2>
 <p>Assign customer segments based on purchase totals:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">left_join</span>, <span class="va">join_by</span>, <span class="va">group_by</span>, <span class="va">slice_max</span>, <span class="va">ungroup</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">left_join</span>, <span class="va">join_by</span>, <span class="va">group_by</span>, <span class="va">slice_max</span>, <span class="va">ungroup</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">purchases</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
 <span>    customer_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span>,</span>
@@ -767,7 +795,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <span class="header-section-number">6.2</span> Range joins for time-based matching</h2>
 <p>Match transactions to active promotions:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
 <span>    <span class="va">dplyr</span><span class="op">[</span>tbl <span class="op">=</span> <span class="va">tibble</span>, <span class="va">inner_join</span>, <span class="va">join_by</span>, <span class="va">between</span>, <span class="va">transmute</span><span class="op">]</span>,</span>
 <span>    <span class="va">lubridate</span><span class="op">[</span><span class="va">as_date</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
@@ -825,22 +853,22 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Here’s the equivalent SQL code:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    tx_id,</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    tx_date,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    promo,</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    amount,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    discount,</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    amount <span class="op">*</span> discount <span class="kw">AS</span> savings</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> t.<span class="op">*</span>, p.<span class="op">*</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> transactions <span class="kw">AS</span> t</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">INNER</span> <span class="kw">JOIN</span> promos <span class="kw">AS</span> p</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> (</span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>            t.tx_date <span class="op">&gt;=</span> p.<span class="kw">start</span> <span class="kw">AND</span></span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>            t.tx_date <span class="op">&lt;=</span> p.<span class="cf">end</span></span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>) <span class="kw">AS</span> new_table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    tx_id,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    tx_date,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    promo,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    amount,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    discount,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    amount <span class="op">*</span> discount <span class="kw">AS</span> savings</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> t.<span class="op">*</span>, p.<span class="op">*</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> transactions <span class="kw">AS</span> t</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">INNER</span> <span class="kw">JOIN</span> promos <span class="kw">AS</span> p</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> (</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>            t.tx_date <span class="op">&gt;=</span> p.<span class="kw">start</span> <span class="kw">AND</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>            t.tx_date <span class="op">&lt;=</span> p.<span class="cf">end</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>) <span class="kw">AS</span> new_table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -850,7 +878,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <p>What’s so great about <a href="https://tidyverse.tidyverse.org">tidyverse</a> is while easy to use, there are a lot of things you can take advantage of, such as the code below — it’s far more flexible than you thought. In the example below, I take advantage of <code><a href="https://dplyr.tidyverse.org/reference/reframe.html">dplyr::reframe()</a></code> to generate a new data frame with a variable number of rows directly from grouped operations on the original data.</p>
 <p>In this case, we’re exploring the linear relationship between vehicle weight (<code>wt</code>) and fuel efficiency (<code>mpg</code>) in the classic <code>{mtcars}</code> dataset, stratified by the number of cylinders (<code>cyl</code>). The code below computes key summary statistics — including regression coefficients, Pearson correlation, R-squared, and adjusted R-squared—for each cylinder group.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">group_by</span>, <span class="va">reframe</span><span class="op">]</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">group_by</span>, <span class="va">reframe</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mtcars</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu">group_by</span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -909,7 +937,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 <li>
 <p>When investigating relationships between variables, it’s tempting to rely solely on p-values from null hypothesis significance testing (NHST). For instance, a simple linear regression on the full <code>mtcars</code> dataset shows a highly significant relationship between <code>wt</code> and <code>mpg</code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
 <span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 5
@@ -918,7 +946,7 @@ $ `Phone Number`      &lt;chr&gt; "nan", "123-456-7890", "098-765-4321", NA, "09
 1 (Intercept)    37.3      1.88      19.9  8.24e-19
 2 wt             -5.34     0.559     -9.56 1.29e-10</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 12
   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC

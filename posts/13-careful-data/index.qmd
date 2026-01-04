@@ -77,9 +77,43 @@ mtcars |> dplyr::mutate(new = mpg / wt) |> head(5)
 
 # `R CMD CHECK` friendly
 mtcars |> dplyr::mutate(new = .data$mpg / .data$wt) |> head(5)
+
 ```
 
 Why did I tell you this? Let's say you're planning to use this package as one of your package dependencies. Unfortunately, `R CMD CHECK` will fail and will complain if you are using bare column names, so instead use `.data$colname`. 
+
+Update: Thanks to [u/Sufficient_Meet6836](https://www.reddit.com/user/Sufficient_Meet6836/) from this [thread](https://www.reddit.com/r/rstats/comments/1q2vagq/comment/nxkp6ov/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button) for pointing it out, and Hadley Wickham respectfully recommends `.data[[colname]]`, rather than `.data$colname`.
+
+Here's why:
+
+1.  `.data$colname` will throws an error once used in a closure:  
+
+    ``` r
+    new_col = function(data, var1, var2) {
+        data |> 
+            dplyr::mutate(new = .data$var1 / .data$var2) |> 
+            head(5)
+    }
+    
+    mtcars |> new_col(mpg, wt)
+    ```
+
+2.  `.data[[colname]]` with `ensym()` is less painful and accepts both bare columns and stringed columns: 
+
+    ``` r
+    new_col = function(data, var1, var2) {
+        box::use(rlang[ensym, as_string], dplyr[mutate])
+        var1 = as_string(ensym(var1))
+        var2 = as_string(ensym(var2))
+        
+        data |> 
+            mutate(new = .data[[var1]] / .data[[var2]]) |> 
+            head(5)
+    }
+    
+    mtcars |> new_col(mpg, wt)
+    mtcars |> new_col('mpg', 'wt')
+    ```
 
 Another method is the use of `{{ name }}` when used in a different context. The most optimal application is when you’re writing functions that takes column names as arguments.
 
@@ -137,8 +171,7 @@ read_csv("data.csv")
 read_csv(
     "data.csv",
     col_types = cols(
-        # force everything as text first
-        .default = col_character(),           
+        .default = col_character(), # This force everything as text first 
     )
 )
 ```

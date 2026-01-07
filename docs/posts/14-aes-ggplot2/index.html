@@ -6,7 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Joshua Marie">
 <meta name="dcterms.date" content="2026-01-03">
-<title>Interesting thoughts about aesthetics aes() in ggplot2 – Joshua Marie</title>
+<meta name="description" content="A personal appreciation of aes() in ggplot2: from basic mappings to advanced delayed evaluation, ‘tidy’ programming patterns, and seamless tidyverse integration.">
+<title>The genius invention about aesthetics in ggplot2 – Joshua Marie</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -18,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -75,9 +111,12 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../styles/dark-mode.css">
 <link rel="stylesheet" href="../Theme/code.css">
 <link rel="stylesheet" href="../Theme/table.css">
-<meta name="twitter:title" content="Interesting thoughts about aesthetics aes() in ggplot2 – Joshua Marie">
-<meta name="twitter:description" content="">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The genius invention about aesthetics in ggplot2 – Joshua Marie">
+<meta name="twitter:description" content="A personal appreciation of aes() in ggplot2: from basic mappings to advanced delayed evaluation, ‘tidy’ programming patterns, and seamless tidyverse integration.">
+<meta name="twitter:image" content="https://joshuamarie.com/posts/14-aes-ggplot2/index_files/figure-html/unnamed-chunk-2-1.png">
+<meta name="twitter:image-height" content="1152">
+<meta name="twitter:image-width" content="1920">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body class="nav-fixed quarto-light">
 
@@ -135,8 +174,14 @@ ul.task-list li input[type="checkbox"] {
       </div> <!-- /container-fluid -->
     </nav></header><!-- content --><header id="title-block-header" class="quarto-title-block default page-columns page-full"><div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Interesting thoughts about aesthetics <code>aes()</code> in ggplot2</h1>
-                                <div class="quarto-categories">
+      <h1 class="title">The genius invention about aesthetics in ggplot2</h1>
+            <p class="subtitle lead">The common and uncommon usages of aes() and its implementation</p>
+                  <div>
+        <div class="description">
+          A personal appreciation of aes() in ggplot2: from basic mappings to advanced delayed evaluation, ‘tidy’ programming patterns, and seamless tidyverse integration.
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">R</div>
                 <div class="quarto-category">ggplot2</div>
                 <div class="quarto-category">visualization</div>
@@ -173,28 +218,484 @@ ul.task-list li input[type="checkbox"] {
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
    
   <ul>
-<li><a href="#what-do-i-like-about" id="toc-what-do-i-like-about" class="nav-link active" data-scroll-target="#what-do-i-like-about"><span class="header-section-number">1</span> What do I like about</a></li>
-  <li><a href="#my-argument-regarding-ggplot2-implementation" id="toc-my-argument-regarding-ggplot2-implementation" class="nav-link" data-scroll-target="#my-argument-regarding-ggplot2-implementation"><span class="header-section-number">2</span> My argument regarding ggplot2 implementation</a></li>
+<li><a href="#what-do-i-love-about-aes" id="toc-what-do-i-love-about-aes" class="nav-link active" data-scroll-target="#what-do-i-love-about-aes"><span class="header-section-number">1</span> What do I love about <em>aes()</em>?</a></li>
+  <li><a href="#mapped-vs-fixed-aesthetics" id="toc-mapped-vs-fixed-aesthetics" class="nav-link" data-scroll-target="#mapped-vs-fixed-aesthetics"><span class="header-section-number">2</span> Mapped vs Fixed Aesthetics</a></li>
+  <li><a href="#the-group-aesthetic" id="toc-the-group-aesthetic" class="nav-link" data-scroll-target="#the-group-aesthetic"><span class="header-section-number">3</span> The <em>group</em> Aesthetic</a></li>
+  <li><a href="#stage-based-transformations-after_stat-and-after_scale" id="toc-stage-based-transformations-after_stat-and-after_scale" class="nav-link" data-scroll-target="#stage-based-transformations-after_stat-and-after_scale"><span class="header-section-number">4</span> Stage-Based Transformations: <em>after_stat()</em> and <em>after_scale()</em></a></li>
+  <li><a href="#tidy-evaluation-and-programming-with-aes" id="toc-tidy-evaluation-and-programming-with-aes" class="nav-link" data-scroll-target="#tidy-evaluation-and-programming-with-aes"><span class="header-section-number">5</span> Tidy Evaluation and Programming with <em>aes()</em></a></li>
+  <li><a href="#dplyr-ggplot2-pipe" id="toc-dplyr-ggplot2-pipe" class="nav-link" data-scroll-target="#dplyr-ggplot2-pipe"><span class="header-section-number">6</span> Integration with the Tidyverse</a></li>
+  <li>
+<a href="#other-aesthetic-weaponries-you-want-to-use" id="toc-other-aesthetic-weaponries-you-want-to-use" class="nav-link" data-scroll-target="#other-aesthetic-weaponries-you-want-to-use"><span class="header-section-number">7</span> Other aesthetic ‘weaponries’ you want to use</a>
+  <ul class="collapse">
+<li><a href="#inheriting-and-overriding-aesthetics" id="toc-inheriting-and-overriding-aesthetics" class="nav-link" data-scroll-target="#inheriting-and-overriding-aesthetics"><span class="header-section-number">7.1</span> Inheriting and Overriding Aesthetics</a></li>
+  <li><a href="#using-aes-with-statistical-transformations" id="toc-using-aes-with-statistical-transformations" class="nav-link" data-scroll-target="#using-aes-with-statistical-transformations"><span class="header-section-number">7.2</span> Using <em>aes()</em> with Statistical Transformations</a></li>
+  <li><a href="#constant-aesthetics-inside-aes" id="toc-constant-aesthetics-inside-aes" class="nav-link" data-scroll-target="#constant-aesthetics-inside-aes"><span class="header-section-number">7.3</span> Constant aesthetics inside <em>aes()</em></a></li>
+  <li><a href="#dynamic-aesthetics" id="toc-dynamic-aesthetics" class="nav-link" data-scroll-target="#dynamic-aesthetics"><span class="header-section-number">7.4</span> Dynamic Aesthetics</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#my-argument-regarding-ggplot2-implementation" id="toc-my-argument-regarding-ggplot2-implementation" class="nav-link" data-scroll-target="#my-argument-regarding-ggplot2-implementation"><span class="header-section-number">8</span> My argument regarding ggplot2 implementation</a>
+  <ul class="collapse">
+<li><a href="#comparison" id="toc-comparison" class="nav-link" data-scroll-target="#comparison"><span class="header-section-number">8.1</span> Comparison</a></li>
+  <li><a href="#why-stringly-typed-code-is-fundamentally-problematic" id="toc-why-stringly-typed-code-is-fundamentally-problematic" class="nav-link" data-scroll-target="#why-stringly-typed-code-is-fundamentally-problematic"><span class="header-section-number">8.2</span> Why stringly typed code is fundamentally problematic</a></li>
+  </ul>
+</li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">9</span> Resources</a></li>
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/14-aes-ggplot2/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content"><div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
-<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;text=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/14-aes-ggplot2" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/14-aes-ggplot2" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;name=Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Aesthetics in ggplot2 — Joshua Marie https://joshuamarie.com/posts/14-aes-ggplot2'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/14-aes-ggplot2%20Aesthetics%20in%20ggplot2%20%E2%80%94%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;text=Aesthetics%20in%20ggplot2%20%E2%80%93%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%93%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Aesthetics%20in%20ggplot2%20%E2%80%93%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/14-aes-ggplot2" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/14-aes-ggplot2" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%93%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;title=Aesthetics%20in%20ggplot2%20%E2%80%93%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/14-aes-ggplot2&amp;name=Aesthetics%20in%20ggplot2%20%E2%80%93%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Aesthetics in ggplot2 – Joshua Marie https://joshuamarie.com/posts/14-aes-ggplot2'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/14-aes-ggplot2%20Aesthetics%20in%20ggplot2%20%E2%80%93%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
 </div></div>
 
 
-<p><em>This post is under construction</em></p>
-<section id="what-do-i-like-about" class="level1" data-number="1"><h1 data-number="1">
-<span class="header-section-number">1</span> What do I like about</h1>
-<p>What do I like about aesthetics in <a href="https://ggplot2.tidyverse.org">ggplot2</a>?</p>
-<p>Explaining how <code>aes()</code> was implemented is gonna take a lot, and I’ll briefly explain about it.</p>
-</section><section id="my-argument-regarding-ggplot2-implementation" class="level1" data-number="2"><h1 data-number="2">
-<span class="header-section-number">2</span> My argument regarding ggplot2 implementation</h1>
-<p>I have argued this somebody that uses Python for data viz, saying “there’s <code>{plotnine}</code> in Python and you have all the features in <a href="https://ggplot2.tidyverse.org">ggplot2</a> and you can’t look back”. I argued that it’s just a pale imitation: you can’t really fully replicate this package, it’ll take a lot to FULLY replicate it, and it’s TOO complicated for Python to replicate.</p>
-<!-- # ```{r} -->
-<!-- #  -->
-<!-- # ``` -->
-<p>The thing is, R in general is functional; the arguments are <em>lazily evaluated</em> by default and way similar to Lisp macros, where the AST can be transformed / modify during compile-time — you can pretty much .</p>
+<section id="what-do-i-love-about-aes" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> What do I love about <em>aes()</em>?</h1>
+<p>The <code>aes()</code> function is a <strong>domain-specific language</strong> (DSL) embedded inside R that feels almost magical thanks to lazy evaluation, quosures, and deep integration with the <a href="https://tidyverse.tidyverse.org">tidyverse</a>.</p>
+<p>What keeps pulling me back is how elegantly it balances simplicity for beginners with incredible power for advanced use — all without ever feeling clunky.</p>
+</section><section id="mapped-vs-fixed-aesthetics" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Mapped vs Fixed Aesthetics</h1>
+<p>One of the first things to understand is the distinction between <strong>mapped</strong> and <strong>fixed</strong> aesthetics.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span><span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_point</span><span class="op">]</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<section id="the-colors-are-mapped-through-groups" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="the-colors-are-mapped-through-groups">
+<span class="header-section-number">2.1</span> The colors are mapped through groups</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span>, y <span class="op">=</span> <span class="va">hp</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div><div class="column" style="width:50%;">
+<section id="the-color-is-fixed-for-all-points" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="the-color-is-fixed-for-all-points">
+<span class="header-section-number">2.2</span> The color is fixed for all points</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span>, y <span class="op">=</span> <span class="va">hp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<p>When you put an aesthetic inside <code>aes()</code>, it’s <strong>mapped</strong> to a variable. Outside <code>aes()</code>, it’s <strong>fixed</strong> to a constant value. This distinction is crucial but often trips up beginners.</p>
+</section><section id="the-group-aesthetic" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> The <em>group</em> Aesthetic</h1>
+<p>The <code>group</code> aesthetic controls how <a href="https://ggplot2.tidyverse.org">ggplot2</a> groups data for statistical transformations and geoms like lines.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span><span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_line</span><span class="op">]</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<section id="without-group-one-line-connects-all-points" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="without-group-one-line-connects-all-points">
+<span class="header-section-number">3.1</span> Without group, one line connects all points</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span>, y <span class="op">=</span> <span class="va">hp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div><div class="column" style="width:50%;">
+<section id="with-group-separate-lines-for-each-cylinder-count" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="with-group-separate-lines-for-each-cylinder-count">
+<span class="header-section-number">3.2</span> With group, separate lines for each cylinder count</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span>, y <span class="op">=</span> <span class="va">hp</span>, group <span class="op">=</span> <span class="va">cyl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<p>Often, <code>group</code> is set automatically when you use <code>color</code>, <code>linetype</code>, or <code>fill</code>, but sometimes you need explicit control.</p>
+</section><section id="stage-based-transformations-after_stat-and-after_scale" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Stage-Based Transformations: <em>after_stat()</em> and <em>after_scale()</em>
+</h1>
+<p>I already made a blog talking about delaying <code>aes()</code> arguments, you can check it <a href="https://joshuamarie.com/posts/09-ggplot2/#the-art-of-delay">here</a>. These functions let you compute aesthetics based on statistical transformations or after scale transformations.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span></span>
+<span>        <span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_histogram</span>, <span class="va">geom_point</span>, </span>
+<span>        <span class="va">after_stat</span>, <span class="va">after_scale</span>, <span class="va">alpha</span></span>
+<span>    <span class="op">]</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol type="1">
+<li>
+<p>Color bars based on computed count from <code>stat_bin</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">count</span><span class="op">)</span><span class="op">)</span>, bins <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Use <code>after_scale()</code> to modify colors after scale mapping</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span>, y <span class="op">=</span> <span class="va">hp</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="fu">after_scale</span><span class="op">(</span><span class="fu">alpha</span><span class="op">(</span><span class="va">color</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</li>
+</ol>
+<p><code>after_stat()</code> accesses variables computed by statistical transformations (like <code>count</code>, <code>density</code>, etc.). <code>after_scale()</code> works with the final scaled aesthetic values, allowing post-processing of colors, sizes, and more.</p>
+</section><section id="tidy-evaluation-and-programming-with-aes" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Tidy Evaluation and Programming with <em>aes()</em>
+</h1>
+<p>When you’re writing functions that create <a href="https://ggplot2.tidyverse.org">ggplot2</a> plots, you need to programmatically pass variable names. This is where tidy evaluation with <code><a href="https://rdrr.io/r/base/Paren.html">{ }</a></code> (curly-curly) and <code>!!</code> (bang-bang) comes in.</p>
+<ol type="1">
+<li>
+<p>The double curly brackets <code><a href="https://rdrr.io/r/base/Paren.html">{ }</a></code> is more recommended</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">plot_scatter</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">x_var</span>, <span class="va">y_var</span>, <span class="va">color_var</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>        <span class="va">ggplot2</span><span class="op">[</span></span>
+<span>            <span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_point</span>, <span class="va">theme_minimal</span></span>
+<span>        <span class="op">]</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="op">{</span><span class="op">{</span> <span class="va">x_var</span> <span class="op">}</span><span class="op">}</span>, y <span class="op">=</span> <span class="op">{</span><span class="op">{</span> <span class="va">y_var</span> <span class="op">}</span><span class="op">}</span>, color <span class="op">=</span> <span class="op">{</span><span class="op">{</span> <span class="va">color_var</span> <span class="op">}</span><span class="op">}</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">plot_scatter</span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">mpg</span>, <span class="va">hp</span>, <span class="va">cyl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>With <code><a href="https://rlang.r-lib.org/reference/defusing-advanced.html">rlang::ensym()</a></code>, it accepts both string and a bare column</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">plot_scatter_string</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">x_var</span>, <span class="va">y_var</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>        <span class="va">ggplot2</span><span class="op">[</span><span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_point</span><span class="op">]</span>,</span>
+<span>        <span class="va">rlang</span><span class="op">[</span><span class="va">ensym</span><span class="op">]</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="op">!</span><span class="op">!</span><span class="fu">ensym</span><span class="op">(</span><span class="va">x_var</span><span class="op">)</span>, y <span class="op">=</span> <span class="op">!</span><span class="op">!</span><span class="fu">ensym</span><span class="op">(</span><span class="va">y_var</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">plot_scatter_string</span><span class="op">(</span><span class="va">mtcars</span>, <span class="st">"mpg"</span>, <span class="st">"hp"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># plot_scatter_string(mtcars, "mpg", hp)</span></span>
+<span><span class="co"># plot_scatter_string(mtcars, mpg, "hp")</span></span>
+<span><span class="co"># plot_scatter_string(mtcars, mpg, hp)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</li>
+</ol>
+<p>This works because <code>aes()</code> uses quosures (quoted expressions with their environment) internally, which are part of <a href="https://rlang.r-lib.org">rlang</a>’s non-standard evaluation framework.</p>
+</section><section id="dplyr-ggplot2-pipe" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Integration with the Tidyverse</h1>
+<p>The <code>aes()</code> function plays beautifully with <a href="https://tidyverse.tidyverse.org">tidyverse</a> workflows because they share the same evaluation model.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, <span class="va">case_when</span><span class="op">]</span>, </span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span><span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_point</span>, <span class="va">labs</span>, <span class="va">theme_minimal</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mtcars</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">mutate</span><span class="op">(</span></span>
+<span>        efficiency <span class="op">=</span> <span class="va">mpg</span> <span class="op">/</span> <span class="va">hp</span>,</span>
+<span>        cyl_category <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span></span>
+<span>            <span class="va">cyl</span> <span class="op">==</span> <span class="fl">4</span> <span class="op">~</span> <span class="st">"Small"</span>,</span>
+<span>            <span class="va">cyl</span> <span class="op">==</span> <span class="fl">6</span> <span class="op">~</span> <span class="st">"Medium"</span>,</span>
+<span>            <span class="va">cyl</span> <span class="op">==</span> <span class="fl">8</span> <span class="op">~</span> <span class="st">"Large"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">wt</span>, y <span class="op">=</span> <span class="va">efficiency</span>, color <span class="op">=</span> <span class="va">cyl_category</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Efficiency by Weight and Engine Size"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/dplyr-ggplot2-pipe-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>You can pipe data through <a href="https://dplyr.tidyverse.org">dplyr</a> transformations and directly into <a href="https://ggplot2.tidyverse.org">ggplot2</a>, and all the column names work seamlessly. This should be trivial to you since this is more taught by most <a href="https://ggplot2.tidyverse.org">ggplot2</a> tutorials.</p>
+</section><section id="other-aesthetic-weaponries-you-want-to-use" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Other aesthetic ‘weaponries’ you want to use</h1>
+<p>Beyond the common patterns, <code>aes()</code> has several advanced capabilities that showcase its flexibility.</p>
+<p>Here, I can name few:</p>
+<section id="inheriting-and-overriding-aesthetics" class="level2" data-number="7.1"><h2 data-number="7.1" class="anchored" data-anchor-id="inheriting-and-overriding-aesthetics">
+<span class="header-section-number">7.1</span> Inheriting and Overriding Aesthetics</h2>
+<p>You can set aesthetics at the plot level and override them in specific layers. This is useful for creating complex plots with different mappings per layer.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span></span>
+<span>        <span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_point</span>, <span class="va">geom_smooth</span>, <span class="va">labs</span>, </span>
+<span>        <span class="va">geom_line</span>, <span class="va">theme_minimal</span></span>
+<span>    <span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">wt</span>, y <span class="op">=</span> <span class="va">mpg</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="co"># Override color for this layer only</span></span>
+<span>    <span class="fu">geom_smooth</span><span class="op">(</span></span>
+<span>        <span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>, </span>
+<span>        method <span class="op">=</span> <span class="st">"lm"</span>, </span>
+<span>        color <span class="op">=</span> <span class="st">"#061E29"</span>, </span>
+<span>        se <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>        linetype <span class="op">=</span> <span class="st">"dashed"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="co"># Then the regression lines for each group</span></span>
+<span>    <span class="fu">geom_line</span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"smooth"</span>, method <span class="op">=</span> <span class="st">"lm"</span>, se <span class="op">=</span> <span class="cn">FALSE</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Individual trends vs overall trend"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="using-aes-with-statistical-transformations" class="level2" data-number="7.2"><h2 data-number="7.2" class="anchored" data-anchor-id="using-aes-with-statistical-transformations">
+<span class="header-section-number">7.2</span> Using <em>aes()</em> with Statistical Transformations</h2>
+<p>Some geometries perform statistical transformations and create new variables. You can map aesthetics to these computed variables using <code>after_stat()</code> or by knowing the variable names.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span></span>
+<span>        <span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_histogram</span>, <span class="va">geom_line</span>, <span class="va">after_stat</span>, </span>
+<span>        <span class="va">scale_fill_viridis_c</span>, <span class="va">scale_color_viridis_c</span>, </span>
+<span>        <span class="va">labs</span>, <span class="va">theme_minimal</span>, <span class="va">theme</span>, <span class="va">margin</span>, </span>
+<span>        <span class="va">element_text</span></span>
+<span>    <span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_histogram</span><span class="op">(</span></span>
+<span>        <span class="fu">aes</span><span class="op">(</span></span>
+<span>            y <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span><span class="op">)</span>,  </span>
+<span>            fill <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span> <span class="op">&gt;</span> <span class="fl">0.05</span><span class="op">)</span>  </span>
+<span>        <span class="op">)</span>,</span>
+<span>        bins <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>        color <span class="op">=</span> <span class="st">"white"</span>,</span>
+<span>        linewidth <span class="op">=</span> <span class="fl">0.2</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_line</span><span class="op">(</span></span>
+<span>        stat <span class="op">=</span> <span class="st">"density"</span>, </span>
+<span>        mapping <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span></span>
+<span>            y <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span><span class="op">)</span>,  </span>
+<span>            color <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span> <span class="op">&gt;</span> <span class="fl">0.05</span><span class="op">)</span>  </span>
+<span>        <span class="op">)</span>, </span>
+<span>        show.legend <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">scale_fill_viridis_c</span><span class="op">(</span>option <span class="op">=</span> <span class="st">"plasma"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">scale_color_viridis_c</span><span class="op">(</span>option <span class="op">=</span> <span class="st">"plasma"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">labs</span><span class="op">(</span></span>
+<span>        title <span class="op">=</span> <span class="st">"Histogram with after_stat()"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Y-axis shows density, fill color shows count"</span>,</span>
+<span>        x <span class="op">=</span> <span class="st">"Miles per gallon"</span>,</span>
+<span>        y <span class="op">=</span> <span class="st">"Density"</span>,</span>
+<span>        fill <span class="op">=</span> <span class="st">"Count"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">theme_minimal</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">theme</span><span class="op">(</span></span>
+<span>        plot.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
+<span>        legend.position <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>        plot.margin <span class="op">=</span> <span class="fu">margin</span><span class="op">(</span><span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">15</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here we’re using <code>after_stat(scaled)</code> to access the scaled density values and conditionally coloring regions.</p>
+</section><section id="constant-aesthetics-inside-aes" class="level2" data-number="7.3"><h2 data-number="7.3" class="anchored" data-anchor-id="constant-aesthetics-inside-aes">
+<span class="header-section-number">7.3</span> Constant aesthetics inside <em>aes()</em>
+</h2>
+<p>In this <a href="#dplyr-ggplot2-pipe">section</a>, we piped down the result from the data wrangling with <a href="https://dplyr.tidyverse.org">dplyr</a> into <a href="https://ggplot2.tidyverse.org">ggplot2</a> layers. How about the transformation happened within the layer itself? Reminder that <code>aes()</code> is not far from Lisp macros and handles homoiconicity, which means it will handle an expression</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span><span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_point</span>, <span class="va">labs</span>, <span class="va">scale_color_identity</span><span class="op">]</span>,</span>
+<span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">if_else</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">wt</span>, y <span class="op">=</span> <span class="va">mpg</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="fu">if_else</span><span class="op">(</span><span class="va">mpg</span> <span class="op">&gt;</span> <span class="fl">20</span>, <span class="st">"darkgreen"</span>, <span class="st">"darkred"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_color_identity</span><span class="op">(</span></span>
+<span>        guide <span class="op">=</span> <span class="st">"legend"</span>, </span>
+<span>        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Low MPG"</span>, <span class="st">"High MPG"</span><span class="op">)</span>,</span>
+<span>        breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"darkred"</span>, <span class="st">"darkgreen"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">labs</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Efficiency"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code><a href="https://rdrr.io/r/base/AsIs.html">I()</a></code> tells <a href="https://ggplot2.tidyverse.org">ggplot2</a> to use the values as-is without scaling, while <code>scale_color_identity()</code> creates a legend.</p>
+</section><section id="dynamic-aesthetics" class="level2" data-number="7.4"><h2 data-number="7.4" class="anchored" data-anchor-id="dynamic-aesthetics">
+<span class="header-section-number">7.4</span> Dynamic Aesthetics</h2>
+<p>You can create aesthetics on-the-fly using R functions directly in <code>aes()</code>. Here, I <em>cut</em> down <code>hp</code> into 3 groups, then use it as a basis for the shapes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span><span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_point</span>, <span class="va">labs</span>, <span class="va">theme_minimal</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">wt</span>, y <span class="op">=</span> <span class="va">mpg</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span></span>
+<span>        <span class="fu">aes</span><span class="op">(</span></span>
+<span>            size <span class="op">=</span> <span class="va">cyl</span>,</span>
+<span>            shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span><span class="op">(</span></span>
+<span>                <span class="va">hp</span>, </span>
+<span>                breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">200</span>, <span class="fl">400</span><span class="op">)</span>, </span>
+<span>                labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Low"</span>, <span class="st">"Medium"</span>, <span class="st">"High"</span><span class="op">)</span></span>
+<span>            <span class="op">)</span></span>
+<span>        <span class="op">)</span>, </span>
+<span>        alpha <span class="op">=</span> <span class="fl">0.7</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">labs</span><span class="op">(</span>size <span class="op">=</span> <span class="st">"Horsepower"</span>, shape <span class="op">=</span> <span class="st">"Cylinders"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section><section id="my-argument-regarding-ggplot2-implementation" class="level1" data-number="8"><h1 data-number="8">
+<span class="header-section-number">8</span> My argument regarding ggplot2 implementation</h1>
+<p>I’ve argued with Python users who say “there’s <code>{plotnine}</code> in Python and you have all the features in <a href="https://ggplot2.tidyverse.org">ggplot2</a> and you can’t look back.” — it’s not even close. I maintain that it’s just a pale imitation: you can’t really fully replicate this package. It’ll take a lot to FULLY replicate it, and it’s TOO complicated for Python to replicate.</p>
+<p>The thing is, R in general is functional; the arguments are <em>lazily evaluated</em> by default and similar to Lisp macros, where the AST can be transformed/modified during compile-time—you can pretty much manipulate and inspect expressions before they’re evaluated, giving you metaprogramming capabilities that are first-class citizens in R.</p>
+<section id="comparison" class="level2" data-number="8.1"><h2 data-number="8.1" class="anchored" data-anchor-id="comparison">
+<span class="header-section-number">8.1</span> Comparison</h2>
+<p>Here’s a side by side comparison:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">In R with ggplot2</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">In Python with plotnine</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>This package uses first-class metaprogramming — you can use clean, bare variable names. You can also override and transform inline.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">ggplot2</span><span class="op">[</span><span class="va">ggplot</span>, <span class="va">aes</span>, <span class="va">geom_point</span>, <span class="va">geom_smooth</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span>, y <span class="op">=</span> <span class="va">hp</span> <span class="op">*</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_smooth</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">hp</span> <span class="op">*</span> <span class="fl">2</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"lm"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Python in general lacks this environment as in R, we refer it as <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Computing-on-the-language-1">“computing on the language”</a>, which dubbed later by Hadley Wickham as “non-standard evaluation”, one of the techniques used in <a href="https://adv-r.hadley.nz/metaprogramming.html">R metaprogramming</a>.</p>
+<p>Supplying arguments within <code>aes()</code> from <code>{plotnine}</code> package works with strings. Yes, it works, but notice the quotes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> ggplot, aes, geom_point, geom_smooth</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>(ggplot(mtcars, aes(x <span class="op">=</span> <span class="st">'mpg'</span>, y <span class="op">=</span> <span class="st">'hp * 2'</span>, color <span class="op">=</span> <span class="st">'factor(cyl)'</span>)) <span class="op">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    geom_point() <span class="op">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    geom_smooth(aes(y <span class="op">=</span> <span class="st">'hp * 2'</span>), method <span class="op">=</span> <span class="st">'lm'</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="index_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="why-stringly-typed-code-is-fundamentally-problematic" class="level2" data-number="8.2"><h2 data-number="8.2" class="anchored" data-anchor-id="why-stringly-typed-code-is-fundamentally-problematic">
+<span class="header-section-number">8.2</span> Why stringly typed code is fundamentally problematic</h2>
+<p>Let me clarify: The Python version suffers from being <a href="http://wiki.c2.com/?StringlyTyped">stringly typed</a>. The fact that <code>{plotnine}</code> forces to approximate things in <a href="https://ggplot2.tidyverse.org">ggplot2</a> R using strings where structured data types should be used. This creates concrete technical problems, so hear me out:</p>
+<ol type="1">
+<li>
+<p>Loss of type safety and compile-time guarantees. All of the arguments supplied into <code>aes()</code> are valid strings to Python, but only one works</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>aes(x <span class="op">=</span> <span class="st">'mpg'</span>)      <span class="co"># 1 </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>aes(x <span class="op">=</span> <span class="st">'mpgg'</span>)     <span class="co"># 2 </span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>aes(x <span class="op">=</span> <span class="st">'mpg + '</span>)   <span class="co"># 3 </span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>aes(x <span class="op">=</span> <span class="dv">42</span>)         <span class="co"># 4 </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol type="1">
+<li>This syntax is correct</li>
+<li>You made a typo — no error until runtime</li>
+<li>Syntax error in the mini-language - no error until runtime</li>
+<li>Wrong type, maybe? Depends on plotnine’s implementation</li>
+</ol>
+<p>In R, <code>aes(x = mpg)</code> is a proper expression that participates in R’s type system and evaluation model.</p>
+</li>
+<li>
+<p>You’re implementing a parser for a mini-language</p>
+<p>Plotnine must parse strings like <code>'np.log(mpg) if mpg &gt; 0 else 0'</code> at runtime. This means:</p>
+<ul>
+<li>Writing a lexer/parser for Python expressions</li>
+<li>Handling operator precedence, function calls, conditionals</li>
+<li>Maintaining this parser as Python evolves</li>
+<li>Debugging when the parser behaves differently than Python itself</li>
+</ul>
+<p><em>Note that supplying an argument with some kind of transformation, e.g.&nbsp;<code>aes(y = 'np.log(mpg)')</code> still works.</em></p>
+<p>In R, it handles (lazy) evaluation:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You can take this in different level with <code>stage()</code>, <code>after_stat()</code>, and <code>after_scale()</code>.</p>
+</li>
+</ol>
+<!-- # Why This Implementation Matters --><!-- This design gives `{ggplot2}` its declarative, composable nature. You're building a specification of what you want, and the system figures out the rendering. Python's eager evaluation makes this pattern fundamentally harder to implement cleanly—you'd need to build an entire mini-language or use metaclasses and descriptors to approximate this behavior. --><!-- That's why `{plotnine}` always feels like it's playing catch-up: it's trying to replicate behavior that's deeply tied to R's evaluation model and metaprogramming capabilities. --></section></section><section id="resources" class="level1" data-number="9"><h1 data-number="9">
+<span class="header-section-number">9</span> Resources</h1>
+<ul>
+<li><a href="https://ggplot2.tidyverse.org/">ggplot2 Official Documentation</a></li>
+<li><a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html">ggplot2 Aesthetic specification</a></li>
+</ul>
 
 
 </section></main><!-- /main --><style>

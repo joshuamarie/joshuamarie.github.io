@@ -1,9 +1,9 @@
 ---
-title: "Interesting thoughts about aesthetics `aes()` in ggplot2"
-# subtitle: ""
+title: "The genius invention about aesthetics in ggplot2"
+subtitle: "The common and uncommon usages of aes() and its implementation"
+description: "A personal appreciation of aes() in ggplot2: from basic mappings to advanced delayed evaluation, 'tidy' programming patterns, and seamless tidyverse integration."
 date: "2026-01-03"
 categories: [R, ggplot2, visualization, tidyverse]
-# description: "Teaching you the things you can take advantage of, and things weren't taught by some tutorials you (potentially) know"
 format:
     html:
         toc: true
@@ -26,7 +26,7 @@ filters:
     - collapse-output
 share:
     permalink: "https://joshuamarie.com/posts/14-aes-ggplot2"
-    description: "Aesthetics in ggplot2 — Joshua Marie"
+    description: "Aesthetics in ggplot2 – Joshua Marie"
     twitter: true
     facebook: true
     reddit: true
@@ -40,22 +40,404 @@ share:
 engine: knitr
 ---
 
-_This post is under construction_
+# What do I love about _aes()_?
 
-# What do I like about
+The `aes()` function is a **domain-specific language** (DSL) embedded inside R that feels almost magical thanks to lazy evaluation, quosures, and deep integration with the `{tidyverse}`.
 
-What do I like about aesthetics in `{ggplot2}`? 
+What keeps pulling me back is how elegantly it balances simplicity for beginners with incredible power for advanced use — all without ever feeling clunky.
 
-Explaining how `aes()` was implemented is gonna take a lot, and I'll briefly explain about it. 
+# Mapped vs Fixed Aesthetics
+
+One of the first things to understand is the distinction between **mapped** and **fixed** aesthetics.
+
+```{r}
+box::use(
+    ggplot2[ggplot, aes, geom_point]
+)
+```
+
+::::: columns
+::: {.column width="50%"}
+## The colors are mapped through groups
+
+```{r}
+ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
+    geom_point()
+```
+:::
+
+::: {.column width="50%"}
+## The color is fixed for all points
+
+```{r}
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+    geom_point(color = "blue")
+```
+:::
+:::::
+
+When you put an aesthetic inside `aes()`, it's **mapped** to a variable. Outside `aes()`, it's **fixed** to a constant value. This distinction is crucial but often trips up beginners.
+
+# The _group_ Aesthetic
+
+The `group` aesthetic controls how `{ggplot2}` groups data for statistical transformations and geoms like lines.
+
+```{r}
+box::use(
+    ggplot2[ggplot, aes, geom_line]
+)
+```
+
+::::: columns
+::: {.column width="50%"}
+## Without group, one line connects all points
+
+```{r}
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+    geom_line()
+```
+:::
+
+::: {.column width="50%"}
+## With group, separate lines for each cylinder count
+
+```{r}
+ggplot(mtcars, aes(x = mpg, y = hp, group = cyl)) +
+    geom_line()
+```
+:::
+:::::
+
+Often, `group` is set automatically when you use `color`, `linetype`, or `fill`, but sometimes you need explicit control.
+
+# Stage-Based Transformations: _after_stat()_ and _after_scale()_
+
+I already made a blog talking about delaying `aes()` arguments, you can check it [here](https://joshuamarie.com/posts/09-ggplot2/#the-art-of-delay). These functions let you compute aesthetics based on statistical transformations or after scale transformations.
+
+```{r}
+box::use(
+    ggplot2[
+        ggplot, aes, geom_histogram, geom_point, 
+        after_stat, after_scale, alpha
+    ]
+)
+```
+
+1.  Color bars based on computed count from `stat_bin`
+
+    ```{r}
+    ggplot(mtcars, aes(x = mpg)) +
+        geom_histogram(aes(fill = after_stat(count)), bins = 10)
+    ```
+
+2.  Use `after_scale()` to modify colors after scale mapping
+
+    ```{r}
+    ggplot(mtcars, aes(x = mpg, y = hp, color = factor(cyl))) +
+        geom_point(aes(color = after_scale(alpha(color, 0.5))), size = 4)
+    ```
+
+`after_stat()` accesses variables computed by statistical transformations (like `count`, `density`, etc.). `after_scale()` works with the final scaled aesthetic values, allowing post-processing of colors, sizes, and more.
+
+# Tidy Evaluation and Programming with _aes()_
+
+When you're writing functions that create `{ggplot2}` plots, you need to programmatically pass variable names. This is where tidy evaluation with `{{ }}` (curly-curly) and `!!` (bang-bang) comes in.
+
+1.  The double curly brackets `{{ }}` is more recommended
+
+    ```{r}
+    plot_scatter = function(data, x_var, y_var, color_var) {
+        box::use(
+            ggplot2[
+                ggplot, aes, geom_point, theme_minimal
+            ]
+        )
+        
+        ggplot(data, aes(x = {{ x_var }}, y = {{ y_var }}, color = {{ color_var }})) +
+            geom_point() +
+            theme_minimal()
+    }
+
+    plot_scatter(mtcars, mpg, hp, cyl)
+    ```
+
+2.  With `rlang::ensym()`, it accepts both string and a bare column
+
+    ```{r}
+    plot_scatter_string = function(data, x_var, y_var) {
+        box::use(
+            ggplot2[ggplot, aes, geom_point],
+            rlang[ensym]
+        )
+        
+        ggplot(data, aes(x = !!ensym(x_var), y = !!ensym(y_var))) +
+            geom_point()
+    }
+
+    plot_scatter_string(mtcars, "mpg", "hp")
+    # plot_scatter_string(mtcars, "mpg", hp)
+    # plot_scatter_string(mtcars, mpg, "hp")
+    # plot_scatter_string(mtcars, mpg, hp)
+    ```
+
+This works because `aes()` uses quosures (quoted expressions with their environment) internally, which are part of `{rlang}`'s non-standard evaluation framework.
+
+# Integration with the Tidyverse {#dplyr-ggplot2-pipe}
+
+The `aes()` function plays beautifully with `{tidyverse}` workflows because they share the same evaluation model.
+
+```{r}
+#| label: "dplyr-ggplot2-pipe"
+box::use(
+    dplyr[mutate, case_when], 
+    ggplot2[ggplot, aes, geom_point, labs, theme_minimal]
+)
+
+mtcars |> 
+    mutate(
+        efficiency = mpg / hp,
+        cyl_category = case_when(
+            cyl == 4 ~ "Small",
+            cyl == 6 ~ "Medium",
+            cyl == 8 ~ "Large"
+        )
+    ) |> 
+    ggplot() +
+    aes(x = wt, y = efficiency, color = cyl_category) + 
+    geom_point(size = 3) +
+    labs(title = "Efficiency by Weight and Engine Size") + 
+    theme_minimal()
+```
+
+You can pipe data through `{dplyr}` transformations and directly into `{ggplot2}`, and all the column names work seamlessly. This should be trivial to you since this is more taught by most `{ggplot2}` tutorials. 
+
+# Other aesthetic 'weaponries' you want to use
+
+Beyond the common patterns, `aes()` has several advanced capabilities that showcase its flexibility. 
+
+Here, I can name few: 
+
+## Inheriting and Overriding Aesthetics
+
+You can set aesthetics at the plot level and override them in specific layers. This is useful for creating complex plots with different mappings per layer.
+
+```{r}
+box::use(
+    ggplot2[
+        ggplot, aes, geom_point, geom_smooth, labs, 
+        geom_line, theme_minimal
+    ]
+)
+
+ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl))) +
+    geom_point(size = 3) +
+    # Override color for this layer only
+    geom_smooth(
+        aes(color = NULL), 
+        method = "lm", 
+        color = "#061E29", 
+        se = FALSE,
+        linetype = "dashed"
+    ) + 
+    # Then the regression lines for each group
+    geom_line(stat = "smooth", method = "lm", se = FALSE, alpha = 0.5) + 
+    labs(title = "Individual trends vs overall trend") + 
+    theme_minimal()
+```
+
+## Using _aes()_ with Statistical Transformations
+
+Some geometries perform statistical transformations and create new variables. You can map aesthetics to these computed variables using `after_stat()` or by knowing the variable names.
+
+```{r}
+box::use(
+    ggplot2[
+        ggplot, aes, geom_histogram, geom_line, after_stat, 
+        scale_fill_viridis_c, scale_color_viridis_c, 
+        labs, theme_minimal, theme, margin, 
+        element_text
+    ]
+)
+
+ggplot(mtcars, aes(x = mpg)) +
+    geom_histogram(
+        aes(
+            y = after_stat(density),  
+            fill = after_stat(density > 0.05)  
+        ),
+        bins = 30,
+        color = "white",
+        linewidth = 0.2
+    ) +
+    geom_line(
+        stat = "density", 
+        mapping = aes(
+            y = after_stat(density),  
+            color = after_stat(density > 0.05)  
+        ), 
+        show.legend = FALSE
+    ) + 
+    scale_fill_viridis_c(option = "plasma") + 
+    scale_color_viridis_c(option = "plasma") + 
+    labs(
+        title = "Histogram with after_stat()",
+        subtitle = "Y-axis shows density, fill color shows count",
+        x = "Miles per gallon",
+        y = "Density",
+        fill = "Count"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(
+        plot.title = element_text(face = "bold"),
+        legend.position = "right",
+        plot.margin = margin(15, 15, 15, 15)
+    )
+```
+
+Here we're using `after_stat(scaled)` to access the scaled density values and conditionally coloring regions.
+
+## Constant aesthetics inside _aes()_
+
+In this [section](#dplyr-ggplot2-pipe), we piped down the result from the data wrangling with `{dplyr}` into `{ggplot2}` layers. How about the transformation happened within the layer itself? Reminder that `aes()` is not far from Lisp macros and handles homoiconicity, which means it will handle an expression
+
+```{r}
+box::use(
+    ggplot2[ggplot, aes, geom_point, labs, scale_color_identity],
+    dplyr[if_else]
+)
+
+ggplot(mtcars) + 
+    aes(x = wt, y = mpg, color = I(if_else(mpg > 20, "darkgreen", "darkred"))) + 
+    geom_point(size = 4) +
+    scale_color_identity(
+        guide = "legend", 
+        labels = c("Low MPG", "High MPG"),
+        breaks = c("darkred", "darkgreen")
+    ) +
+    labs(color = "Efficiency")
+```
+
+`I()` tells `{ggplot2}` to use the values as-is without scaling, while `scale_color_identity()` creates a legend.
+
+## Dynamic Aesthetics
+
+You can create aesthetics on-the-fly using R functions directly in `aes()`. Here, I _cut_ down `hp` into 3 groups, then use it as a basis for the shapes. 
+
+```{r}
+box::use(
+    ggplot2[ggplot, aes, geom_point, labs, theme_minimal]
+)
+
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+    geom_point(
+        aes(
+            size = cyl,
+            shape = cut(
+                hp, 
+                breaks = c(0, 100, 200, 400), 
+                labels = c("Low", "Medium", "High")
+            )
+        ), 
+        alpha = 0.7
+    ) +
+    labs(size = "Horsepower", shape = "Cylinders") +
+    theme_minimal()
+```
 
 # My argument regarding ggplot2 implementation
 
-I have argued this somebody that uses Python for data viz, saying "there's `{plotnine}` in Python and you have all the features in `{ggplot2}` and you can't look back". I argued that it's just a pale imitation: you can't really fully replicate this package, it'll take a lot to FULLY replicate it, and it's TOO complicated for Python to replicate. 
+I've argued with Python users who say "there's `{plotnine}` in Python and you have all the features in `{ggplot2}` and you can't look back." — it's not even close. I maintain that it's just a pale imitation: you can't really fully replicate this package. It'll take a lot to FULLY replicate it, and it's TOO complicated for Python to replicate.
 
-<!-- # ```{r} -->
-<!-- #  -->
-<!-- # ``` -->
+The thing is, R in general is functional; the arguments are *lazily evaluated* by default and similar to Lisp macros, where the AST can be transformed/modified during compile-time—you can pretty much manipulate and inspect expressions before they're evaluated, giving you metaprogramming capabilities that are first-class citizens in R.
 
-The thing is, R in general is functional; the arguments are _lazily evaluated_ by default and way similar to Lisp macros, where the AST can be transformed / modify during compile-time — you can pretty much . 
+## Comparison
 
+Here's a side by side comparison:
 
+::: panel-tabset
+### In R with ggplot2
+
+This package uses first-class metaprogramming — you can use clean, bare variable names. You can also override and transform inline.
+
+```{r}
+box::use(
+    ggplot2[ggplot, aes, geom_point, geom_smooth]
+)
+
+ggplot(mtcars, aes(x = mpg, y = hp * 2, color = factor(cyl))) +
+    geom_point() +
+    geom_smooth(aes(y = hp * 2), method = "lm")
+```
+
+### In Python with plotnine
+
+Python in general lacks this environment as in R, we refer it as ["computing on the language"](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Computing-on-the-language-1), which dubbed later by Hadley Wickham as "non-standard evaluation", one of the techniques used in [R metaprogramming](https://adv-r.hadley.nz/metaprogramming.html).
+
+```{python}
+#| include: false
+#| echo: false
+#| warning: false
+#| message: false
+mtcars = r.mtcars
+```
+
+Supplying arguments within `aes()` from `{plotnine}` package works with strings. Yes, it works, but notice the quotes.
+
+```{python}
+from plotnine import ggplot, aes, geom_point, geom_smooth
+
+(ggplot(mtcars, aes(x = 'mpg', y = 'hp * 2', color = 'factor(cyl)')) +
+    geom_point() +
+    geom_smooth(aes(y = 'hp * 2'), method = 'lm')) 
+```
+:::
+
+## Why stringly typed code is fundamentally problematic
+
+Let me clarify: The Python version suffers from being [stringly typed](http://wiki.c2.com/?StringlyTyped). The fact that `{plotnine}` forces to approximate things in `{ggplot2}` R using strings where structured data types should be used. This creates concrete technical problems, so hear me out:
+
+1.  Loss of type safety and compile-time guarantees. All of the arguments supplied into `aes()` are valid strings to Python, but only one works
+
+    ``` python
+    aes(x = 'mpg')      # 1 
+    aes(x = 'mpgg')     # 2 
+    aes(x = 'mpg + ')   # 3 
+    aes(x = 42)         # 4 
+    ```
+
+    1.  This syntax is correct
+    2.  You made a typo — no error until runtime
+    3.  Syntax error in the mini-language - no error until runtime
+    4.  Wrong type, maybe? Depends on plotnine's implementation
+
+    In R, `aes(x = mpg)` is a proper expression that participates in R's type system and evaluation model.
+
+2.  You're implementing a parser for a mini-language
+
+    Plotnine must parse strings like `'np.log(mpg) if mpg > 0 else 0'` at runtime. This means:
+
+    -   Writing a lexer/parser for Python expressions
+    -   Handling operator precedence, function calls, conditionals
+    -   Maintaining this parser as Python evolves
+    -   Debugging when the parser behaves differently than Python itself
+
+    *Note that supplying an argument with some kind of transformation, e.g. `aes(y = 'np.log(mpg)')` still works.*
+
+    In R, it handles (lazy) evaluation:
+
+    ``` r
+    aes(x = ifelse(mpg > 0, log(mpg), 0)) 
+    ```
+
+    You can take this in different level with `stage()`, `after_stat()`, and `after_scale()`.
+
+<!-- # Why This Implementation Matters -->
+
+<!-- This design gives `{ggplot2}` its declarative, composable nature. You're building a specification of what you want, and the system figures out the rendering. Python's eager evaluation makes this pattern fundamentally harder to implement cleanly—you'd need to build an entire mini-language or use metaclasses and descriptors to approximate this behavior. -->
+
+<!-- That's why `{plotnine}` always feels like it's playing catch-up: it's trying to replicate behavior that's deeply tied to R's evaluation model and metaprogramming capabilities. -->
+
+# Resources
+
+-  [ggplot2 Official Documentation](https://ggplot2.tidyverse.org/)
+-  [ggplot2 Aesthetic specification](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html)

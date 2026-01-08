@@ -3,6 +3,7 @@ title: "The genius invention about aesthetics in ggplot2"
 subtitle: "The common and uncommon usages of aes() and its implementation"
 description: "A personal appreciation of aes() in ggplot2: from basic mappings to advanced delayed evaluation, 'tidy' programming patterns, and seamless tidyverse integration."
 date: "2026-01-03"
+image: "image.png"
 categories: [R, ggplot2, visualization, tidyverse]
 format:
     html:
@@ -16,7 +17,6 @@ format:
         fig-width: 10
         fig-height: 6
         fig-cap-location: bottom
-        code-annotations: hover
 execute:
     echo: true
     warning: false
@@ -40,11 +40,15 @@ share:
 engine: knitr
 ---
 
+![](image.png)
+
 # What do I love about _aes()_?
 
-The `aes()` function is a **domain-specific language** (DSL) embedded inside R that feels almost magical thanks to lazy evaluation, quosures, and deep integration with the `{tidyverse}`.
+The `aes()` function is a **domain-specific language** (DSL) embedded inside R — a Lisp-y function that deeply ties with lazy evaluation, quosures, and deep integration with the `{tidyverse}`.
 
 What keeps pulling me back is how elegantly it balances simplicity for beginners with incredible power for advanced use — all without ever feeling clunky.
+
+![](pacha-perfection.gif)
 
 # Mapped vs Fixed Aesthetics
 

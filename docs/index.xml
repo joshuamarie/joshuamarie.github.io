@@ -20,10 +20,12 @@
 </div></div>
 
 
+<p><img src="https://joshuamarie.com/posts/14-aes-ggplot2/image.png" class="img-fluid"></p>
 <section id="what-do-i-love-about-aes" class="level1" data-number="1"><h1 data-number="1">
 <span class="header-section-number">1</span> What do I love about <em>aes()</em>?</h1>
-<p>The <code>aes()</code> function is a <strong>domain-specific language</strong> (DSL) embedded inside R that feels almost magical thanks to lazy evaluation, quosures, and deep integration with the <a href="https://tidyverse.tidyverse.org">tidyverse</a>.</p>
+<p>The <code>aes()</code> function is a <strong>domain-specific language</strong> (DSL) embedded inside R — a Lisp-y function that deeply ties with lazy evaluation, quosures, and deep integration with the <a href="https://tidyverse.tidyverse.org">tidyverse</a>.</p>
 <p>What keeps pulling me back is how elegantly it balances simplicity for beginners with incredible power for advanced use — all without ever feeling clunky.</p>
+<p><img src="https://joshuamarie.com/posts/14-aes-ggplot2/pacha-perfection.gif" class="img-fluid"></p>
 </section><section id="mapped-vs-fixed-aesthetics" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Mapped vs Fixed Aesthetics</h1>
 <p>One of the first things to understand is the distinction between <strong>mapped</strong> and <strong>fixed</strong> aesthetics.</p>
@@ -2068,6 +2070,7 @@ font-style: inherit;">)</span> </span></code></pre></div></div>
   <category>tidyverse</category>
   <guid>https://joshuamarie.com/posts/14-aes-ggplot2/</guid>
   <pubDate>Fri, 02 Jan 2026 16:00:00 GMT</pubDate>
+  <media:content url="https://joshuamarie.com/posts/14-aes-ggplot2/image.png" medium="image" type="image/png" height="70" width="144"/>
 </item>
 <item>
   <title>A ‘careful’ and ‘small’ guide to data science with ‘tidyverse’</title>

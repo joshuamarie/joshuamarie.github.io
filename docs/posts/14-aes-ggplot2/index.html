@@ -113,9 +113,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../Theme/table.css">
 <meta name="twitter:title" content="The genius invention about aesthetics in ggplot2 – Joshua Marie">
 <meta name="twitter:description" content="A personal appreciation of aes() in ggplot2: from basic mappings to advanced delayed evaluation, ‘tidy’ programming patterns, and seamless tidyverse integration.">
-<meta name="twitter:image" content="https://joshuamarie.com/posts/14-aes-ggplot2/index_files/figure-html/unnamed-chunk-2-1.png">
-<meta name="twitter:image-height" content="1152">
-<meta name="twitter:image-width" content="1920">
+<meta name="twitter:image" content="https://joshuamarie.com/posts/14-aes-ggplot2/image.png">
+<meta name="twitter:image-height" content="913">
+<meta name="twitter:image-width" content="1887">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 <body class="nav-fixed quarto-light">
@@ -249,10 +249,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div></div>
 
 
+<p><img src="image.png" class="img-fluid"></p>
 <section id="what-do-i-love-about-aes" class="level1" data-number="1"><h1 data-number="1">
 <span class="header-section-number">1</span> What do I love about <em>aes()</em>?</h1>
-<p>The <code>aes()</code> function is a <strong>domain-specific language</strong> (DSL) embedded inside R that feels almost magical thanks to lazy evaluation, quosures, and deep integration with the <a href="https://tidyverse.tidyverse.org">tidyverse</a>.</p>
+<p>The <code>aes()</code> function is a <strong>domain-specific language</strong> (DSL) embedded inside R — a Lisp-y function that deeply ties with lazy evaluation, quosures, and deep integration with the <a href="https://tidyverse.tidyverse.org">tidyverse</a>.</p>
 <p>What keeps pulling me back is how elegantly it balances simplicity for beginners with incredible power for advanced use — all without ever feeling clunky.</p>
+<p><img src="pacha-perfection.gif" class="img-fluid"></p>
 </section><section id="mapped-vs-fixed-aesthetics" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Mapped vs Fixed Aesthetics</h1>
 <p>One of the first things to understand is the distinction between <strong>mapped</strong> and <strong>fixed</strong> aesthetics.</p>
@@ -2452,64 +2454,25 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         };
       }
-        const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
-        for (let i=0; i<annoteTargets.length; i++) {
-          const annoteTarget = annoteTargets[i];
-          const targetCell = annoteTarget.getAttribute("data-target-cell");
-          const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
-          const contentFn = () => {
-            const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-            if (content) {
-              const tipContent = content.cloneNode(true);
-              tipContent.classList.add("code-annotation-tip-content");
-              return tipContent.outerHTML;
-            }
-          }
-          const config = {
-            allowHTML: true,
-            content: contentFn,
-            onShow: (instance) => {
-              selectCodeLines(instance.reference);
-              instance.reference.classList.add('code-annotation-active');
-              window.tippy.hideAll();
-            },
-            onHide: (instance) => {
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
               unselectCodeLines();
-              instance.reference.classList.remove('code-annotation-active');
-            },
-            maxWidth: 300,
-            delay: [50, 0],
-            duration: [200, 0],
-            offset: [5, 10],
-            arrow: true,
-            appendTo: function(el) {
-              return el.parentElement.parentElement.parentElement;
-            },
-            interactive: true,
-            interactiveBorder: 10,
-            theme: 'quarto',
-            placement: 'right',
-            popperOptions: {
-              modifiers: [
-              {
-                name: 'flip',
-                options: {
-                  flipVariations: false, // true by default
-                  allowedAutoPlacements: ['right'],
-                  fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
-                },
-              },
-              {
-                name: 'preventOverflow',
-                options: {
-                  mainAxis: false,
-                  altAxis: false
-                }
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
               }
-              ]        
-            }      
-          };
-          window.tippy(annoteTarget, config); 
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
         }
     const findCites = (el) => {
       const parentEl = el.parentElement;

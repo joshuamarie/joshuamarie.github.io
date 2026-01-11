@@ -1,0 +1,142 @@
+---
+title: "Using neural networks in R is still not obsolete in 2026"
+subtitle: "The state of R for neural networks and how to work with neural networks from R in 2026: Tools and steps"
+description: "Let me show you the state of R for neural networks, and how capable it is for deep learning, featuring my new package '{kindling}'"
+date: "2026-01-10"
+image: "image.png"
+categories: [R, machine-learning, deep-learning, torch, tensorflow, keras, tidymodels, kindling, neural-networks]
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/15-nn-r"
+    description: "Neural Networks in R — Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+![](image.png)
+
+# Introduction
+
+Despite what you might hear in certain corners of the internet, R is still not an obsolete platform for deep learning in 2026. While Python dominates the headlines thanks to PyTorch and TensorFlow, in my opinion the R ecosystem has quietly matured into a robust environment for neural network development—especially for data scientists were attach to `{tidyverse}`.
+
+In this post, I'll walk you through the current state of neural networks in R, showcase the available tools, featuring my new package `{kindling}`, which reduces `{torch}` boilerplate (not to confuse with `{luz}`, a different package to train `{torch}` neural networks) and bridges with `{tidymodels}` to make deep neural networks more easier to train to R users.
+
+# Why Neural Networks in R?
+
+Before diving into the technical details, let's address the elephant in the room: why would anyone choose R for deep learning when Python has such a strong ecosystem?
+
+**For many R users, the answer is simple: workflow integration.** If your data preprocessing, visualization, and statistical modeling already live in R, rebuilding everything in Python creates unnecessary friction. The R ecosystem now offers:
+
+- Native GPU-accelerated tensor operations via `{torch}`
+- Seamless integration with the tidyverse and tidymodels
+- Excellent tooling for model deployment (Shiny, Plumber)
+- First-class support for statistical analysis alongside deep learning
+
+The real question isn't _"Can you do deep learning in R?"_ but rather _"Should you?"_. And for many use cases—especially in research, biostatistics, and business analytics—the answer is a resounding yes. I can't recommend you enough to use R for such task like natural language processing (NLP) or audio augmentation, though. 
+
+# The R Deep Learning Ecosystem in 2026
+
+Let's survey the landscape of available tools.
+
+## Core Frameworks
+
+Here are the battery-ready frameworks for such neural networks models. 
+
+### torch for R
+
+The `{torch}` package provides R bindings to LibTorch (the C++ backend of PyTorch), giving you:
+
+- Full tensor operations with automatic differentiation
+- GPU acceleration via CUDA
+- Custom neural network architectures via `nn_module`
+- Pre-trained models and transfer learning capabilities
+
+``` r
+box::use(
+    torch[torch_randn, torch_matmul]
+)
+
+x = torch_randn(c(5, 3))
+y = torch_randn(c(3, 2))
+z = torch_matmul(x, y)
+```
+
+### Keras/TensorFlow
+
+While `{keras}` and `{tensorflow}` are still available, they've taken a backseat to `{torch}` in recent years, and they still depend on Python installation to make them work. On the other hand, the torch ecosystem has better R integration and more active development.
+
+# High-Level Interfaces
+
+This is where things get interesting. Raw `{torch}` requires significant boilerplate code—defining modules, training loops, data loaders, etc. Several packages have emerged to simplify this:
+
+- `{luz}`: A high-level interface for torch with built-in training loops
+- `{tabnet}`: Implements TabNet architecture specifically for tabular data
+- `{brulee}`: High-Level Modeling Functions with 'torch'
+- `{kindling}`: (That's my package!) A simplified (and less typing) to auto-train torch neural networks modelling
+
+# Introducing {kindling}: Torch Meets Tidymodels
+
+Here's the problem I set out to solve: `{torch}` is powerful but verbose, while `{tidymodels}` provides an elegant API for traditional ML but lacks deep learning integration. Although `{tidymodels}` has `{brulee}` to bridge this gap, `{kindling}` takes another level by being able to:
+
+1.  Customize the number of hidden layers; 
+2.  Tweak the activation function for each layer; 
+3.  And being able to tune the neural network architecture while incorporating both 1 and 2.
+
+I truly wanted this for the sake of convenience, consistency, and the easiness to model. 
+
+## Philosophy
+
+I leverage R's metaprogramming and non-standard evaluation into `{kindling}` through code generation with embedded Domain-Specific Language (DSL) to specify activation functions. Under the hood, it:
+
+1. Generates `torch::nn_module` expressions based on your specifications
+2. Wraps training logic into reusable functions
+<!-- 3. Exposes everything through the familiar `{parsnip}` interface -->
+
+<!-- This architecture gives you flexibility to work at whatever abstraction level suits your task, from raw torch code to fully integrated tidymodels workflows. -->
+
+## Installation
+
+```r
+# Install from GitHub (CRAN submission pending!)
+pak::pak("joshuamarie/kindling")
+
+library(kindling)
+```
+
+## References
+
+Falbel D, Luraschi J (2023). *torch: Tensors and Neural Networks with 'GPU' Acceleration*. R package version 0.13.0.
+
+Goodfellow I, Bengio Y, Courville A (2016). *Deep Learning*. MIT Press.
+
+Kuhn M, Wickham H (2020). *Tidymodels: a collection of packages for modeling and machine learning using tidyverse principles*.
+
+Wickham H (2019). *Advanced R*, 2nd edition. Chapman and Hall/CRC.
+

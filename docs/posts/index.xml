@@ -10,7 +10,213 @@
 <atom:link href="https://joshuamarie.com/posts/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Fri, 02 Jan 2026 16:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 09 Jan 2026 16:00:00 GMT</lastBuildDate>
+<item>
+  <title>Using neural networks in R is still not obsolete in 2026</title>
+  <dc:creator>Joshua Marie</dc:creator>
+  <link>https://joshuamarie.com/posts/15-nn-r/</link>
+  <description><![CDATA[ <div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/15-nn-r&amp;text=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/15-nn-r" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/15-nn-r" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/15-nn-r&amp;name=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Neural Networks in R — Joshua Marie https://joshuamarie.com/posts/15-nn-r'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/15-nn-r%20Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<p><img src="https://joshuamarie.com/posts/15-nn-r/image.png" class="img-fluid"></p>
+<section id="introduction" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Introduction</h1>
+<p>Despite what you might hear in certain corners of the internet, R is still not an obsolete platform for deep learning in 2026. While Python dominates the headlines thanks to PyTorch and TensorFlow, in my opinion the R ecosystem has quietly matured into a robust environment for neural network development—especially for data scientists were attach to <a href="https://tidyverse.tidyverse.org">tidyverse</a>.</p>
+<p>In this post, I’ll walk you through the current state of neural networks in R, showcase the available tools, featuring my new package <a href="https://kindling.joshuamarie.com">kindling</a>, which reduces <a href="https://torch.mlverse.org/docs">torch</a> boilerplate (not to confuse with <a href="https://mlverse.github.io/luz/">luz</a>, a different package to train <a href="https://torch.mlverse.org/docs">torch</a> neural networks) and bridges with <a href="https://tidymodels.tidymodels.org">tidymodels</a> to make deep neural networks more easier to train to R users.</p>
+</section><section id="why-neural-networks-in-r" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Why Neural Networks in R?</h1>
+<p>Before diving into the technical details, let’s address the elephant in the room: why would anyone choose R for deep learning when Python has such a strong ecosystem?</p>
+<p><strong>For many R users, the answer is simple: workflow integration.</strong> If your data preprocessing, visualization, and statistical modeling already live in R, rebuilding everything in Python creates unnecessary friction. The R ecosystem now offers:</p>
+<ul>
+<li>Native GPU-accelerated tensor operations via <a href="https://torch.mlverse.org/docs">torch</a>
+</li>
+<li>Seamless integration with the tidyverse and tidymodels</li>
+<li>Excellent tooling for model deployment (Shiny, Plumber)</li>
+<li>First-class support for statistical analysis alongside deep learning</li>
+</ul>
+<p>The real question isn’t <em>“Can you do deep learning in R?”</em> but rather <em>“Should you?”</em>. And for many use cases—especially in research, biostatistics, and business analytics—the answer is a resounding yes. I can’t recommend you enough to use R for such task like natural language processing (NLP) or audio augmentation, though.</p>
+</section><section id="the-r-deep-learning-ecosystem-in-2026" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> The R Deep Learning Ecosystem in 2026</h1>
+<p>Let’s survey the landscape of available tools.</p>
+<section id="core-frameworks" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="core-frameworks">
+<span class="header-section-number">3.1</span> Core Frameworks</h2>
+<p>Here are the battery-ready frameworks for such neural networks models.</p>
+<section id="torch-for-r" class="level3" data-number="3.1.1"><h3 data-number="3.1.1" class="anchored" data-anchor-id="torch-for-r">
+<span class="header-section-number">3.1.1</span> torch for R</h3>
+<p>The <a href="https://torch.mlverse.org/docs">torch</a> package provides R bindings to LibTorch (the C++ backend of PyTorch), giving you:</p>
+<ul>
+<li>Full tensor operations with automatic differentiation</li>
+<li>GPU acceleration via CUDA</li>
+<li>Custom neural network architectures via <code>nn_module</code>
+</li>
+<li>Pre-trained models and transfer learning capabilities</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">torch</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">torch_randn</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">torch_matmul</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">torch_randn</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">y</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">torch_randn</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">z</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">torch_matmul</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">y</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</section><section id="kerastensorflow" class="level3" data-number="3.1.2"><h3 data-number="3.1.2" class="anchored" data-anchor-id="kerastensorflow">
+<span class="header-section-number">3.1.2</span> Keras/TensorFlow</h3>
+<p>While <a href="https://tensorflow.rstudio.com/">keras</a> and <a href="https://github.com/rstudio/tensorflow">tensorflow</a> are still available, they’ve taken a backseat to <a href="https://torch.mlverse.org/docs">torch</a> in recent years, and they still depend on Python installation to make them work. On the other hand, the torch ecosystem has better R integration and more active development.</p>
+</section></section></section><section id="high-level-interfaces" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> High-Level Interfaces</h1>
+<p>This is where things get interesting. Raw <a href="https://torch.mlverse.org/docs">torch</a> requires significant boilerplate code—defining modules, training loops, data loaders, etc. Several packages have emerged to simplify this:</p>
+<ul>
+<li>
+<a href="https://mlverse.github.io/luz/">luz</a>: A high-level interface for torch with built-in training loops</li>
+<li>
+<a href="https://mlverse.github.io/tabnet/">tabnet</a>: Implements TabNet architecture specifically for tabular data</li>
+<li>
+<a href="https://github.com/tidymodels/brulee">brulee</a>: High-Level Modeling Functions with ‘torch’</li>
+<li>
+<a href="https://kindling.joshuamarie.com">kindling</a>: (That’s my package!) A simplified (and less typing) to auto-train torch neural networks modelling</li>
+</ul></section><section id="introducing-kindling-torch-meets-tidymodels" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Introducing {kindling}: Torch Meets Tidymodels</h1>
+<p>Here’s the problem I set out to solve: <a href="https://torch.mlverse.org/docs">torch</a> is powerful but verbose, while <a href="https://tidymodels.tidymodels.org">tidymodels</a> provides an elegant API for traditional ML but lacks deep learning integration. Although <a href="https://tidymodels.tidymodels.org">tidymodels</a> has <a href="https://github.com/tidymodels/brulee">brulee</a> to bridge this gap, <a href="https://kindling.joshuamarie.com">kindling</a> takes another level by being able to:</p>
+<ol type="1">
+<li>Customize the number of hidden layers;</li>
+<li>Tweak the activation function for each layer;</li>
+<li>And being able to tune the neural network architecture while incorporating both 1 and 2.</li>
+</ol>
+<p>I truly wanted this for the sake of convenience, consistency, and the easiness to model.</p>
+<section id="philosophy" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="philosophy">
+<span class="header-section-number">5.1</span> Philosophy</h2>
+<p>I leverage R’s metaprogramming and non-standard evaluation into <a href="https://kindling.joshuamarie.com">kindling</a> through code generation with embedded Domain-Specific Language (DSL) to specify activation functions. Under the hood, it:</p>
+<ol type="1">
+<li>Generates <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html">torch::nn_module</a></code> expressions based on your specifications</li>
+<li>Wraps training logic into reusable functions <!-- 3. Exposes everything through the familiar `{parsnip}` interface -->
+</li>
+</ol>
+<!-- This architecture gives you flexibility to work at whatever abstraction level suits your task, from raw torch code to fully integrated tidymodels workflows. --></section><section id="installation" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="installation">
+<span class="header-section-number">5.2</span> Installation</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Install from GitHub (CRAN submission pending!)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pak</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://pak.r-lib.org/reference/pak.html">pak</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"joshuamarie/kindling"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;"><a href="https://kindling.joshuamarie.com">kindling</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</section><section id="references" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="references">
+<span class="header-section-number">5.3</span> References</h2>
+<p>Falbel D, Luraschi J (2023). <em>torch: Tensors and Neural Networks with ‘GPU’ Acceleration</em>. R package version 0.13.0.</p>
+<p>Goodfellow I, Bengio Y, Courville A (2016). <em>Deep Learning</em>. MIT Press.</p>
+<p>Kuhn M, Wickham H (2020). <em>Tidymodels: a collection of packages for modeling and machine learning using tidyverse principles</em>.</p>
+<p>Wickham H (2019). <em>Advanced R</em>, 2nd edition. Chapman and Hall/CRC.</p>
+
+
+</section></section> ]]></description>
+  <category>R</category>
+  <category>machine-learning</category>
+  <category>deep-learning</category>
+  <category>torch</category>
+  <category>tensorflow</category>
+  <category>keras</category>
+  <category>tidymodels</category>
+  <category>kindling</category>
+  <category>neural-networks</category>
+  <guid>https://joshuamarie.com/posts/15-nn-r/</guid>
+  <pubDate>Fri, 09 Jan 2026 16:00:00 GMT</pubDate>
+  <media:content url="https://joshuamarie.com/posts/15-nn-r/image.png" medium="image" type="image/png" height="121" width="144"/>
+</item>
 <item>
   <title>The genius invention about aesthetics in ggplot2</title>
   <dc:creator>Joshua Marie</dc:creator>

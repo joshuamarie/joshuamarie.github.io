@@ -311,7 +311,7 @@ mean_data(iris)
 ```
 
 ::: {.callout-note title="Notice"}
-> Noticed that I don't call `dplyr::` for `across()` and `where()`? I have a [blog](https://joshuamarie.github.io/joshuamarie/posts/04-tidyselect-helpers/) talking about this. 
+> Noticed that I don't call `dplyr::` for `across()` and `where()`? I have a [blog](https://joshuamarie.com/posts/04-tidyselect-helpers/) talking about this. 
 
 :::
 

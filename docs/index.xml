@@ -16461,7 +16461,7 @@ font-style: inherit;">)</span></span></code></pre></div></div>
 </div>
 <div class="callout-body-container callout-body">
 <blockquote class="blockquote">
-<p>Noticed that I don’t call <code>dplyr::</code> for <code><a href="https://dplyr.tidyverse.org/reference/across.html">across()</a></code> and <code><a href="https://tidyselect.r-lib.org/reference/where.html">where()</a></code>? I have a <a href="https://joshuamarie.github.io/joshuamarie/posts/04-tidyselect-helpers/">blog</a> talking about this.</p>
+<p>Noticed that I don’t call <code>dplyr::</code> for <code><a href="https://dplyr.tidyverse.org/reference/across.html">across()</a></code> and <code><a href="https://tidyselect.r-lib.org/reference/where.html">where()</a></code>? I have a <a href="https://joshuamarie.com/posts/04-tidyselect-helpers/">blog</a> talking about this.</p>
 </blockquote>
 </div>
 </div>

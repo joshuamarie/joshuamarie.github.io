@@ -1,7 +1,7 @@
 ---
-title: "Using neural networks in R is still not obsolete in 2026"
-subtitle: "The state of R for neural networks and how to work with neural networks from R in 2026: Tools and steps"
-description: "Let me show you the state of R for neural networks, and how capable it is for deep learning, featuring my new package '{kindling}'"
+title: "Neural Networks in R Remain Viable in 2026"
+subtitle: "The current state of R for deep learning: tools, workflows, and practical approaches"
+description: "An overview of R's neural network capabilities in 2026, featuring the new {kindling} package for simplified torch modeling"
 date: "2026-01-10"
 image: "image.png"
 categories: [R, machine-learning, deep-learning, torch, tensorflow, keras, tidymodels, kindling, neural-networks]
@@ -26,7 +26,7 @@ filters:
     - collapse-output
 share:
     permalink: "https://joshuamarie.com/posts/15-nn-r"
-    description: "Neural Networks in R — Joshua Marie"
+    description: "Neural Networks in R – Joshua Marie"
     twitter: true
     facebook: true
     reddit: true
@@ -44,93 +44,199 @@ engine: knitr
 
 # Introduction
 
-Despite what you might hear in certain corners of the internet, R is still not an obsolete platform for deep learning in 2026. While Python dominates the headlines thanks to PyTorch and TensorFlow, in my opinion the R ecosystem has quietly matured into a robust environment for neural network development—especially for data scientists were attach to `{tidyverse}`.
+Python dominates the AI/DL space very well (Hugging Face, diffusion models, large-scale RL), and it's such a pleasure to deploy those model into production at scale. However, many data scientists, statisticians, bioinformaticians, and analysts continue working in R because:
 
-In this post, I'll walk you through the current state of neural networks in R, showcase the available tools, featuring my new package `{kindling}`, which reduces `{torch}` boilerplate (not to confuse with `{luz}`, a different package to train `{torch}` neural networks) and bridges with `{tidymodels}` to make deep neural networks more easier to train to R users.
+-   Data naturally lives in tidy data frames, keeping preprocessing, exploration, and visualization in one language
+-   `{tidymodels}` provides a consistent, production-ready modeling grammar
+-   `{torch}` now offers excellent native GPU support without requiring Python installation
+-   Strong deployment options exist (Shiny, Posit Connect/Workbench, plumber APIs, vetiver)
+-   Statistical modeling and deep learning can coexist seamlessly in the same session
 
 # Why Neural Networks in R?
 
-Before diving into the technical details, let's address the elephant in the room: why would anyone choose R for deep learning when Python has such a strong ecosystem?
+You see, R typically isn't the best choice for training 100B-parameter LLMs or real-time video models, but it excels at:
 
-**For many R users, the answer is simple: workflow integration.** If your data preprocessing, visualization, and statistical modeling already live in R, rebuilding everything in Python creates unnecessary friction. The R ecosystem now offers:
+- Tabular deep learning
+- Research prototyping where statistics and interpretability matter
+- Teaching deep learning in statistics-focused curricula
 
-- Native GPU-accelerated tensor operations via `{torch}`
-- Seamless integration with the tidyverse and tidymodels
-- Excellent tooling for model deployment (Shiny, Plumber)
-- First-class support for statistical analysis alongside deep learning
+Before diving into technical details, let's address a key question: why choose R for deep learning when Python has such a robust ecosystem?
 
-The real question isn't _"Can you do deep learning in R?"_ but rather _"Should you?"_. And for many use cases—especially in research, biostatistics, and business analytics—the answer is a resounding yes. I can't recommend you enough to use R for such task like natural language processing (NLP) or audio augmentation, though. 
+*For many R users, the answer is straightforward: workflow integration.*
 
-# The R Deep Learning Ecosystem in 2026
+![](grumpy-cat.gif)
 
-Let's survey the landscape of available tools.
+## The current R Neural Networks Stack in 2026
+
+| Package       | Backend     | Python dep? | tidymodels? | Best for                              |
+|---------------|-------------|-------------|-------------|---------------------------------------|
+| **torch**     | LibTorch    | No          | Partial     | Full control, custom models           |
+| **luz**       | torch       | No          | No          | High-level training loops             |
+| **brulee**    | torch       | No          | Yes         | Quick MLPs on tabular data            |
+| **tabnet**    | torch       | No          | Yes         | Tabular data (TabNet architecture)    |
+| **keras** / tensorflow | TF/Python | Yes   | Partial     | Familiar Keras API                    |
+| **kindling**  | torch       | No          | Yes         | Full architecture tuning      |
+
+`{torch}` is clearly the most actively developed native option in 2026. `{brulee}` remains the go-to for simple multilayer perceptrons (MLPs) within tidymodels. `{kindling}` aims to combine those—offering more flexible layer configuration than brulee while remaining fully tidymodels-native.
+
+# The R Neural Networks Ecosystem in 2026
+
+Let's examine the available tools.
 
 ## Core Frameworks
 
-Here are the battery-ready frameworks for such neural networks models. 
+These are the primary frameworks for building neural network models.
 
 ### torch for R
 
-The `{torch}` package provides R bindings to LibTorch (the C++ backend of PyTorch), giving you:
+The `{torch}` package provides R bindings to LibTorch (PyTorch's C++ backend), offering:
 
-- Full tensor operations with automatic differentiation
-- GPU acceleration via CUDA
-- Custom neural network architectures via `nn_module`
-- Pre-trained models and transfer learning capabilities
+1. Full tensor operations with automatic differentiation
+2. GPU acceleration via CUDA
+3. Custom neural network architectures via `nn_module`
+4. Pre-trained models and transfer learning capabilities
 
-``` r
+```{r}
+#| eval: false
 box::use(
-    torch[torch_randn, torch_matmul]
+    torch[randn = torch_randn, torch_matmul]
 )
 
-x = torch_randn(c(5, 3))
-y = torch_randn(c(3, 2))
+x = randn(c(5, 3))
+y = randn(c(3, 2))
 z = torch_matmul(x, y)
 ```
 
 ### Keras/TensorFlow
 
-While `{keras}` and `{tensorflow}` are still available, they've taken a backseat to `{torch}` in recent years, and they still depend on Python installation to make them work. On the other hand, the torch ecosystem has better R integration and more active development.
+While `{tensorflow}` and `{keras}` remain available, they've become less prominent for R compared to `{torch}` in recent years, and still require Python installation. The torch ecosystem offers better R integration, more active development, and no Python dependency. This framework, however, beats `{torch}` in terms of composability. 
+
+Example usage:
+
+```{r}
+#| eval: false
+box::use(
+    keras[
+        model_sequential = keras_model_sequential, 
+        to_categorical, 
+        layer_dense, 
+        optimizer_adam, 
+        compile, fit, 
+        evaluate
+    ],
+    stats[predict]
+)
+
+x = as.matrix(iris[, 1:4])
+y = {as.integer(iris$Species) - 1} |> to_categorical(num_classes = 3)
+
+model = 
+    model_sequential() |>
+    layer_dense(
+        units = 16,
+        activation = "relu",
+        input_shape = ncol(x)
+    ) |>
+    layer_dense(
+        units = 16,
+        activation = "relu"
+    ) |>
+    layer_dense(
+        units = 3,
+        activation = "softmax"
+    )
+
+model |>
+    compile(
+        optimizer = optimizer_adam(learning_rate = 0.01),
+        loss = "categorical_crossentropy",
+        metrics = "accuracy"
+    )
+
+history =
+    model |>
+    fit(
+        x,
+        y,
+        epochs = 50,
+        batch_size = 16,
+        validation_split = 0.2,
+        verbose = 1
+    )
+
+model |>
+    evaluate(x, y)
+
+pred = predict(model, x)
+
+class_pred = max.col(pred) - 1
+```
 
 # High-Level Interfaces
 
-This is where things get interesting. Raw `{torch}` requires significant boilerplate code—defining modules, training loops, data loaders, etc. Several packages have emerged to simplify this:
+![](next-level-steve.gif)
+
+This is where things get interesting. Raw `{torch}` requires substantial boilerplate—defining modules, training loops, data loaders, etc. Several packages have emerged to simplify this workflow:
 
 - `{luz}`: A high-level interface for torch with built-in training loops
 - `{tabnet}`: Implements TabNet architecture specifically for tabular data
-- `{brulee}`: High-Level Modeling Functions with 'torch'
-- `{kindling}`: (That's my package!) A simplified (and less typing) to auto-train torch neural networks modelling
+- `{brulee}`: High-level modeling functions with torch
+- `{mlr3torch}`: Bridges torch deep learning into the `{mlr3}` ecosystem
+- `{kindling}`: (My package!) Simplified torch neural network modeling with reduced boilerplate
 
-# Introducing {kindling}: Torch Meets Tidymodels
+# Introducing {kindling}: Torch with Less Typing
 
-Here's the problem I set out to solve: `{torch}` is powerful but verbose, while `{tidymodels}` provides an elegant API for traditional ML but lacks deep learning integration. Although `{tidymodels}` has `{brulee}` to bridge this gap, `{kindling}` takes another level by being able to:
+Here's the problem I aimed to solve: `{torch}` is powerful for deep learning and scientific computing, but verbose and less expressive (no offense), while `{tidymodels}` has an ergonomic API, thanks to `{tidyverse}` for traditional ML, but has limited deep learning stacks and integrations. The `{tidymodels}` framework has `{brulee}` for this kind of thing, but limited to 1-2 hidden layers, while `{kindling}` goes further beyond by enabling you to:
 
-1.  Customize the number of hidden layers; 
-2.  Tweak the activation function for each layer; 
-3.  And being able to tune the neural network architecture while incorporating both 1 and 2.
+1. Customize the number of hidden layers
+2. Specify activation functions for each layer, and their specific parameters (e.g. `lambd` from `nnf_softshrink()` function)
+3. Tune neural network architecture while incorporating both capabilities above
 
-I truly wanted this for the sake of convenience, consistency, and the easiness to model. 
+I built this package for convenience, consistency, and ease of modeling. In its current implementation, it's limited to data frames only, and planning to extend this for image datasets.
+
+![](typing-slow.gif)
+
+::: {.callout-note title="Core Goal"}
+The primary goal of this package is to reduce boilerplate and reduce typing when modelling neural network with `{torch}`.
+:::
 
 ## Philosophy
 
-I leverage R's metaprogramming and non-standard evaluation into `{kindling}` through code generation with embedded Domain-Specific Language (DSL) to specify activation functions. Under the hood, it:
+I powered `{kindling}` with R's metaprogramming and non-standard evaluation (NSE) through code generation with an embedded Domain-Specific Language (DSL) for specifying activation functions. Under the hood, it generates `torch::nn_module()` expressions based on your specifications and then wraps training logic into reusable functions. 
 
-1. Generates `torch::nn_module` expressions based on your specifications
-2. Wraps training logic into reusable functions
-<!-- 3. Exposes everything through the familiar `{parsnip}` interface -->
+The `*_kindling()` functions expose everything through the familiar `{parsnip}` interface, integrating seamlessly with `{tidymodels}`. This package makes neural network modeling with `{torch}` easier, more concise, and more readable (with `{tidymodels}`, of course).
 
-<!-- This architecture gives you flexibility to work at whatever abstraction level suits your task, from raw torch code to fully integrated tidymodels workflows. -->
+The package gives you flexibility to work at whatever abstraction level suits your task, from raw torch code to fully integrated tidymodels workflows.
 
 ## Installation
 
-```r
-# Install from GitHub (CRAN submission pending!)
-pak::pak("joshuamarie/kindling")
+You can install this package from:
 
-library(kindling)
-```
+1. CRAN
 
-## References
+   ```r
+   install.packages("kindling")
+   pak::pkg_install("kindling")
+   ```
+
+2. GitHub
+
+   ```r
+   remotes::install_github("joshuamarie/kindling")
+   pak::pak("joshuamarie/kindling")
+   ```
+
+## Future Plans
+
+![](future-spongebob.gif)
+
+As of January 13, 2026, there are some stuffs that I want to add for the future versions. Here are my current plans for the future to enhance this package: 
+
+1.  More `{mlr3}` integration. 
+2.  Suitability for time series modelling with customized algorithms. 
+3.  Ease to add more neural network models, e.g. deep belief networks. 
+
+# References
 
 Falbel D, Luraschi J (2023). *torch: Tensors and Neural Networks with 'GPU' Acceleration*. R package version 0.13.0.
 
@@ -140,3 +246,4 @@ Kuhn M, Wickham H (2020). *Tidymodels: a collection of packages for modeling and
 
 Wickham H (2019). *Advanced R*, 2nd edition. Chapman and Hall/CRC.
 
+Keydana S (2023). *Deep Learning and Scientific Computing with R torch*

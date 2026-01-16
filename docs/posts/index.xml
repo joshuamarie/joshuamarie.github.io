@@ -12,47 +12,118 @@
 <generator>quarto-1.8.26</generator>
 <lastBuildDate>Fri, 09 Jan 2026 16:00:00 GMT</lastBuildDate>
 <item>
-  <title>Using neural networks in R is still not obsolete in 2026</title>
+  <title>Neural Networks in R Remain Viable in 2026</title>
   <dc:creator>Joshua Marie</dc:creator>
   <link>https://joshuamarie.com/posts/15-nn-r/</link>
   <description><![CDATA[ <div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
-<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/15-nn-r&amp;text=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/15-nn-r" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/15-nn-r" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/15-nn-r&amp;name=Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Neural Networks in R — Joshua Marie https://joshuamarie.com/posts/15-nn-r'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/15-nn-r%20Neural%20Networks%20in%20R%20%E2%80%94%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/15-nn-r&amp;text=Neural%20Networks%20in%20R%20%E2%80%93%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%93%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Neural%20Networks%20in%20R%20%E2%80%93%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/15-nn-r" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/15-nn-r" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%93%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/15-nn-r&amp;title=Neural%20Networks%20in%20R%20%E2%80%93%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/15-nn-r&amp;name=Neural%20Networks%20in%20R%20%E2%80%93%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Neural Networks in R – Joshua Marie https://joshuamarie.com/posts/15-nn-r'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/15-nn-r%20Neural%20Networks%20in%20R%20%E2%80%93%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
 </div></div>
 
 
 <p><img src="https://joshuamarie.com/posts/15-nn-r/image.png" class="img-fluid"></p>
 <section id="introduction" class="level1" data-number="1"><h1 data-number="1">
 <span class="header-section-number">1</span> Introduction</h1>
-<p>Despite what you might hear in certain corners of the internet, R is still not an obsolete platform for deep learning in 2026. While Python dominates the headlines thanks to PyTorch and TensorFlow, in my opinion the R ecosystem has quietly matured into a robust environment for neural network development—especially for data scientists were attach to <a href="https://tidyverse.tidyverse.org">tidyverse</a>.</p>
-<p>In this post, I’ll walk you through the current state of neural networks in R, showcase the available tools, featuring my new package <a href="https://kindling.joshuamarie.com">kindling</a>, which reduces <a href="https://torch.mlverse.org/docs">torch</a> boilerplate (not to confuse with <a href="https://mlverse.github.io/luz/">luz</a>, a different package to train <a href="https://torch.mlverse.org/docs">torch</a> neural networks) and bridges with <a href="https://tidymodels.tidymodels.org">tidymodels</a> to make deep neural networks more easier to train to R users.</p>
-</section><section id="why-neural-networks-in-r" class="level1" data-number="2"><h1 data-number="2">
-<span class="header-section-number">2</span> Why Neural Networks in R?</h1>
-<p>Before diving into the technical details, let’s address the elephant in the room: why would anyone choose R for deep learning when Python has such a strong ecosystem?</p>
-<p><strong>For many R users, the answer is simple: workflow integration.</strong> If your data preprocessing, visualization, and statistical modeling already live in R, rebuilding everything in Python creates unnecessary friction. The R ecosystem now offers:</p>
+<p>Python dominates the AI/DL space very well (Hugging Face, diffusion models, large-scale RL), and it’s such a pleasure to deploy those model into production at scale. However, many data scientists, statisticians, bioinformaticians, and analysts continue working in R because:</p>
 <ul>
-<li>Native GPU-accelerated tensor operations via <a href="https://torch.mlverse.org/docs">torch</a>
-</li>
-<li>Seamless integration with the tidyverse and tidymodels</li>
-<li>Excellent tooling for model deployment (Shiny, Plumber)</li>
-<li>First-class support for statistical analysis alongside deep learning</li>
+<li>Data naturally lives in tidy data frames, keeping preprocessing, exploration, and visualization in one language</li>
+<li>
+<a href="https://tidymodels.tidymodels.org">tidymodels</a> provides a consistent, production-ready modeling grammar</li>
+<li>
+<a href="https://torch.mlverse.org/docs">torch</a> now offers excellent native GPU support without requiring Python installation</li>
+<li>Strong deployment options exist (Shiny, Posit Connect/Workbench, plumber APIs, vetiver)</li>
+<li>Statistical modeling and deep learning can coexist seamlessly in the same session</li>
+</ul></section><section id="why-neural-networks-in-r" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Why Neural Networks in R?</h1>
+<p>You see, R typically isn’t the best choice for training 100B-parameter LLMs or real-time video models, but it excels at:</p>
+<ul>
+<li>Tabular deep learning</li>
+<li>Research prototyping where statistics and interpretability matter</li>
+<li>Teaching deep learning in statistics-focused curricula</li>
 </ul>
-<p>The real question isn’t <em>“Can you do deep learning in R?”</em> but rather <em>“Should you?”</em>. And for many use cases—especially in research, biostatistics, and business analytics—the answer is a resounding yes. I can’t recommend you enough to use R for such task like natural language processing (NLP) or audio augmentation, though.</p>
-</section><section id="the-r-deep-learning-ecosystem-in-2026" class="level1" data-number="3"><h1 data-number="3">
-<span class="header-section-number">3</span> The R Deep Learning Ecosystem in 2026</h1>
-<p>Let’s survey the landscape of available tools.</p>
+<p>Before diving into technical details, let’s address a key question: why choose R for deep learning when Python has such a robust ecosystem?</p>
+<p><em>For many R users, the answer is straightforward: workflow integration.</em></p>
+<p><img src="https://joshuamarie.com/posts/15-nn-r/grumpy-cat.gif" class="img-fluid"></p>
+<section id="the-current-r-neural-networks-stack-in-2026" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="the-current-r-neural-networks-stack-in-2026">
+<span class="header-section-number">2.1</span> The current R Neural Networks Stack in 2026</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 41%">
+</colgroup>
+<thead><tr class="header">
+<th>Package</th>
+<th>Backend</th>
+<th>Python dep?</th>
+<th>tidymodels?</th>
+<th>Best for</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>torch</strong></td>
+<td>LibTorch</td>
+<td>No</td>
+<td>Partial</td>
+<td>Full control, custom models</td>
+</tr>
+<tr class="even">
+<td><strong>luz</strong></td>
+<td>torch</td>
+<td>No</td>
+<td>No</td>
+<td>High-level training loops</td>
+</tr>
+<tr class="odd">
+<td><strong>brulee</strong></td>
+<td>torch</td>
+<td>No</td>
+<td>Yes</td>
+<td>Quick MLPs on tabular data</td>
+</tr>
+<tr class="even">
+<td><strong>tabnet</strong></td>
+<td>torch</td>
+<td>No</td>
+<td>Yes</td>
+<td>Tabular data (TabNet architecture)</td>
+</tr>
+<tr class="odd">
+<td>
+<strong>keras</strong> / tensorflow</td>
+<td>TF/Python</td>
+<td>Yes</td>
+<td>Partial</td>
+<td>Familiar Keras API</td>
+</tr>
+<tr class="even">
+<td><strong>kindling</strong></td>
+<td>torch</td>
+<td>No</td>
+<td>Yes</td>
+<td>Full architecture tuning</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://torch.mlverse.org/docs">torch</a> is clearly the most actively developed native option in 2026. <a href="https://github.com/tidymodels/brulee">brulee</a> remains the go-to for simple multilayer perceptrons (MLPs) within tidymodels. <a href="https://kindling.joshuamarie.com">kindling</a> aims to combine those—offering more flexible layer configuration than brulee while remaining fully tidymodels-native.</p>
+</section></section><section id="the-r-neural-networks-ecosystem-in-2026" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> The R Neural Networks Ecosystem in 2026</h1>
+<p>Let’s examine the available tools.</p>
 <section id="core-frameworks" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="core-frameworks">
 <span class="header-section-number">3.1</span> Core Frameworks</h2>
-<p>Here are the battery-ready frameworks for such neural networks models.</p>
+<p>These are the primary frameworks for building neural network models.</p>
 <section id="torch-for-r" class="level3" data-number="3.1.1"><h3 data-number="3.1.1" class="anchored" data-anchor-id="torch-for-r">
 <span class="header-section-number">3.1.1</span> torch for R</h3>
-<p>The <a href="https://torch.mlverse.org/docs">torch</a> package provides R bindings to LibTorch (the C++ backend of PyTorch), giving you:</p>
-<ul>
+<p>The <a href="https://torch.mlverse.org/docs">torch</a> package provides R bindings to LibTorch (PyTorch’s C++ backend), offering:</p>
+<ol type="1">
 <li>Full tensor operations with automatic differentiation</li>
 <li>GPU acceleration via CUDA</li>
 <li>Custom neural network architectures via <code>nn_module</code>
 </li>
 <li>Pre-trained models and transfer learning capabilities</li>
-</ul>
+</ol>
+<div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
@@ -66,7 +137,9 @@ font-style: inherit;">(</span></span>
 background-color: null;
 font-style: inherit;">torch</span><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">[</span><span class="va" style="color: #111111;
+font-style: inherit;">[</span>randn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">torch_randn</span>, <span class="va" style="color: #111111;
 background-color: null;
@@ -83,7 +156,7 @@ font-style: inherit;">x</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">torch_randn</span><span class="op" style="color: #5E5E5E;
+font-style: inherit;">randn</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -104,7 +177,7 @@ font-style: inherit;">y</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">torch_randn</span><span class="op" style="color: #5E5E5E;
+font-style: inherit;">randn</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">(</span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -134,43 +207,429 @@ background-color: null;
 font-style: inherit;">y</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">)</span></span></code></pre></div></div>
+</div>
 </section><section id="kerastensorflow" class="level3" data-number="3.1.2"><h3 data-number="3.1.2" class="anchored" data-anchor-id="kerastensorflow">
 <span class="header-section-number">3.1.2</span> Keras/TensorFlow</h3>
-<p>While <a href="https://tensorflow.rstudio.com/">keras</a> and <a href="https://github.com/rstudio/tensorflow">tensorflow</a> are still available, they’ve taken a backseat to <a href="https://torch.mlverse.org/docs">torch</a> in recent years, and they still depend on Python installation to make them work. On the other hand, the torch ecosystem has better R integration and more active development.</p>
+<p>While <a href="https://github.com/rstudio/tensorflow">tensorflow</a> and <a href="https://tensorflow.rstudio.com/">keras</a> remain available, they’ve become less prominent for R compared to <a href="https://torch.mlverse.org/docs">torch</a> in recent years, and still require Python installation. The torch ecosystem offers better R integration, more active development, and no Python dependency. This framework, however, beats <a href="https://torch.mlverse.org/docs">torch</a> in terms of composability.</p>
+<p>Example usage:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">keras</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span></span>
+<span>        model_sequential <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">keras_model_sequential</span>, </span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">to_categorical</span>, </span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">layer_dense</span>, </span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">optimizer_adam</span>, </span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">compile</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">fit</span>, </span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">evaluate</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">stats</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">predict</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">iris</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">y</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">iris</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">Species</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">to_categorical</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>num_classes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">model_sequential</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">layer_dense</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        units <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>,</span>
+<span>        activation <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"relu"</span>,</span>
+<span>        input_shape <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">layer_dense</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        units <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>,</span>
+<span>        activation <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"relu"</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">layer_dense</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        units <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,</span>
+<span>        activation <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"softmax"</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">compile</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        optimizer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">optimizer_adam</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>learning_rate <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>        loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"categorical_crossentropy"</span>,</span>
+<span>        metrics <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"accuracy"</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">history</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fit</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>,</span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">y</span>,</span>
+<span>        epochs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>,</span>
+<span>        batch_size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>,</span>
+<span>        validation_split <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>,</span>
+<span>        verbose <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">evaluate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">y</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pred</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">x</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">class_pred</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/maxCol.html">max.col</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pred</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span></code></pre></div></div>
+</div>
 </section></section></section><section id="high-level-interfaces" class="level1" data-number="4"><h1 data-number="4">
 <span class="header-section-number">4</span> High-Level Interfaces</h1>
-<p>This is where things get interesting. Raw <a href="https://torch.mlverse.org/docs">torch</a> requires significant boilerplate code—defining modules, training loops, data loaders, etc. Several packages have emerged to simplify this:</p>
+<p><img src="https://joshuamarie.com/posts/15-nn-r/next-level-steve.gif" class="img-fluid"></p>
+<p>This is where things get interesting. Raw <a href="https://torch.mlverse.org/docs">torch</a> requires substantial boilerplate—defining modules, training loops, data loaders, etc. Several packages have emerged to simplify this workflow:</p>
 <ul>
 <li>
 <a href="https://mlverse.github.io/luz/">luz</a>: A high-level interface for torch with built-in training loops</li>
 <li>
 <a href="https://mlverse.github.io/tabnet/">tabnet</a>: Implements TabNet architecture specifically for tabular data</li>
 <li>
-<a href="https://github.com/tidymodels/brulee">brulee</a>: High-Level Modeling Functions with ‘torch’</li>
+<a href="https://github.com/tidymodels/brulee">brulee</a>: High-level modeling functions with torch</li>
 <li>
-<a href="https://kindling.joshuamarie.com">kindling</a>: (That’s my package!) A simplified (and less typing) to auto-train torch neural networks modelling</li>
-</ul></section><section id="introducing-kindling-torch-meets-tidymodels" class="level1" data-number="5"><h1 data-number="5">
-<span class="header-section-number">5</span> Introducing {kindling}: Torch Meets Tidymodels</h1>
-<p>Here’s the problem I set out to solve: <a href="https://torch.mlverse.org/docs">torch</a> is powerful but verbose, while <a href="https://tidymodels.tidymodels.org">tidymodels</a> provides an elegant API for traditional ML but lacks deep learning integration. Although <a href="https://tidymodels.tidymodels.org">tidymodels</a> has <a href="https://github.com/tidymodels/brulee">brulee</a> to bridge this gap, <a href="https://kindling.joshuamarie.com">kindling</a> takes another level by being able to:</p>
+<a href="https://mlr3torch.mlr-org.com/">mlr3torch</a>: Bridges torch deep learning into the <a href="https://mlr3.mlr-org.com">mlr3</a> ecosystem</li>
+<li>
+<a href="https://kindling.joshuamarie.com">kindling</a>: (My package!) Simplified torch neural network modeling with reduced boilerplate</li>
+</ul></section><section id="introducing-kindling-torch-with-less-typing" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Introducing {kindling}: Torch with Less Typing</h1>
+<p>Here’s the problem I aimed to solve: <a href="https://torch.mlverse.org/docs">torch</a> is powerful for deep learning and scientific computing, but verbose and less expressive (no offense), while <a href="https://tidymodels.tidymodels.org">tidymodels</a> has an ergonomic API, thanks to <a href="https://tidyverse.tidyverse.org">tidyverse</a> for traditional ML, but has limited deep learning stacks and integrations. The <a href="https://tidymodels.tidymodels.org">tidymodels</a> framework has <a href="https://github.com/tidymodels/brulee">brulee</a> for this kind of thing, but limited to 1-2 hidden layers, while <a href="https://kindling.joshuamarie.com">kindling</a> goes further beyond by enabling you to:</p>
 <ol type="1">
-<li>Customize the number of hidden layers;</li>
-<li>Tweak the activation function for each layer;</li>
-<li>And being able to tune the neural network architecture while incorporating both 1 and 2.</li>
+<li>Customize the number of hidden layers</li>
+<li>Specify activation functions for each layer, and their specific parameters (e.g.&nbsp;<code>lambd</code> from <code>nnf_softshrink()</code> function)</li>
+<li>Tune neural network architecture while incorporating both capabilities above</li>
 </ol>
-<p>I truly wanted this for the sake of convenience, consistency, and the easiness to model.</p>
+<p>I built this package for convenience, consistency, and ease of modeling. In its current implementation, it’s limited to data frames only, and planning to extend this for image datasets.</p>
+<p><img src="https://joshuamarie.com/posts/15-nn-r/typing-slow.gif" class="img-fluid"></p>
+<div class="callout callout-style-default callout-note callout-titled" title="Core Goal">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Core Goal
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The primary goal of this package is to reduce boilerplate and reduce typing when modelling neural network with <a href="https://torch.mlverse.org/docs">torch</a>.</p>
+</div>
+</div>
 <section id="philosophy" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="philosophy">
 <span class="header-section-number">5.1</span> Philosophy</h2>
-<p>I leverage R’s metaprogramming and non-standard evaluation into <a href="https://kindling.joshuamarie.com">kindling</a> through code generation with embedded Domain-Specific Language (DSL) to specify activation functions. Under the hood, it:</p>
-<ol type="1">
-<li>Generates <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html">torch::nn_module</a></code> expressions based on your specifications</li>
-<li>Wraps training logic into reusable functions <!-- 3. Exposes everything through the familiar `{parsnip}` interface -->
-</li>
-</ol>
-<!-- This architecture gives you flexibility to work at whatever abstraction level suits your task, from raw torch code to fully integrated tidymodels workflows. --></section><section id="installation" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="installation">
+<p>I powered <a href="https://kindling.joshuamarie.com">kindling</a> with R’s metaprogramming and non-standard evaluation (NSE) through code generation with an embedded Domain-Specific Language (DSL) for specifying activation functions. Under the hood, it generates <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html">torch::nn_module()</a></code> expressions based on your specifications and then wraps training logic into reusable functions.</p>
+<p>The <code>*_kindling()</code> functions expose everything through the familiar <a href="https://github.com/tidymodels/parsnip">parsnip</a> interface, integrating seamlessly with <a href="https://tidymodels.tidymodels.org">tidymodels</a>. This package makes neural network modeling with <a href="https://torch.mlverse.org/docs">torch</a> easier, more concise, and more readable (with <a href="https://tidymodels.tidymodels.org">tidymodels</a>, of course).</p>
+<p>The package gives you flexibility to work at whatever abstraction level suits your task, from raw torch code to fully integrated tidymodels workflows.</p>
+</section><section id="installation" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="installation">
 <span class="header-section-number">5.2</span> Installation</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+<p>You can install this package from:</p>
+<ol type="1">
+<li>
+<p>CRAN</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;"># Install from GitHub (CRAN submission pending!)</span></span>
+font-style: inherit;"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"kindling"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pak</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://pak.r-lib.org/reference/pkg_install.html">pkg_install</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"kindling"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</li>
+<li>
+<p>GitHub</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">remotes</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"joshuamarie/kindling"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
 <span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">pak</span><span class="fu" style="color: #4758AB;
@@ -183,27 +642,26 @@ font-style: inherit;">(</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"joshuamarie/kindling"</span><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">)</span></span>
-<span></span>
-<span><span class="kw" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">(</span><span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;"><a href="https://kindling.joshuamarie.com">kindling</a></span><span class="op" style="color: #5E5E5E;
-background-color: null;
 font-style: inherit;">)</span></span></code></pre></div></div>
-</section><section id="references" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="references">
-<span class="header-section-number">5.3</span> References</h2>
+</li>
+</ol></section><section id="future-plans" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="future-plans">
+<span class="header-section-number">5.3</span> Future Plans</h2>
+<p><img src="https://joshuamarie.com/posts/15-nn-r/future-spongebob.gif" class="img-fluid"></p>
+<p>As of January 13, 2026, there are some stuffs that I want to add for the future versions. Here are my current plans for the future to enhance this package:</p>
+<ol type="1">
+<li>More <a href="https://mlr3.mlr-org.com">mlr3</a> integration.</li>
+<li>Suitability for time series modelling with customized algorithms.</li>
+<li>Ease to add more neural network models, e.g.&nbsp;deep belief networks.</li>
+</ol></section></section><section id="references" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> References</h1>
 <p>Falbel D, Luraschi J (2023). <em>torch: Tensors and Neural Networks with ‘GPU’ Acceleration</em>. R package version 0.13.0.</p>
 <p>Goodfellow I, Bengio Y, Courville A (2016). <em>Deep Learning</em>. MIT Press.</p>
 <p>Kuhn M, Wickham H (2020). <em>Tidymodels: a collection of packages for modeling and machine learning using tidyverse principles</em>.</p>
 <p>Wickham H (2019). <em>Advanced R</em>, 2nd edition. Chapman and Hall/CRC.</p>
+<p>Keydana S (2023). <em>Deep Learning and Scientific Computing with R torch</em></p>
 
 
-</section></section> ]]></description>
+</section> ]]></description>
   <category>R</category>
   <category>machine-learning</category>
   <category>deep-learning</category>

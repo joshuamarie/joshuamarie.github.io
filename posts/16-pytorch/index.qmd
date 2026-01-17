@@ -16,7 +16,7 @@ format:
         theme: default
         fig-width: 10
         fig-height: 6
-        fig-cap-location: bottom
+        code-annotations: hover
 execute:
     echo: true
     warning: false
@@ -162,23 +162,23 @@ The training process in PyTorch is explicit and transparent:
     ```{python}
     for epoch in range(num_epochs):
         for batch_idx, (data, target) in enumerate(train_loader):
-            # Zero gradients
-            optimizer.zero_grad()
+            optimizer.zero_grad() # <1>
             
-            # Forward pass
-            output = model(data)
-            loss = criterion(output, target)
+            output = model(data) # <2>
+            loss = criterion(output, target) # <2>
             
-            # Backward pass
-            loss.backward()
+            loss.backward() # <3> 
             
-            # Update weights
-            optimizer.step()
+            optimizer.step() # <4> 
             
             if batch_idx % 100 == 0:
                 print(f'Epoch: {epoch}, Loss: {loss.item():.4f}')
-    
     ```
+    
+    1.  Zero gradients
+    2.  Forward pass
+    3.  Backward pass
+    4.  Update weights
 
 # PyTorch vs. Other Frameworks
 

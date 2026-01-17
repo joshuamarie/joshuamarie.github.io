@@ -256,7 +256,7 @@ font-style: inherit;">0.001</span>)</span></code></pre></div></div>
 </div></li>
 <li><p>Run the training loop:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-10" style="background: #f1f3f5;"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-10-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">for</span> epoch <span class="kw" style="color: #003B4F;
@@ -265,7 +265,7 @@ font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(num_epochs):</span>
-<span id="cb10-2">    <span class="cf" style="color: #003B4F;
+<span id="annotated-cell-10-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">for</span> batch_idx, (data, target) <span class="kw" style="color: #003B4F;
@@ -274,32 +274,20 @@ font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">enumerate</span>(train_loader):</span>
-<span id="cb10-3">        <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Zero gradients</span></span>
-<span id="cb10-4">        optimizer.zero_grad()</span>
-<span id="cb10-5"></span>
-<span id="cb10-6">        <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Forward pass</span></span>
-<span id="cb10-7">        output <span class="op" style="color: #5E5E5E;
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="1">1</button><span id="annotated-cell-10-3" class="code-annotation-target">        optimizer.zero_grad()</span>
+<span id="annotated-cell-10-4"></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="2">2</button><span id="annotated-cell-10-5" class="code-annotation-target">        output <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> model(data)</span>
-<span id="cb10-8">        loss <span class="op" style="color: #5E5E5E;
+<span id="annotated-cell-10-6">        loss <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> criterion(output, target)</span>
-<span id="cb10-9"></span>
-<span id="cb10-10">        <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Backward pass</span></span>
-<span id="cb10-11">        loss.backward()</span>
-<span id="cb10-12"></span>
-<span id="cb10-13">        <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Update weights</span></span>
-<span id="cb10-14">        optimizer.step()</span>
-<span id="cb10-15"></span>
-<span id="cb10-16">        <span class="cf" style="color: #003B4F;
+<span id="annotated-cell-10-7"></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="3">3</button><span id="annotated-cell-10-8" class="code-annotation-target">        loss.backward()</span>
+<span id="annotated-cell-10-9"></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="4">4</button><span id="annotated-cell-10-10" class="code-annotation-target">        optimizer.step()</span>
+<span id="annotated-cell-10-11"></span>
+<span id="annotated-cell-10-12">        <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">if</span> batch_idx <span class="op" style="color: #5E5E5E;
@@ -311,7 +299,7 @@ background-color: null;
 font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>:</span>
-<span id="cb10-17">            <span class="bu" style="color: null;
+<span id="annotated-cell-10-13">            <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
 background-color: null;
@@ -329,7 +317,27 @@ font-style: inherit;">.</span>item()<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'</span>)</span></code></pre></div></div>
+font-style: inherit;">'</span>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-10" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="3" data-code-annotation="1">Zero gradients</span>
+</dd>
+<dt data-target-cell="annotated-cell-10" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="5,6" data-code-annotation="2">Forward pass</span>
+</dd>
+<dt data-target-cell="annotated-cell-10" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="8" data-code-annotation="3">Backward pass</span>
+</dd>
+<dt data-target-cell="annotated-cell-10" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="10" data-code-annotation="4">Update weights</span>
+</dd>
+</dl>
+</div>
 </div></li>
 </ol>
 </section>

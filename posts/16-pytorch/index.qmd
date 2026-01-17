@@ -1,0 +1,211 @@
+---
+title: "PyTorch is my go-to framework for deep learning"
+subtitle: "The ergonomic framework I chose for deep learning"
+description: "Explaining why PyTorch my go-to framework for deep learning enthusiasts and researchers, with practical examples and comparisons to TensorFlow, Keras, and JAX"
+date: "2026-01-17"
+image: "image.png"
+categories: [Python, machine-learning, deep-learning, torch, tensorflow, keras, neural-networks]
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+execute:
+    echo: true
+    warning: false
+    message: false
+    eval: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/16-pytorch"
+    description: "PyTorch – Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+# Introduction to PyTorch
+
+I've been writing Python to do deep learning stuffs for ~2 years now. I started from tensorflow then later PyTorch and it has become my go-to framework for deep learning, and for good reason. Developed by Meta's AI Research lab, PyTorch is an ergonomic framework to buildi neural networks in Pythonic approach that feels natural to any Python developer. Unlike some other frameworks that can feel overly abstracted, PyTorch strikes the perfect balance between ease of use and fine control.
+
+No worries, I am still using tensorflow / keras in this date. 
+
+# Why PyTorch?
+
+After working with TensorFlow, Keras, and other frameworks, I consistently find myself reaching for PyTorch. Here's why:
+
+**Dynamic Computation Graphs**: PyTorch uses dynamic computational graphs (define-by-run), meaning the graph is built on the fly as operations are executed. This makes debugging significantly easier—you can use standard Python debugging tools and print statements to inspect tensors at any point in your code.
+
+**Pythonic**: Not gonna lie, using "Pythonic" word makes me feel cringe. Anyways, PyTorch feels like native Python. The API is less abstract but still clean, consistent, and follows Python conventions. If you know NumPy, you'll feel right at home with PyTorch tensors.
+
+**Research-Friendly**: PyTorch has always been ideal for research and experimentation, well aside from JAX. You can easily modify architectures, implement custom layers, and try novel ideas without fighting against the framework. Perfect for ML researchers like me. 
+
+**Strong Community and Ecosystem**: PyTorch has excellent documentation, a vibrant community, and a rich ecosystem of libraries like PyTorch Lightning, Hugging Face Transformers, and torchvision.
+
+# Getting Started
+
+## Installation
+
+Installing PyTorch is straightforward. Visit [pytorch.org](https://pytorch.org) to get the installation command for your system, or use:
+
+```{python}
+#| code-summary: "Torch installation"
+# CPU version
+pip install torch torchvision torchaudio
+
+# GPU version (CUDA 11.8)
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
+I recommend installing `{uv}` to quickly resolve the package and its dependencies. Here's how you install the package with `{uv}`:
+
+```{python}
+#| eval: false
+
+# CPU version
+uv pip install torch torchvision torchaudio
+
+# GPU version (CUDA 11.8)
+uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
+## Basic Tensor Operations
+
+Tensors are the fundamental building blocks in PyTorch, similar to NumPy arrays but with GPU acceleration support. 
+
+```{python}
+import torch
+```
+
+Here's how you use it:
+
+1.  Creating tensor objects
+
+    ```{python}
+    x = torch.tensor([[1, 2], [3, 4]])
+    y = torch.ones(2, 2)
+    z = torch.randn(2, 2)  
+    ```
+
+2.  Performing (basic) operations
+
+    ```{python}
+    result = x + y
+    matrix_mult = torch.mm(x, y)
+    ```
+
+3.  You can move to GPU if available
+
+    ```{python}
+    if torch.cuda.is_available():
+        x = x.cuda()
+    ```
+
+# Building Neural Networks
+
+PyTorch's `nn.Module` class provides a clean way to define neural networks:
+
+```{python}
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SimpleNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SimpleNN, self).__init__()
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, output_size)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+```
+
+After defining the module, then you can simply instantiate the model:
+
+```{python}
+model = SimpleNN(input_size=784, hidden_size=128, output_size=10)
+```
+
+# Training Loop
+
+The training process in PyTorch is explicit and transparent:
+
+1.  Define loss and optimizer
+
+    ```{python}
+    import torch.optim as optim
+    
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    ```
+
+2.  Run the training loop:
+
+    ```{python}
+    for epoch in range(num_epochs):
+        for batch_idx, (data, target) in enumerate(train_loader):
+            # Zero gradients
+            optimizer.zero_grad()
+            
+            # Forward pass
+            output = model(data)
+            loss = criterion(output, target)
+            
+            # Backward pass
+            loss.backward()
+            
+            # Update weights
+            optimizer.step()
+            
+            if batch_idx % 100 == 0:
+                print(f'Epoch: {epoch}, Loss: {loss.item():.4f}')
+    
+    ```
+
+# PyTorch vs. Other Frameworks
+
+1.  **vs. TensorFlow/Keras**: While TensorFlow 2.x has improved significantly with eager execution, PyTorch still seems much closer to the heart of DL to me. Sure, `{keras}` module is great for quick prototyping, but I find PyTorch's explicit approach gives me better control and understanding of what's happening under the hood.
+
+2.  **vs. JAX**: JAX is actually excellent (been using this for a year now) for numerical computing and offers impressive performance, but PyTorch's ecosystem, documentation, and community support are currently unmatched, which includes transformers, etc. For production applications and research, I would argue PyTorch provides better tooling and debugging capabilities.
+
+# Key Features I Love
+
+**Autograd**: It has Automatic differentiation (autograd) and it is seamless. Just call `.backward()` on your loss, and PyTorch handles the gradient computation.
+
+**DataLoader**: Built-in utilities for efficient data loading, batching, and shuffling make preprocessing a breeze.
+
+**TorchScript**: When you need to deploy models to production, TorchScript allows you to serialize and optimize your models.
+
+**Mixed Precision Training**: Easy to implement with `torch.cuda.amp` for faster training and reduced memory usage.
+
+# Extra: torch implementation in R
+
+PyTorch lives in LibTorch, its C++ distribution—the actual computational core where tensors, autograd, and neural network primitives are implemented. Python is "just" one of the frontends that talks to this core.
+
+Thanks to `{Rcpp}`, the `{torch}` package in R is able to interface directly with LibTorch. Rather than wrapping Python or relying on `{reticulate}`, `{torch}` binds to PyTorch’s C++ backend itself, exposing the same tensor operations, automatic differentiation engine, and neural network building blocks to R users.
+
+This design choice is crucial. It means that `{torch}` in R is not a secondary or reimplemented version of PyTorch, but another first-class frontend to the same underlying engine. Training a model in R with `{torch}` executes the very same C++ code paths as training in Python—only the surface language changes. As a result, performance characteristics, numerical behavior, and model semantics remain consistent across languages, while still allowing R users to work in an idiomatic R style.
+
+# Conclusion
+
+PyTorch has earned its place as the dominant framework in deep learning research and is increasingly popular in production environments. Its intuitive design, flexibility, and powerful features make it my framework of choice. Whether you're just starting out or you're an experienced practitioner, PyTorch provides the tools you need to build sophisticated models without unnecessary complexity.
+
+The learning curve is gentle, the documentation is excellent, and the community is supportive. If you haven't tried PyTorch yet, I highly recommend giving it a shot—you might find, like I did, that you never want to go back.

@@ -10,7 +10,369 @@
 <atom:link href="https://joshuamarie.com/posts/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Fri, 09 Jan 2026 16:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 16 Jan 2026 16:00:00 GMT</lastBuildDate>
+<item>
+  <title>PyTorch is my go-to framework for deep learning</title>
+  <dc:creator>Joshua Marie</dc:creator>
+  <link>https://joshuamarie.com/posts/16-pytorch/</link>
+  <description><![CDATA[ 
+<div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://twitter.com/share?url=https://joshuamarie.com/posts/16-pytorch&amp;text=PyTorch – Joshua Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/16-pytorch&amp;title=PyTorch – Joshua Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=PyTorch – Joshua Marie&amp;body=Check out this link:https://joshuamarie.com/posts/16-pytorch" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/16-pytorch" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/16-pytorch&amp;title=PyTorch – Joshua Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/16-pytorch&amp;title=PyTorch – Joshua Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/16-pytorch&amp;name=PyTorch – Joshua Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=PyTorch – Joshua Marie https://joshuamarie.com/posts/16-pytorch'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/16-pytorch PyTorch – Joshua Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a></div></div>
+
+
+
+
+
+<section id="introduction-to-pytorch" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction to PyTorch</h1>
+<p>I’ve been writing Python to do deep learning stuffs for ~2 years now. I started from tensorflow then later PyTorch and it has become my go-to framework for deep learning, and for good reason. Developed by Meta’s AI Research lab, PyTorch is an ergonomic framework to buildi neural networks in Pythonic approach that feels natural to any Python developer. Unlike some other frameworks that can feel overly abstracted, PyTorch strikes the perfect balance between ease of use and fine control.</p>
+<p>No worries, I am still using tensorflow / keras in this date.</p>
+</section>
+<section id="why-pytorch" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Why PyTorch?</h1>
+<p>After working with TensorFlow, Keras, and other frameworks, I consistently find myself reaching for PyTorch. Here’s why:</p>
+<p><strong>Dynamic Computation Graphs</strong>: PyTorch uses dynamic computational graphs (define-by-run), meaning the graph is built on the fly as operations are executed. This makes debugging significantly easier—you can use standard Python debugging tools and print statements to inspect tensors at any point in your code.</p>
+<p><strong>Pythonic</strong>: Not gonna lie, using “Pythonic” word makes me feel cringe. Anyways, PyTorch feels like native Python. The API is less abstract but still clean, consistent, and follows Python conventions. If you know NumPy, you’ll feel right at home with PyTorch tensors.</p>
+<p><strong>Research-Friendly</strong>: PyTorch has always been ideal for research and experimentation, well aside from JAX. You can easily modify architectures, implement custom layers, and try novel ideas without fighting against the framework. Perfect for ML researchers like me.</p>
+<p><strong>Strong Community and Ecosystem</strong>: PyTorch has excellent documentation, a vibrant community, and a rich ecosystem of libraries like PyTorch Lightning, Hugging Face Transformers, and torchvision.</p>
+</section>
+<section id="getting-started" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Getting Started</h1>
+<section id="installation" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="installation"><span class="header-section-number">3.1</span> Installation</h2>
+<p>Installing PyTorch is straightforward. Visit <a href="https://pytorch.org">pytorch.org</a> to get the installation command for your system, or use:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># CPU version</span></span>
+<span id="cb1-2">pip install torch torchvision torchaudio</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># GPU version (CUDA 11.8)</span></span>
+<span id="cb1-5">pip install torch torchvision torchaudio <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>index<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>url https:<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span>download.pytorch.org<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>whl<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>cu118</span></code></pre></div></div>
+</div>
+<p>I recommend installing <code>{uv}</code> to quickly resolve the package and its dependencies. Here’s how you install the package with <code>{uv}</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># CPU version</span></span>
+<span id="cb2-2">uv pip install torch torchvision torchaudio</span>
+<span id="cb2-3"></span>
+<span id="cb2-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># GPU version (CUDA 11.8)</span></span>
+<span id="cb2-5">uv pip install torch torchvision torchaudio <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>index<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>url https:<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span>download.pytorch.org<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>whl<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>cu118</span></code></pre></div></div>
+</div>
+</section>
+<section id="basic-tensor-operations" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="basic-tensor-operations"><span class="header-section-number">3.2</span> Basic Tensor Operations</h2>
+<p>Tensors are the fundamental building blocks in PyTorch, similar to NumPy arrays but with GPU acceleration support.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span></code></pre></div></div>
+</div>
+<p>Here’s how you use it:</p>
+<ol type="1">
+<li><p>Creating tensor objects</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.tensor([[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>], [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>]])</span>
+<span id="cb4-2">y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.ones(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb4-3">z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.randn(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)  </span></code></pre></div></div>
+</div></li>
+<li><p>Performing (basic) operations</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">result <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> y</span>
+<span id="cb5-2">matrix_mult <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.mm(x, y)</span></code></pre></div></div>
+</div></li>
+<li><p>You can move to GPU if available</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> torch.cuda.is_available():</span>
+<span id="cb6-2">    x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x.cuda()</span></code></pre></div></div>
+</div></li>
+</ol>
+</section>
+</section>
+<section id="building-neural-networks" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Building Neural Networks</h1>
+<p>PyTorch’s <code>nn.Module</code> class provides a clean way to define neural networks:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch.nn <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> nn</span>
+<span id="cb7-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch.nn.functional <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> F</span>
+<span id="cb7-3"></span>
+<span id="cb7-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> SimpleNN(nn.Module):</span>
+<span id="cb7-5">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, input_size, hidden_size, output_size):</span>
+<span id="cb7-6">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>(SimpleNN, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>).<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb7-7">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.fc1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(input_size, hidden_size)</span>
+<span id="cb7-8">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.fc2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(hidden_size, output_size)</span>
+<span id="cb7-9">    </span>
+<span id="cb7-10">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb7-11">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> F.relu(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.fc1(x))</span>
+<span id="cb7-12">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.fc2(x)</span>
+<span id="cb7-13">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> x</span></code></pre></div></div>
+</div>
+<p>After defining the module, then you can simply instantiate the model:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> SimpleNN(input_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">784</span>, hidden_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">128</span>, output_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span></code></pre></div></div>
+</div>
+</section>
+<section id="training-loop" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Training Loop</h1>
+<p>The training process in PyTorch is explicit and transparent:</p>
+<ol type="1">
+<li><p>Define loss and optimizer</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch.optim <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> optim</span>
+<span id="cb9-2"></span>
+<span id="cb9-3">criterion <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.CrossEntropyLoss()</span>
+<span id="cb9-4">optimizer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> optim.Adam(model.parameters(), lr<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.001</span>)</span></code></pre></div></div>
+</div></li>
+<li><p>Run the training loop:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> epoch <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(num_epochs):</span>
+<span id="cb10-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> batch_idx, (data, target) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">enumerate</span>(train_loader):</span>
+<span id="cb10-3">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Zero gradients</span></span>
+<span id="cb10-4">        optimizer.zero_grad()</span>
+<span id="cb10-5"></span>
+<span id="cb10-6">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Forward pass</span></span>
+<span id="cb10-7">        output <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model(data)</span>
+<span id="cb10-8">        loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> criterion(output, target)</span>
+<span id="cb10-9"></span>
+<span id="cb10-10">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Backward pass</span></span>
+<span id="cb10-11">        loss.backward()</span>
+<span id="cb10-12"></span>
+<span id="cb10-13">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Update weights</span></span>
+<span id="cb10-14">        optimizer.step()</span>
+<span id="cb10-15"></span>
+<span id="cb10-16">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> batch_idx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb10-17">            <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Epoch: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>epoch<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">, Loss: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>loss<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>item()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span></code></pre></div></div>
+</div></li>
+</ol>
+</section>
+<section id="pytorch-vs.-other-frameworks" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> PyTorch vs.&nbsp;Other Frameworks</h1>
+<ol type="1">
+<li><p><strong>vs.&nbsp;TensorFlow/Keras</strong>: While TensorFlow 2.x has improved significantly with eager execution, PyTorch still seems much closer to the heart of DL to me. Sure, <code>{keras}</code> module is great for quick prototyping, but I find PyTorch’s explicit approach gives me better control and understanding of what’s happening under the hood.</p></li>
+<li><p><strong>vs.&nbsp;JAX</strong>: JAX is actually excellent (been using this for a year now) for numerical computing and offers impressive performance, but PyTorch’s ecosystem, documentation, and community support are currently unmatched, which includes transformers, etc. For production applications and research, I would argue PyTorch provides better tooling and debugging capabilities.</p></li>
+</ol>
+</section>
+<section id="key-features-i-love" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Key Features I Love</h1>
+<p><strong>Autograd</strong>: It has Automatic differentiation (autograd) and it is seamless. Just call <code>.backward()</code> on your loss, and PyTorch handles the gradient computation.</p>
+<p><strong>DataLoader</strong>: Built-in utilities for efficient data loading, batching, and shuffling make preprocessing a breeze.</p>
+<p><strong>TorchScript</strong>: When you need to deploy models to production, TorchScript allows you to serialize and optimize your models.</p>
+<p><strong>Mixed Precision Training</strong>: Easy to implement with <code>torch.cuda.amp</code> for faster training and reduced memory usage.</p>
+</section>
+<section id="extra-torch-implementation-in-r" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Extra: torch implementation in R</h1>
+<p>PyTorch lives in LibTorch, its C++ distribution—the actual computational core where tensors, autograd, and neural network primitives are implemented. Python is “just” one of the frontends that talks to this core.</p>
+<p>Thanks to <code>{Rcpp}</code>, the <code>{torch}</code> package in R is able to interface directly with LibTorch. Rather than wrapping Python or relying on <code>{reticulate}</code>, <code>{torch}</code> binds to PyTorch’s C++ backend itself, exposing the same tensor operations, automatic differentiation engine, and neural network building blocks to R users.</p>
+<p>This design choice is crucial. It means that <code>{torch}</code> in R is not a secondary or reimplemented version of PyTorch, but another first-class frontend to the same underlying engine. Training a model in R with <code>{torch}</code> executes the very same C++ code paths as training in Python—only the surface language changes. As a result, performance characteristics, numerical behavior, and model semantics remain consistent across languages, while still allowing R users to work in an idiomatic R style.</p>
+</section>
+<section id="conclusion" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Conclusion</h1>
+<p>PyTorch has earned its place as the dominant framework in deep learning research and is increasingly popular in production environments. Its intuitive design, flexibility, and powerful features make it my framework of choice. Whether you’re just starting out or you’re an experienced practitioner, PyTorch provides the tools you need to build sophisticated models without unnecessary complexity.</p>
+<p>The learning curve is gentle, the documentation is excellent, and the community is supportive. If you haven’t tried PyTorch yet, I highly recommend giving it a shot—you might find, like I did, that you never want to go back.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>Python</category>
+  <category>machine-learning</category>
+  <category>deep-learning</category>
+  <category>torch</category>
+  <category>tensorflow</category>
+  <category>keras</category>
+  <category>neural-networks</category>
+  <guid>https://joshuamarie.com/posts/16-pytorch/</guid>
+  <pubDate>Fri, 16 Jan 2026 16:00:00 GMT</pubDate>
+  <media:content url="https://joshuamarie.com/posts/16-pytorch/image.png" medium="image" type="image/png" height="87" width="144"/>
+</item>
 <item>
   <title>Neural Networks in R Remain Viable in 2026</title>
   <dc:creator>Joshua Marie</dc:creator>

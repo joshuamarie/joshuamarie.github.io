@@ -186,7 +186,11 @@ This is where things get interesting. Raw `{torch}` requires substantial boilerp
 
 # Introducing {kindling}: Torch with Less Typing
 
-Here's the problem I aimed to solve: `{torch}` is powerful for deep learning and scientific computing, but verbose and less expressive (no offense), while `{tidymodels}` has an ergonomic API, thanks to `{tidyverse}` for traditional ML, but has limited deep learning stacks and integrations. The `{tidymodels}` framework has `{brulee}` for this kind of thing, but limited to 1-2 hidden layers, while `{kindling}` goes further beyond by enabling you to:
+Here's the problem I aimed to solve: `{torch}` is powerful for deep learning and scientific computing, but verbose and less expressive (no offense), while `{tidymodels}` has an ergonomic API, thanks to `{tidyverse}` for traditional ML, but has limited deep learning stacks and integrations. 
+
+<!-- The `{tidymodels}` framework has `{brulee}` for this kind of thing, but limited to 1-2 hidden layers, while  -->
+
+The `{kindling}` package goes further beyond by enabling you to:
 
 1. Customize the number of hidden layers
 2. Specify activation functions for each layer, and their specific parameters (e.g. `lambd` from `nnf_softshrink()` function)

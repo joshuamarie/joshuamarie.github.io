@@ -1,0 +1,261 @@
+---
+title: "What do you need to know before starting Pandas 3.0?"
+subtitle: "What changes, what breaks, what adds, and what finally makes sense"
+description: "For ones who started Pandas in version 3.0 and those who wants to transition"
+date: "2026-01-18"
+image: "image.png"
+categories: [Python, Pandas, data-science]
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/17-pandas3"
+    description: "Pandas 3.0 — Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+# Introduction
+
+Pandas 3.0 is the biggest update in the library's history, bringing breaking changes that fix long-standing confusions and performance issues. If you're new to pandas, you're starting with a cleaner API. If you're migrating, this guide covers what you need to know.
+
+# The Three Big Changes
+
+Here's what it potentially breaks your pandas pipeline. 
+
+## 1. String Dtype by Default
+
+### What Changed
+
+String columns now use a dedicated `str` dtype instead of `object`, backed by PyArrow for better performance and memory efficiency.
+
+``` python
+import pandas as pd
+
+ser = pd.Series(["apple", "banana", "cherry"])
+print(ser.dtype)  
+#>>> str 
+```
+
+The data type of `ser` is not 'object' anymore!
+
+### Why It Matters
+
+String operations are 2-10x faster, use less memory, and provide better type safety. PyArrow is now a required dependency.
+
+### Breaking Change
+
+Code checking for `dtype == 'object'` will break:
+
+``` python
+# This breaks
+if df['column'].dtype == 'object':
+    process_strings(df['column'])
+
+# Use this instead
+if pd.api.types.is_string_dtype(df['column']):
+    process_strings(df['column'])
+```
+
+## 2. Copy-on-Write is Default
+
+### The Problem It Solved
+
+Remember the infamous `SettingWithCopyWarning`? It's gone. Pandas 3.0 guarantees that all indexing operations behave like copies.
+
+``` python
+df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'score': [85, 92, 78]
+})
+
+high_scorers = df[df['score'] > 90]
+
+# Modify filtered data
+high_scorers['passed'] = False
+```
+
+In this update, `df` is NEVER modified, guaranteed!
+
+### Breaking Change: Chained Assignment
+
+Chained assignment no longer works:
+
+``` python
+# Doesn't work anymore
+df['score'][df['name'] == 'Alice'] = 100
+
+# Use loc instead
+df.loc[df['name'] == 'Alice', 'score'] = 100
+```
+
+The upside? No more confusing warnings, and you don't need defensive `.copy()` calls anymore.
+
+## 3. The `pd.col()` Syntax
+
+This is the feature that stands out among the additions within the update: `pandas.col()` (or just `pd.col()` when you import `pandas` as `pd`). 
+
+No more cluttered lambdas in `.assign()`:
+
+``` python
+# Old way
+df = df.assign(temp_f = lambda x: x['temp_c'] * 9 / 5 + 32)
+
+# New way with pd.col()
+df = df.assign(temp_f = pd.col('temp_c') * 9 / 5 + 32)
+```
+
+### Examples
+
+``` python
+# Arithmetic
+df = df.assign(
+    total=pd.col('price') * pd.col('quantity'),
+    discounted=pd.col('total') * 0.9
+)
+
+# String operations
+df = df.assign(
+    name_upper=pd.col('name').str.upper(),
+    is_alice=pd.col('name') == 'Alice'
+)
+
+# Filtering
+expensive = df.loc[pd.col('price') > 100]
+```
+
+### Current Limitation
+
+`pd.col()` doesn't work in groupby aggregations yet:
+
+``` python
+df.groupby('category').agg(pd.col('value').mean())
+```
+
+# Migration Strategy
+
+## Step 1: Upgrade to 2.3 First
+
+```bash
+# Upgrade to 2.3, fix warnings
+pip install pandas==2.3.0
+
+# Then upgrade to 3.0
+pip install pandas==3.0.0
+```
+
+## Step 2: Test New Behavior in 2.3
+
+``` python
+# Enable new behavior before upgrading
+pd.options.mode.copy_on_write = True
+pd.options.future.infer_string = True
+```
+
+## Step 3: Fix Common Issues
+
+1.  Remove defensive copies:**
+
+    ``` python
+    # Unnecessary now
+    df2 = df[df['value'] > 10].copy()
+    
+    # Copy happens automatically
+    df2 = df[df['value'] > 10]
+    ```
+
+2.  Fix chained assignment:
+
+    ``` python
+    # Old
+    df['col'][mask] = value
+    
+    # New
+    df.loc[mask, 'col'] = value
+    ```
+
+3.  Update dtype checks:
+
+    ``` python
+    # Old
+    if df['col'].dtype == 'object':
+    
+    # New
+    if pd.api.types.is_string_dtype(df['col']):
+    ```
+
+# Performance Improvements
+
+With PyArrow-backed strings, expect significant gains:
+
+-   String operations: up to 10x faster
+-   Memory usage: ~50% reduction for string columns
+-   Reduced unnecessary copies with Copy-on-Write
+
+# Best Practices
+
+1.  Use `pd.col()` for clarity
+
+``` python
+df = df.assign(
+    full_name = pd.col('first') + ' ' + pd.col('last'),
+    is_senior = pd.col('age') >= 65
+)
+```
+
+2.  Always use `.loc` for assignment
+
+``` python
+df.loc[mask, 'column'] = value
+```
+
+3.  Trust Copy-on-Write (no defensive `.copy()`)
+
+``` python
+subset = df[df['value'] > threshold]
+subset['processed'] = True  # df unchanged!
+```
+
+4.  Use type-checking functions
+
+``` python
+if pd.api.types.is_string_dtype(df['col']):
+    # Handle strings
+```
+
+# Conclusion
+
+Don't celebrate yet, although Pandas 3.0 fixes years of confusing behavior with three major changes: proper string types, predictable copy semantics, and cleaner column syntax, there are still some inconsistencies—this library is not the as other data libraries out there, e.g. **dplyr**, **polars**. 
+
+If you're new, you're learning the modern API. If you're migrating, upgrade to 2.3 first, fix warnings, then jump to 3.0. The changes might feel disruptive, but they solve real problems and make pandas faster and more composable than before.
+
+## Resources
+
+- [Pandas 3.0 Release Notes](https://pandas.pydata.org/docs/dev/whatsnew/v3.0.0.html)
+- [Copy-on-Write Guide](https://pandas.pydata.org/docs/dev/user_guide/copy_on_write.html)
+- [String Dtype Migration](https://pandas.pydata.org/docs/dev/user_guide/text.html#migrating-to-string-dtype)

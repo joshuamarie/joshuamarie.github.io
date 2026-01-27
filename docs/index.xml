@@ -10,7 +10,501 @@
 <atom:link href="https://joshuamarie.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Fri, 16 Jan 2026 16:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 17 Jan 2026 16:00:00 GMT</lastBuildDate>
+<item>
+  <title>What do you need to know before starting Pandas 3.0?</title>
+  <dc:creator>Joshua Marie</dc:creator>
+  <link>https://joshuamarie.com/posts/17-pandas3/</link>
+  <description><![CDATA[ <div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/17-pandas3&amp;text=Pandas%203.0%20%E2%80%94%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/17-pandas3&amp;title=Pandas%203.0%20%E2%80%94%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Pandas%203.0%20%E2%80%94%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/17-pandas3" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/17-pandas3" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/17-pandas3&amp;title=Pandas%203.0%20%E2%80%94%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/17-pandas3&amp;title=Pandas%203.0%20%E2%80%94%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/17-pandas3&amp;name=Pandas%203.0%20%E2%80%94%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Pandas 3.0 — Joshua Marie https://joshuamarie.com/posts/17-pandas3'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/17-pandas3%20Pandas%203.0%20%E2%80%94%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<section id="introduction" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Introduction</h1>
+<p>Pandas 3.0 is the biggest update in the library’s history, bringing breaking changes that fix long-standing confusions and performance issues. If you’re new to pandas, you’re starting with a cleaner API. If you’re migrating, this guide covers what you need to know.</p>
+</section><section id="the-three-big-changes" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> The Three Big Changes</h1>
+<p>Here’s what it potentially breaks your pandas pipeline.</p>
+<section id="string-dtype-by-default" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="string-dtype-by-default">
+<span class="header-section-number">2.1</span> 1. String Dtype by Default</h2>
+<section id="what-changed" class="level3" data-number="2.1.1"><h3 data-number="2.1.1" class="anchored" data-anchor-id="what-changed">
+<span class="header-section-number">2.1.1</span> What Changed</h3>
+<p>String columns now use a dedicated <code>str</code> dtype instead of <code>object</code>, backed by PyArrow for better performance and memory efficiency.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">ser <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.Series([<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"apple"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"banana"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"cherry"</span>])</span>
+<span id="cb1-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(ser.dtype)  </span>
+<span id="cb1-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#&gt;&gt;&gt; str </span></span></code></pre></div></div>
+<p>The data type of <code>ser</code> is not ‘object’ anymore!</p>
+</section><section id="why-it-matters" class="level3" data-number="2.1.2"><h3 data-number="2.1.2" class="anchored" data-anchor-id="why-it-matters">
+<span class="header-section-number">2.1.2</span> Why It Matters</h3>
+<p>String operations are 2-10x faster, use less memory, and provide better type safety. PyArrow is now a required dependency.</p>
+</section><section id="breaking-change" class="level3" data-number="2.1.3"><h3 data-number="2.1.3" class="anchored" data-anchor-id="breaking-change">
+<span class="header-section-number">2.1.3</span> Breaking Change</h3>
+<p>Code checking for <code>dtype == 'object'</code> will break:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># This breaks</span></span>
+<span id="cb2-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'column'</span>].dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'object'</span>:</span>
+<span id="cb2-3">    process_strings(df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'column'</span>])</span>
+<span id="cb2-4"></span>
+<span id="cb2-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Use this instead</span></span>
+<span id="cb2-6"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> pd.api.types.is_string_dtype(df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'column'</span>]):</span>
+<span id="cb2-7">    process_strings(df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'column'</span>])</span></code></pre></div></div>
+</section></section><section id="copy-on-write-is-default" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="copy-on-write-is-default">
+<span class="header-section-number">2.2</span> 2. Copy-on-Write is Default</h2>
+<section id="the-problem-it-solved" class="level3" data-number="2.2.1"><h3 data-number="2.2.1" class="anchored" data-anchor-id="the-problem-it-solved">
+<span class="header-section-number">2.2.1</span> The Problem It Solved</h3>
+<p>Remember the infamous <code>SettingWithCopyWarning</code>? It’s gone. Pandas 3.0 guarantees that all indexing operations behave like copies.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame({</span>
+<span id="cb3-2">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'name'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Alice'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Bob'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Charlie'</span>],</span>
+<span id="cb3-3">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'score'</span>: [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">85</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">92</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">78</span>]</span>
+<span id="cb3-4">})</span>
+<span id="cb3-5"></span>
+<span id="cb3-6">high_scorers <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df[df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'score'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">90</span>]</span>
+<span id="cb3-7"></span>
+<span id="cb3-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Modify filtered data</span></span>
+<span id="cb3-9">high_scorers[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'passed'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span></span></code></pre></div></div>
+<p>In this update, <code>df</code> is NEVER modified, guaranteed!</p>
+</section><section id="breaking-change-chained-assignment" class="level3" data-number="2.2.2"><h3 data-number="2.2.2" class="anchored" data-anchor-id="breaking-change-chained-assignment">
+<span class="header-section-number">2.2.2</span> Breaking Change: Chained Assignment</h3>
+<p>Chained assignment no longer works:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Doesn't work anymore</span></span>
+<span id="cb4-2">df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'score'</span>][df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'name'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Alice'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span></span>
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Use loc instead</span></span>
+<span id="cb4-5">df.loc[df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'name'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Alice'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'score'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span></span></code></pre></div></div>
+<p>The upside? No more confusing warnings, and you don’t need defensive <code>.copy()</code> calls anymore.</p>
+</section></section><section id="the-pd.col-syntax" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="the-pd.col-syntax">
+<span class="header-section-number">2.3</span> 3. The <code>pd.col()</code> Syntax</h2>
+<p>This is the feature that stands out among the additions within the update: <code>pandas.col()</code> (or just <code>pd.col()</code> when you import <code>pandas</code> as <code>pd</code>).</p>
+<p>No more cluttered lambdas in <code>.assign()</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Old way</span></span>
+<span id="cb5-2">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.assign(temp_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> x: x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'temp_c'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">32</span>)</span>
+<span id="cb5-3"></span>
+<span id="cb5-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># New way with pd.col()</span></span>
+<span id="cb5-5">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.assign(temp_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'temp_c'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">32</span>)</span></code></pre></div></div>
+<section id="examples" class="level3" data-number="2.3.1"><h3 data-number="2.3.1" class="anchored" data-anchor-id="examples">
+<span class="header-section-number">2.3.1</span> Examples</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Arithmetic</span></span>
+<span id="cb6-2">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.assign(</span>
+<span id="cb6-3">    total<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'price'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'quantity'</span>),</span>
+<span id="cb6-4">    discounted<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'total'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span></span>
+<span id="cb6-5">)</span>
+<span id="cb6-6"></span>
+<span id="cb6-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># String operations</span></span>
+<span id="cb6-8">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.assign(</span>
+<span id="cb6-9">    name_upper<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'name'</span>).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>.upper(),</span>
+<span id="cb6-10">    is_alice<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'name'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Alice'</span></span>
+<span id="cb6-11">)</span>
+<span id="cb6-12"></span>
+<span id="cb6-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Filtering</span></span>
+<span id="cb6-14">expensive <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.loc[pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'price'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>]</span></code></pre></div></div>
+</section><section id="current-limitation" class="level3" data-number="2.3.2"><h3 data-number="2.3.2" class="anchored" data-anchor-id="current-limitation">
+<span class="header-section-number">2.3.2</span> Current Limitation</h3>
+<p><code>pd.col()</code> doesn’t work in groupby aggregations yet:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">df.groupby(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'category'</span>).agg(pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'value'</span>).mean())</span></code></pre></div></div>
+</section></section></section><section id="migration-strategy" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Migration Strategy</h1>
+<section id="step-1-upgrade-to-2.3-first" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="step-1-upgrade-to-2.3-first">
+<span class="header-section-number">3.1</span> Step 1: Upgrade to 2.3 First</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Upgrade to 2.3, fix warnings</span></span>
+<span id="cb8-2"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install pandas==2.3.0</span>
+<span id="cb8-3"></span>
+<span id="cb8-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Then upgrade to 3.0</span></span>
+<span id="cb8-5"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install pandas==3.0.0</span></code></pre></div></div>
+</section><section id="step-2-test-new-behavior-in-2.3" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="step-2-test-new-behavior-in-2.3">
+<span class="header-section-number">3.2</span> Step 2: Test New Behavior in 2.3</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Enable new behavior before upgrading</span></span>
+<span id="cb9-2">pd.options.mode.copy_on_write <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb9-3">pd.options.future.infer_string <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span></code></pre></div></div>
+</section><section id="step-3-fix-common-issues" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="step-3-fix-common-issues">
+<span class="header-section-number">3.3</span> Step 3: Fix Common Issues</h2>
+<ol type="1">
+<li>
+<p>Remove defensive copies:**</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Unnecessary now</span></span>
+<span id="cb10-2">df2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df[df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'value'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>].copy()</span>
+<span id="cb10-3"></span>
+<span id="cb10-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Copy happens automatically</span></span>
+<span id="cb10-5">df2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df[df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'value'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>]</span></code></pre></div></div>
+</li>
+<li>
+<p>Fix chained assignment:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Old</span></span>
+<span id="cb11-2">df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'col'</span>][mask] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> value</span>
+<span id="cb11-3"></span>
+<span id="cb11-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># New</span></span>
+<span id="cb11-5">df.loc[mask, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'col'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> value</span></code></pre></div></div>
+</li>
+<li>
+<p>Update dtype checks:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Old</span></span>
+<span id="cb12-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'col'</span>].dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'object'</span>:</span>
+<span id="cb12-3"></span>
+<span id="cb12-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># New</span></span>
+<span id="cb12-5"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> pd.api.types.is_string_dtype(df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'col'</span>]):</span></code></pre></div></div>
+</li>
+</ol></section></section><section id="performance-improvements" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Performance Improvements</h1>
+<p>With PyArrow-backed strings, expect significant gains:</p>
+<ul>
+<li>String operations: up to 10x faster</li>
+<li>Memory usage: ~50% reduction for string columns</li>
+<li>Reduced unnecessary copies with Copy-on-Write</li>
+</ul></section><section id="best-practices" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Best Practices</h1>
+<ol type="1">
+<li>Use <code>pd.col()</code> for clarity</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.assign(</span>
+<span id="cb13-2">    full_name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'first'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">' '</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'last'</span>),</span>
+<span id="cb13-3">    is_senior <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'age'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">65</span></span>
+<span id="cb13-4">)</span></code></pre></div></div>
+<ol start="2" type="1">
+<li>Always use <code>.loc</code> for assignment</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">df.loc[mask, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'column'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> value</span></code></pre></div></div>
+<ol start="3" type="1">
+<li>Trust Copy-on-Write (no defensive <code>.copy()</code>)</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">subset <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df[df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'value'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> threshold]</span>
+<span id="cb15-2">subset[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'processed'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># df unchanged!</span></span></code></pre></div></div>
+<ol start="4" type="1">
+<li>Use type-checking functions</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> pd.api.types.is_string_dtype(df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'col'</span>]):</span>
+<span id="cb16-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Handle strings</span></span></code></pre></div></div>
+</section><section id="conclusion" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Conclusion</h1>
+<p>Don’t celebrate yet, although Pandas 3.0 fixes years of confusing behavior with three major changes: proper string types, predictable copy semantics, and cleaner column syntax, there are still some inconsistencies—this library is not the as other data libraries out there, e.g.&nbsp;<strong>dplyr</strong>, <strong>polars</strong>.</p>
+<p>If you’re new, you’re learning the modern API. If you’re migrating, upgrade to 2.3 first, fix warnings, then jump to 3.0. The changes might feel disruptive, but they solve real problems and make pandas faster and more composable than before.</p>
+<section id="resources" class="level2" data-number="6.1"><h2 data-number="6.1" class="anchored" data-anchor-id="resources">
+<span class="header-section-number">6.1</span> Resources</h2>
+<ul>
+<li><a href="https://pandas.pydata.org/docs/dev/whatsnew/v3.0.0.html">Pandas 3.0 Release Notes</a></li>
+<li><a href="https://pandas.pydata.org/docs/dev/user_guide/copy_on_write.html">Copy-on-Write Guide</a></li>
+<li><a href="https://pandas.pydata.org/docs/dev/user_guide/text.html#migrating-to-string-dtype">String Dtype Migration</a></li>
+</ul>
+
+
+</section></section> ]]></description>
+  <category>Python</category>
+  <category>Pandas</category>
+  <category>data-science</category>
+  <guid>https://joshuamarie.com/posts/17-pandas3/</guid>
+  <pubDate>Sat, 17 Jan 2026 16:00:00 GMT</pubDate>
+  <media:content url="https://joshuamarie.com/posts/17-pandas3/image.png" medium="image" type="image/png"/>
+</item>
 <item>
   <title>PyTorch is my go-to framework for deep learning</title>
   <dc:creator>Joshua Marie</dc:creator>

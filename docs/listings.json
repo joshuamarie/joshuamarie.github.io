@@ -2,6 +2,7 @@
   {
     "listing": "/posts/index.html",
     "items": [
+      "/posts/17-pandas3/index.html",
       "/posts/16-pytorch/index.html",
       "/posts/15-nn-r/index.html",
       "/posts/14-aes-ggplot2/index.html",
@@ -23,6 +24,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/17-pandas3/index.html",
       "/posts/16-pytorch/index.html",
       "/posts/15-nn-r/index.html",
       "/posts/14-aes-ggplot2/index.html",

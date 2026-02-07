@@ -10,7 +10,1173 @@
 <atom:link href="https://joshuamarie.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Sat, 17 Jan 2026 16:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 26 Jan 2026 16:00:00 GMT</lastBuildDate>
+<item>
+  <title>R Reproducibility Stack</title>
+  <dc:creator>Joshua Marie</dc:creator>
+  <link>https://joshuamarie.com/posts/18-reproducibility-r/</link>
+  <description><![CDATA[ <div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;text=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;title=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Reproducibility%20in%20R%20-%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/18-reproducibility-r" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/18-reproducibility-r" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;title=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;title=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;name=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Reproducibility in R - Joshua Marie https://joshuamarie.com/posts/18-reproducibility-r'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/18-reproducibility-r%20Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<section id="overall-rationale-why-reproducibility-matters-in-this-date" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Overall Rationale: Why Reproducibility Matters in this date</h1>
+<p>Reproducibility in R has derived from theory to practice. After handling numerous data science projects, I have learned that reproducibility is rather fundamentally about maintainability and the ability to return to a project months or years later and have it actually work, not just following best practices. Thus, it matters.</p>
+<p>The core problem we face as R practitioners is simple: code that runs perfectly today may fail to other machines or in future executions. Any programming languages you’ll use, not just R, may encounter:</p>
+<ol type="1">
+<li>Packages update</li>
+<li>Dependencies changes</li>
+<li>Evolving versions evolve</li>
+<li>System libraries get upgraded.</li>
+</ol>
+<p>What worked flawlessly on your machine might throw cryptic errors on a colleague’s computer. A pipeline that ran successfully six months ago might inexplicably break when you try to reproduce your results.</p>
+<p>This post outlines my known reproducibility tools in current 2026, built around five core tools: <a href="https://rstudio.github.io/renv/">renv</a> for package management, Git for version control, <a href="https://docs.ropensci.org/targets/">targets</a> for workflow orchestration, <a href="https://klmr.me/box/">box</a> for code organization, and <a href="https://docs.ropensci.org/rixpress">rixpress</a> (powered by rix) for full-stack reproducibility when standard approaches are insufficient.</p>
+<p>I am gonna try to explain what these tools do, and when and why you should use each one, building up from simple projects to complex, long-lived data pipelines.</p>
+<p>Just remember: Over-engineering a simple analysis with unnecessary infrastructure wastes time and creates maintenance burden. Conversely, under-engineering a complex project leads to fragility and technical debt.</p>
+</section><section id="option-1-renv-git-pak" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Option 1: {renv} + git + {pak}</h1>
+<p>The <a href="https://rstudio.github.io/renv/">renv</a> package got more and more stable after years of development. It is nice that they are listening to people’s mindful criticism about its flaws, and this is the best thing we have when dealing with freezing the working environment. It is so stable, it sync with Git version properly, not perfect but that’s the best thing we had for now. Also, my recommendation is that pair it with <a href="https://pak.r-lib.org/">pak</a> as it resolves the package you want to install fast, and also it syncs well with the initialized <a href="https://rstudio.github.io/renv/">renv</a> project.</p>
+<section id="rationale" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="rationale">
+<span class="header-section-number">2.1</span> Rationale</h2>
+<p>The single biggest threat to R reproducibility is package version drift. R has little to no issue with backwards compatibility, except R’s package ecosystem updates every time. A package that worked one way last month might behave differently this month after an update — problems involves dependencies changes, functions get deprecated, or default behaviors shift. Of course, a problem arises: your code’s behavior becomes dependent on when you happened to run it, not just what the code says.</p>
+<p>Consider a concrete example. You write an analysis using <a href="https://dplyr.tidyverse.org">dplyr</a> v1.0.7. Six months later, <a href="https://dplyr.tidyverse.org">dplyr</a> v1.1.0 is released with breaking changes to certain functions. Potentially, when you or a colleague tries to re-run your analysis, it fails with mysterious errors. Without package version control, you face a frustrating choice: modify your code to work with the new version (potentially changing results) or attempt to manually downgrade packages (tedious and error-prone).</p>
+</section><section id="how-renv-solves-this-problem" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="how-renv-solves-this-problem">
+<span class="header-section-number">2.2</span> How {renv} Solves This Problem</h2>
+<p>The <a href="https://rstudio.github.io/renv/">renv</a> package creates a project-local library that isolates each project’s packages from your global R library. When you initialize <a href="https://rstudio.github.io/renv/">renv</a> in a project, it creates these core files:</p>
+<ul>
+<li>A <code>renv.lock</code> file that records the exact version of R version you used, and the exact version of every package used.</li>
+<li>A <code>renv/</code> directory containing project-specific package installations.</li>
+<li>An <code>activate.R</code> script that automatically loads the project environment. Nothing to worry about this, when <code>renv</code> initialized, <code>.Rprofile</code> is created and automatically executes <code>activate.R</code> script.</li>
+</ul>
+<p>Here is how I use <a href="https://rstudio.github.io/renv/">renv</a> in a new project:</p>
+<ol type="1">
+<li>
+<p>Install <a href="https://rstudio.github.io/renv/">renv</a> if you haven’t already</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"renv"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</li>
+<li>
+<p>Initialize <a href="https://rstudio.github.io/renv/">renv</a> in your current project directory</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renv</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rstudio.github.io/renv/reference/init.html">init</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</li>
+<li>
+<p>Install <a href="https://pak.r-lib.org/">pak</a> package</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renv</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rstudio.github.io/renv/reference/install.html">install</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'pak'</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</li>
+<li>
+<p>Now, you can install the packages within the isolated environment with <code><a href="https://pak.r-lib.org/reference/pak.html">pak::pak()</a></code> or <code><a href="https://pak.r-lib.org/reference/pkg_install.html">pak::pkg_install()</a></code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pak</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://pak.r-lib.org/reference/pkg_install.html">pkg_install</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tidyverse"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+</li>
+<li>
+<p>Then, take a snapshot of the environment to automatically creates / updates the record of your current package versions</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renv</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rstudio.github.io/renv/reference/snapshot.html">snapshot</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<p>The <code><a href="https://rstudio.github.io/renv/reference/snapshot.html">renv::snapshot()</a></code> command updates your <code>renv.lock</code> file to reflect your current package versions. This lockfile is a plain text JSON file that precisely records every package version, where it was installed from, and its dependencies.</p>
+</li>
+</ol>
+<p>When someone else (or future you) opens this project, they simply run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renv</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rstudio.github.io/renv/reference/restore.html">restore</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<p>This command reads the <code>renv.lock</code> file and installs the exact same package versions into the project-local library. The result is perfect package-level reproducibility across machines and over time. Again, it is not perfect but this is the best solution we’ve got in R currently.</p>
+</section><section id="git-for-version-control-the-other-half-of-layer-1" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="git-for-version-control-the-other-half-of-layer-1">
+<span class="header-section-number">2.3</span> Git for Version Control: The Other Half of Layer 1</h2>
+<p>While renv handles package versions, git handles code versions. I assume most readers are familiar with git basics, so I will focus on reproducibility-specific considerations.</p>
+<section id="what-to-version-control" class="level3" data-number="2.3.1"><h3 data-number="2.3.1" class="anchored" data-anchor-id="what-to-version-control">
+<span class="header-section-number">2.3.1</span> What to version control</h3>
+<p>Simple: Moderate all R scripts and analysis code, the <code>renv.lock</code> file, the <code>renv/activate.R</code> file and <code>.Rprofile</code>, documentation and README files, and some small reference data files (preferably under a few MB, only if allowed).</p>
+</section><section id="what-not-to-version-control" class="level3" data-number="2.3.2"><h3 data-number="2.3.2" class="anchored" data-anchor-id="what-not-to-version-control">
+<span class="header-section-number">2.3.2</span> What NOT to version control</h3>
+<p>List of things NOT recommendable to moderate:</p>
+<ul>
+<li>The <code>renv/library/</code> directory (large, binary, machine-specific)</li>
+<li>Large data files (use git-lfs or store separately)</li>
+<li>Temporary files and build artifacts</li>
+<li>Personal configuration files</li>
+</ul>
+<p>Here is a sensible <code>.gitignore</code> for R projects:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">.Rproj.user</span></span>
+<span id="cb7-2"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">.Rhistory</span></span>
+<span id="cb7-3"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">.RData</span></span>
+<span id="cb7-4"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">.Ruserdata</span></span>
+<span id="cb7-5"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">renv/library/</span></span>
+<span id="cb7-6"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">renv/local/</span></span>
+<span id="cb7-7"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">renv/staging/</span></span>
+<span id="cb7-8"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">*.csv</span></span>
+<span id="cb7-9"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">*.rds</span></span>
+<span id="cb7-10"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">data/raw/*</span></span>
+<span id="cb7-11"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">.DS_Store</span></span>
+<span id="cb7-12"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">*.Rproj</span></span></code></pre></div></div>
+<blockquote class="blockquote">
+<p>Note: ignoring <code>*.Rproj</code> is totally optional.</p>
+</blockquote>
+</section></section><section id="drawback" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="drawback">
+<span class="header-section-number">2.4</span> Drawback</h2>
+<p>This tooling only helps at moderating and freezing the environment you are working on. It is good at handling isolation and moderation, but not good enough at handling:</p>
+<ol type="1">
+<li>Organization of your code (discussed later)</li>
+<li>System dependencies are not tracked (discussed later)</li>
+<li>Cross-platform differences (discussed later)</li>
+<li>Multi-language workflows — it works with Python, but went off once it crossed with multiple languages, such as Rust or C++ (discussed later)</li>
+</ol></section></section><section id="option-2-targets" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Option 2: {targets}</h1>
+<p>Although I admit that I don’t use <a href="https://docs.ropensci.org/targets/">targets</a> that often, this package is part of my stack. Take note that in this part, I am only gonna explain the surface part of this tooling.</p>
+<section id="rationale-1" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="rationale-1">
+<span class="header-section-number">3.1</span> Rationale</h2>
+<p>This package is inspired by <a href="https://www.gnu.org/software/make/">GNU Make</a>, suitable for bulky pipeline in statistics and data science, which of course, uses R. R is historically bad at being a proper programming language when handling such huge pipelines you handle. This package fills the gap, and this is only a good tool we have, before <a href="https://docs.ropensci.org/drake">drake</a>, of course, as most “pipeline tools” are mostly Python-focused. Sad? I am sad.</p>
+<p>I’d say that <a href="https://docs.ropensci.org/targets/">targets</a> is not actually good for reproducibility, but having this in your stack is unsurprisingly good. For instance, simple scripts waste time on long-running analyses. If step 5 of your 10-step pipeline fails, you don’t want to re-run steps 1-4 again. You want to fix step 5 and continue from there.</p>
+</section><section id="how-targets-works" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="how-targets-works">
+<span class="header-section-number">3.2</span> How {targets} works</h2>
+<p>At its core, targets is simple: you define a pipeline in a <code>_targets.R</code> file where each “target” is a named R object produced by running some code. Here’s a minimal example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># _targets.R</span></span>
+<span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;"><a href="https://docs.ropensci.org/targets/">targets</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;"><a href="https://docs.ropensci.org/tarchetypes/">tarchetypes</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tar_option_set</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>packages <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"dplyr"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"readr"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ggplot2"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tar_target</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">raw_data_file</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/raw.csv"</span>, format <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"file"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tar_target</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">raw_data</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">raw_data_file</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tar_target</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">clean_data</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">raw_data</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tar_target</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">model</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">outcome</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">predictor</span>, data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">clean_data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tar_target</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">plot</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">clean_data</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">predictor</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">outcome</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span>      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span>      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_smooth</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span>method <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"lm"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<p>Run the pipeline with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">targets</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tar_make</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<p>The first time, targets runs everything. If you modify <code>raw_data_file</code>, targets automatically knows to re-run everything that depends on it. If you only modify the plot code, only that target re-runs.</p>
+</section></section><section id="option-3-box" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Option 3: {box}</h1>
+<p>I’ve been using this package lately for my R projects and blogs, just to import the namespace of the package I needed.</p>
+<p>Hot take: I freaking hate using <code><a href="https://rdrr.io/r/base/source.html">source()</a></code>, I feel like I bit my tongue off whenever I use it. I abandoned the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> habit for (quite not) a long time now after discovering this package.</p>
+<section id="rationale-2" class="level2" data-number="4.1"><h2 data-number="4.1" class="anchored" data-anchor-id="rationale-2">
+<span class="header-section-number">4.1</span> Rationale</h2>
+<p>For modular code organization problem and Python-like import system, <a href="https://klmr.me/box/">box</a> is the most ergonomic tool, thanks for Konrad Rudolph for creating and engineering this package. As R projects grow, a common pattern emerges: you start with a single script, then split it into multiple files using <code><a href="https://rdrr.io/r/base/source.html">source()</a></code>. Eventually you have dozens of functions spread across multiple files, all living in the global namespace.</p>
+<p>This creates several problems:</p>
+<ol type="1">
+<li><p><em>Namespace clash:</em> Functions from different files can overwrite each other if they share names. Tracking down which function is actually running becomes difficult.</p></li>
+<li><p><em>Unclear dependencies:</em> When you see a function call, where is that function defined? Which file should you look in? What other functions does it depend on?</p></li>
+<li><p><em>Testing becomes difficult:</em> Testing functions that rely on global state or that modify global variables is challenging and unreliable.</p></li>
+<li><p><em>Reusability suffers:</em> You want to reuse code across directories or in a higher degree, large projects, but extracting functions from tangled dependencies is painful.</p></li>
+</ol>
+<p>R natively suffers this, and mainly because it lacks a tooling that <a href="https://klmr.me/box/">box</a> package eventually filled, so thank <a href="https://klmr.me/box/">box</a> for existing.</p>
+</section><section id="how-box-functions" class="level2" data-number="4.2"><h2 data-number="4.2" class="anchored" data-anchor-id="how-box-functions">
+<span class="header-section-number">4.2</span> How {box} functions</h2>
+<p>I don’t wanna write out everything here to explain how it works, because it has a huge list of things to be detailed. Please, read one of my books: https://joshuamarie.github.io/modules-in-r/, for more details instead.</p>
+<p>On the surface level: The <a href="https://klmr.me/box/">box</a> package brings a module system to R, similar to Python’s import system or JavaScript’s modules. Instead of sourcing entire files into the global namespace, you explicitly import specific functions from specific modules.</p>
+<p>Here’s a quick example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># I hate doing this:</span></span>
+<span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"R/data_processing.r"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"R/plotting.r"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Instead, do this:</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    dm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">data_munging</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">clean_data</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">validate_data</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">plotting</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">make_plot</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>, </span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">plotting</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<p>This makes it crystal clear which functions you’re using and where they come from.</p>
+</section><section id="benefits" class="level2" data-number="4.3"><h2 data-number="4.3" class="anchored" data-anchor-id="benefits">
+<span class="header-section-number">4.3</span> Benefits</h2>
+<p>How does it help on reproduciblity? By being explicit about what you import and gaining better code reusability, <a href="https://klmr.me/box/">box</a> becomes so much a valuable tool for long-term maintainability — it fills gaps that R natively lacks. This is not <a href="https://docs.ropensci.org/targets/">targets</a> package that helps on your computational activity (it is utilized but still orthogonal), or improves <em>package version reproducibility</em> like what <a href="https://rstudio.github.io/renv/">renv</a> does, but improves on what I dubbed as <em>structural reproducibility</em> (e.g.&nbsp;involves code modularity, reusability, …) instead.</p>
+</section></section><section id="option-4-rix-and-rixpress" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Option 4: {rix} and {rixpress}</h1>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You may want to add the previous options I inscribed above in your “reproducibility” stack.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Correct me if I am wrong here. I barely use Nix, let alone these toolings.</p>
+</div>
+</div>
+<section id="when-renv-is-not-enough" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="when-renv-is-not-enough">
+<span class="header-section-number">5.1</span> When {renv} is not enough</h2>
+<p>The renv package provides excellent package-level reproducibility, but it has limitations:</p>
+<ol type="1">
+<li><p><strong>System dependencies are not tracked:</strong> Many R packages depend on system libraries. For example, the sf package requires GDAL and PROJ. The exact versions of these system libraries can affect behavior and availability.</p></li>
+<li><p><strong>Cross-platform differences:</strong> An analysis that works on macOS might fail on Linux or Windows due to different system configurations, compilers, or library versions.</p></li>
+<li><p><strong>Multi-language workflows:</strong> Projects combining R with Python, then potentially with Julia, or other languages have dependencies beyond R’s package system.</p></li>
+</ol>
+<p>For most projects, these limitations are acceptable. But for long-lived research projects, production systems, or work requiring absolute reproducibility across platforms and years, you need stronger guarantees.</p>
+</section><section id="rationale-3" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="rationale-3">
+<span class="header-section-number">5.2</span> Rationale:</h2>
+<p>First, let’s understand Nix and why it matters. Nix is a package manager and build system that provides deterministic, reproducible builds. Unlike traditional package managers, Nix uses cryptographic hashes to uniquely identify every package and its dependencies. This means:</p>
+<ul>
+<li>Every package version is immutably stored and never changes</li>
+<li>Dependencies are explicitly declared and tracked</li>
+<li>Builds are isolated and reproducible</li>
+<li>You can have multiple versions of the same software coexisting without conflict</li>
+</ul>
+<p>The only problem. Nix has a steep learning curve and requires learning a new configuration language. This is where rix and rixpress come in: they provide R-native interfaces to Nix’s power.</p>
+</section><section id="the-rix-package-declarative-nix-environments-from-r" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="the-rix-package-declarative-nix-environments-from-r">
+<span class="header-section-number">5.3</span> The rix Package: Declarative Nix Environments from R</h2>
+<p>The rix package lets you define reproducible computational environments using familiar R syntax. You specify the R version, packages, and system dependencies you need, and rix generates the appropriate Nix configuration.</p>
+<p>Here’s a simple example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Install rix</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># install.packages("rix")</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pak</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://pak.r-lib.org/reference/pkg_install.html">pkg_install</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rix"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">rix</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">rix</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rix</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    r_ver <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"4.4.1"</span>,</span>
+<span>    date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2025-11-30"</span>,</span>
+<span>    packages <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"dplyr"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ggplot2"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tidyr"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sf"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"box"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    system_packages <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gdal"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"proj"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    project_path <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"."</span>,</span>
+<span>    overwrite <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>,</span>
+<span>    ide <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rstudio"</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<p>This generates a <code>default.nix</code> file in your project directory and modifies your <code>.Rprofile</code> to work with Nix. The <code>date</code> parameter pins packages to their state on that date, ensuring reproducibility even as CRAN changes.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Key parameters explained
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>
+<code>r_ver</code>: Exact R version to use</li>
+<li>
+<code>date</code>: Pin package versions to a specific date</li>
+<li>
+<code>packages</code>: R packages to install</li>
+<li>
+<code>system_packages</code>: System-level dependencies (compilers, libraries, etc.)</li>
+<li>
+<code>ide</code>: Configure integration with RStudio or other IDEs</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activating the environment
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Once rix has generated your Nix configuration, you activate it using:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">nix</span> develop</span></code></pre></div></div>
+<p>This drops you into a shell with the exact R version, packages, and system dependencies specified. Everything is isolated from your main system, preventing conflicts.</p>
+</div>
+</div>
+</section><section id="the-rixpress-package-nix-powered-workflows" class="level2" data-number="5.4"><h2 data-number="5.4" class="anchored" data-anchor-id="the-rixpress-package-nix-powered-workflows">
+<span class="header-section-number">5.4</span> The rixpress Package: Nix-Powered Workflows</h2>
+<p>While rix handles environment reproducibility, rixpress extends this to workflow orchestration, similar to targets but with Nix isolation. Each step in your pipeline can run in its own hermetic environment with precisely controlled dependencies.</p>
+<p><strong>Setting up a rixpress pipeline:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Install rixpress</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># remotes::install_github("b-rodrigues/rixpress")</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># devtools::install_github("b-rodrigues/rixpress")</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pak</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://pak.r-lib.org/reference/pak.html">pak</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"b-rodrigues/rixpress"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">rixpress</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span></span>
+<span>        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">rxp_pipeline</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">rxp_r</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">rxp_py</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">rxp_populate</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>,</span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dplyr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">mutate</span>, keep_when <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">filter</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>, </span>
+<span>    <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">readr</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">read_csv</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">write_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pipeline</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># R step: load and clean data</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rxp_r</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"clean_data"</span>,</span>
+<span>        expr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/raw.csv"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>                <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">keep_when</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span>                <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write_csv</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/clean.csv"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span>,</span>
+<span>        rix_env <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"r_env_4.4.1"</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    </span>
+<span>    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Python step: run ML model</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rxp_py</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"train_model"</span>,</span>
+<span>        expr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">import pandas as pd</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">from sklearn.ensemble import RandomForestRegressor</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">import pickle</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"></span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">data = pd.read_csv('data/clean.csv')</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">X = data[['feature1', 'feature2']]</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">y = data['target']</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"></span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">model = RandomForestRegressor()</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">model.fit(X, y)</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"></span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">with open('model.pkl', 'wb') as f:</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    pickle.dump(model, f)</span></span>
+<span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    "</span>,</span>
+<span>        deps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"clean_data"</span>,</span>
+<span>        python_version <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"3.11"</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    </span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rxp_r</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>        name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"report"</span>,</span>
+<span>        expr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rmarkdown</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html">render</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"report.Rmd"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span>,</span>
+<span>        deps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"train_model"</span>,</span>
+<span>        rix_env <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"r_env_4.4.1"</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rxp_populate</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">pipeline</span>, build <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<p>It looks like its behavior is similar to <a href="https://docs.ropensci.org/targets/">targets</a> but with different API and semantics. But, how rixpress differs from targets?</p>
+<p>I’ll make it simple:</p>
+<ul>
+<li>Each step runs in an isolated Nix environment</li>
+<li>System dependencies are explicitly tracked</li>
+<li>Multi-language workflows are first-class citizens</li>
+<li>Reproducibility guarantees extend to the OS level</li>
+<li>Builds are truly deterministic and bit-for-bit reproducible</li>
+</ul></section><section id="practical-considerations-for-using-rix-and-rixpress" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="practical-considerations-for-using-rix-and-rixpress">
+<span class="header-section-number">5.5</span> Practical Considerations for Using rix and rixpress</h2>
+<p>Using this tooling is a bit tedious, especially for beginners. Here’s why:</p>
+<ol type="1">
+<li><p>Nix has a reputation for complexity, and it is deserved. Good thing, {rix} and {rixpress} abstract away much of the difficulty, but spoiler: It still has a bit steeper learning curve. You can get started with basic usage without deep Nix knowledge.</p></li>
+<li><p>Before using <a href="https://docs.ropensci.org/rix/">rix</a> or <a href="https://docs.ropensci.org/rixpress">rixpress</a>, you have to install Nix itself. On Linux and macOS, this is straightforward. On Windows, you will need to use WSL (Windows Subsystem for Linux).</p></li>
+<li><p>This one can make you bite your tongue a bit: Nix stores all packages in its store, which can consume significant disk space. However, packages are shared across projects, so the cost amortizes over multiple projects.</p></li>
+<li><p><em>Build times</em>: The first time you build a Nix environment, it may take considerable time as packages are downloaded and built. Subsequent builds use cached results and are much faster.</p></li>
+</ol>
+<section id="when-to-use-rixrixpress" class="level3" data-number="5.5.1"><h3 data-number="5.5.1" class="anchored" data-anchor-id="when-to-use-rixrixpress">
+<span class="header-section-number">5.5.1</span> When to use rix/rixpress</h3>
+<ul>
+<li>Long-term research projects that must remain runnable for years or decades</li>
+<li>Production environment where stability is critical</li>
+<li>Cross-platform work requiring identical behavior on different operating systems</li>
+<li>Projects with complex system dependencies</li>
+<li>Multi-language pipelines combining R, Python, Julia, etc.</li>
+<li>Situations where you need to prove exact reproducibility (regulatory compliance, peer review)</li>
+</ul></section><section id="when-not-to-use-rixrixpress" class="level3" data-number="5.5.2"><h3 data-number="5.5.2" class="anchored" data-anchor-id="when-not-to-use-rixrixpress">
+<span class="header-section-number">5.5.2</span> When NOT to use rix/rixpress</h3>
+<p>Of course, it has a bit steeper learning curve, so use it on:</p>
+<ul>
+<li>Quick analyses or exploratory work</li>
+<li>Projects where <a href="https://rstudio.github.io/renv/">renv</a> provides sufficient reproducibility</li>
+<li>Situations where the learning curve cost exceeds the benefit</li>
+<li>Environments where you cannot install Nix (some corporate systems)</li>
+</ul></section></section></section><section id="option-5-reporting-with-r-markdown-quarto" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Option 5: Reporting with R Markdown / Quarto</h1>
+<p>Reproducible reporting is where the rubber meets the road. You can have perfect package management, clean code organization, and efficient workflows. Those options above doesn’t solves actual reporting, and on how you presented the code you just run. This is where R Markdown / Quarto comes in.</p>
+<section id="rationale-4" class="level2" data-number="6.1"><h2 data-number="6.1" class="anchored" data-anchor-id="rationale-4">
+<span class="header-section-number">6.1</span> Rationale</h2>
+<p>You can choose between R Markdown and Quarto, although the latter is currently got more updates than the former. Both tools follow the principle of <em>literate programming</em> — combining code, output, and narrative in a single document. When someone runs your <code>.Rmd</code> or <code>.qmd</code> file, they get the exact same results, figures, and tables you generated. No more “copy-paste this plot into Word” or “manually update this table with new numbers.”</p>
+<p>Here’s two comparison:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs">
+<li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">R Markdown</a></li>
+<li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">Quarto</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<p>For me, R Markdown is only better than Quarto if it is a quick reporting. R Markdown is nice, but it is superseded by Quarto — it also got most of R Markdown features, e.g.&nbsp;inline codes.</p>
+<p>Except, for now, Quarto can’t do this (unless <code>engine: knitr</code> is set):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb14-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">title</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Report for February 07, 2026"</span></span>
+<span id="cb14-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">author</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"John Doe"</span></span>
+<span id="cb14-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">output</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> html_document</span></span></code></pre></div></div>
+<p>Hence, R Markdown is still better for quick reporting. Use RStudio to run the cells interactively, and you can have similar interface as Jupyter notebooks while being plain text.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<p>Quarto have most of R markdown features, except it is more <em>extendable</em> and provides multi-language support (so, not just R, this includes Python, Julia, Observable), most especially <code>revealjs</code> is so much better for HTML presentation.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">format</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> revealjs</span></span>
+<span id="cb15-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filters</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb15-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> social-share</span></span>
+<span id="cb15-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> collapse-output</span></span>
+<span id="cb15-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">engine</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> knitr</span></span></code></pre></div></div>
+<p>I recommend using <a href="https://yihui.org/knitr/">knitr</a> as the default engine when using multiple languages in 1 QMD — use <a href="https://rstudio.github.io/reticulate/">reticulate</a> for Python, <a href="https://github.com/JuliaInterop/JuliaCall">JuliaCall</a> for Julia, both are pre-configured.</p>
+</div>
+</div>
+</div>
+</section></section><section id="combining-tools-in-practice" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Combining Tools in Practice</h1>
+<p>Can you combine the options being placed here? Straightforwardly, yes.</p>
+<ol type="a">
+<li><p>In my work, I use options 1 and 3. Having them for reproducibility and maintainability, especially for my own work and make my work shareable to others, is more than enough.</p></li>
+<li><p>Options 1 + 2 + 4 is good when you’re building production-grade data pipelines that need to run reliably over years.</p></li>
+<li><p>You can combine either of the first 4 options then option 5 for reporting.</p></li>
+</ol>
+<p>Except for one thing: <a href="https://docs.ropensci.org/targets/">targets</a> + <a href="https://klmr.me/box/">box</a>, and it is being discussed <a href="https://github.com/ropensci/targets/discussions/936">here</a> why it is a case.</p>
+<p>I’ll make it simple (this is at as far as I know):</p>
+<ol type="1">
+<li><p><a href="https://docs.ropensci.org/targets/">targets</a> relies on static analysis through <a href="https://gitlab.com/luke-tierney/codetools">codetools</a> to discover symbols in your target expressions and build a proper dependency graph (DAG) without running the code. It needs functions and objects to be statically visible.</p></li>
+<li><p>In contrast, <a href="https://klmr.me/box/">box</a> resolves functions at runtime inside module environments (e.g., via <code>$</code>), which hides internal symbols from static analysis. As a result, <a href="https://docs.ropensci.org/targets/">targets</a> may not fully “see” the real function-level dependencies inside <a href="https://klmr.me/box/">box</a> modules.</p></li>
+</ol></section><section id="special-mention" class="level1" data-number="8"><h1 data-number="8">
+<span class="header-section-number">8</span> Special Mention</h1>
+<p>Here are other tools used for reproducibility, but more niche, superseded, and/or known less (by me):</p>
+<ol type="1">
+<li>
+<a href="https://reproducible.predictiveecology.org">reproducible</a> - it is now on its version 3.0.0, and expect to have some breaking changes. This is niche.</li>
+<li>
+<a href="https://github.com/rstudio/packrat">packrat</a> - this is now a legacy, mostly superseded by <a href="https://rstudio.github.io/renv/">renv</a>.</li>
+<li>
+<a href="https://groundhogr.com/">groundhog</a> - purely for packages, specialized in timing. I don’t know much about this one.</li>
+<li>
+<a href="https://docs.ropensci.org/drake">drake</a> - mostly superseded by <a href="https://docs.ropensci.org/targets/">targets</a>.</li>
+<li>
+<a href="https://reprex.tidyverse.org">reprex</a> - only good for providing reproducible example.</li>
+</ol>
+
+
+</section> ]]></description>
+  <category>R</category>
+  <category>programming</category>
+  <category>box</category>
+  <category>targets</category>
+  <category>renv</category>
+  <category>version-control</category>
+  <category>rixpress</category>
+  <guid>https://joshuamarie.com/posts/18-reproducibility-r/</guid>
+  <pubDate>Mon, 26 Jan 2026 16:00:00 GMT</pubDate>
+  <media:content url="https://joshuamarie.com/posts/18-reproducibility-r/image.png" medium="image" type="image/png"/>
+</item>
 <item>
   <title>What do you need to know before starting Pandas 3.0?</title>
   <dc:creator>Joshua Marie</dc:creator>

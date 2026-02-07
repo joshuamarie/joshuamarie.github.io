@@ -1,0 +1,513 @@
+---
+title: "R Reproducibility Stack"
+subtitle: "A pragmatic, layered approach to maintainable code"
+date: "2026-01-27"
+image: "image.png"
+categories: [R, programming, box, targets, renv, version-control, rixpress]
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/18-reproducibility-r"
+    description: "Reproducibility in R - Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+# Overall Rationale: Why Reproducibility Matters in this date
+
+Reproducibility in R has derived from theory to practice. After handling numerous data science projects, I have learned that reproducibility is rather fundamentally about maintainability and the ability to return to a project months or years later and have it actually work, not just following best practices. Thus, it matters. 
+
+The core problem we face as R practitioners is simple: code that runs perfectly today may fail to other machines or in future executions. Any programming languages you'll use, not just R, may encounter: 
+
+1.  Packages update 
+2.  Dependencies changes 
+3.  Evolving versions evolve 
+4.  System libraries get upgraded. 
+
+What worked flawlessly on your machine might throw cryptic errors on a colleague's computer. A pipeline that ran successfully six months ago might inexplicably break when you try to reproduce your results.
+
+This post outlines my known reproducibility tools in current 2026, built around five core tools: `{renv}` for package management, Git for version control, `{targets}` for workflow orchestration, `{box}` for code organization, and `{rixpress}` (powered by rix) for full-stack reproducibility when standard approaches are insufficient. 
+
+I am gonna try to explain what these tools do, and when and why you should use each one, building up from simple projects to complex, long-lived data pipelines.
+
+Just remember:  Over-engineering a simple analysis with unnecessary infrastructure wastes time and creates maintenance burden. Conversely, under-engineering a complex project leads to fragility and technical debt.
+
+# Option 1: {renv} + git + {pak}
+
+The `{renv}` package got more and more stable after years of development. It is nice that they are listening to people's mindful criticism about its flaws, and this is the best thing we have when dealing with freezing the working environment. It is so stable, it sync with Git version properly, not perfect but that's the best thing we had for now. Also, my recommendation is that pair it with `{pak}` as it resolves the package you want to install fast, and also it syncs well with the initialized `{renv}` project. 
+
+## Rationale
+
+The single biggest threat to R reproducibility is package version drift. R has little to no issue with backwards compatibility, except R's package ecosystem updates every time. A package that worked one way last month might behave differently this month after an update — problems involves dependencies changes,  functions get deprecated, or default behaviors shift. Of course, a problem arises: your code's behavior becomes dependent on when you happened to run it, not just what the code says.
+
+Consider a concrete example. You write an analysis using `{dplyr}` v1.0.7. Six months later, `{dplyr}` v1.1.0 is released with breaking changes to certain functions. Potentially, when you or a colleague tries to re-run your analysis, it fails with mysterious errors. Without package version control, you face a frustrating choice: modify your code to work with the new version (potentially changing results) or attempt to manually downgrade packages (tedious and error-prone).
+
+## How {renv} Solves This Problem
+
+The `{renv}` package creates a project-local library that isolates each project's packages from your global R library. When you initialize `{renv}` in a project, it creates these core files:
+
+-   A `renv.lock` file that records the exact version of R version you used, and the exact version of every package used. 
+-   A `renv/` directory containing project-specific package installations. 
+-   An `activate.R` script that automatically loads the project environment. Nothing to worry about this, when `renv` initialized, `.Rprofile` is created and automatically executes `activate.R` script. 
+
+Here is how I use `{renv}` in a new project:
+
+1.  Install `{renv}` if you haven't already
+
+    ``` r
+    install.packages("renv")
+    ```
+
+2.  Initialize `{renv}` in your current project directory
+
+    ``` r
+    renv::init()
+    ```
+
+3.  Install `{pak}` package 
+
+    ``` r
+    renv::install('pak')
+    ```
+
+4.  Now, you can install the packages within the isolated environment with `pak::pak()` or `pak::pkg_install()`:
+
+    ``` r
+    pak::pkg_install("tidyverse")
+    ```
+
+5.  Then, take a snapshot of the environment to automatically creates / updates the record of your current package versions
+
+    ``` r
+    renv::snapshot()
+    ```
+
+    The `renv::snapshot()` command updates your `renv.lock` file to reflect your current package versions. This lockfile is a plain text JSON file that precisely records every package version, where it was installed from, and its dependencies.
+
+When someone else (or future you) opens this project, they simply run:
+
+``` r
+renv::restore()
+```
+
+This command reads the `renv.lock` file and installs the exact same package versions into the project-local library. The result is perfect package-level reproducibility across machines and over time. Again, it is not perfect but this is the best solution we've got in R currently. 
+
+## Git for Version Control: The Other Half of Layer 1
+
+While renv handles package versions, git handles code versions. I assume most readers are familiar with git basics, so I will focus on reproducibility-specific considerations.
+
+### What to version control
+
+Simple: Moderate all R scripts and analysis code, the `renv.lock` file, the `renv/activate.R` file and `.Rprofile`, documentation and README files, and some small reference data files (preferably under a few MB, only if allowed). 
+
+### What NOT to version control
+
+List of things NOT recommendable to moderate: 
+
+-  The `renv/library/` directory (large, binary, machine-specific)
+-  Large data files (use git-lfs or store separately)
+-  Temporary files and build artifacts
+-  Personal configuration files
+
+Here is a sensible `.gitignore` for R projects:
+
+``` bash
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+renv/library/
+renv/local/
+renv/staging/
+*.csv
+*.rds
+data/raw/*
+.DS_Store
+*.Rproj
+```
+
+> Note: ignoring `*.Rproj` is totally optional. 
+
+## Drawback
+
+This tooling only helps at moderating and freezing the environment you are working on. It is good at handling isolation and moderation, but not good enough at handling:
+
+1.  Organization of your code (discussed later)
+2.  System dependencies are not tracked (discussed later)
+3.  Cross-platform differences (discussed later)
+4.  Multi-language workflows — it works with Python, but went off once it crossed with multiple languages, such as Rust or C++ (discussed later)
+
+# Option 2: {targets}
+
+Although I admit that I don't use `{targets}` that often, this package is part of my stack. Take note that in this part, I am only gonna explain the surface part of this tooling. 
+
+## Rationale
+
+This package is inspired by [GNU Make](https://www.gnu.org/software/make/), suitable for bulky pipeline in statistics and data science, which of course, uses R. R is historically bad at being a proper programming language when handling such huge pipelines you handle. This package fills the gap, and this is only a good tool we have, before `{drake}`, of course, as most "pipeline tools" are mostly Python-focused. Sad? I am sad. 
+
+I'd say that `{targets}` is not actually good for reproducibility, but having this in your stack is unsurprisingly good. For instance, simple scripts waste time on long-running analyses. If step 5 of your 10-step pipeline fails, you don't want to re-run steps 1-4 again. You want to fix step 5 and continue from there.
+
+## How {targets} works
+
+At its core, targets is simple: you define a pipeline in a `_targets.R` file where each "target" is a named R object produced by running some code. Here's a minimal example:
+
+``` r
+# _targets.R
+library(targets)
+library(tarchetypes)
+
+tar_option_set(packages = c("dplyr", "readr", "ggplot2"))
+
+list(
+  tar_target(raw_data_file, "data/raw.csv", format = "file"),
+  tar_target(raw_data, read_csv(raw_data_file)),
+  tar_target(clean_data, raw_data |> filter(!is.na(value))),
+  tar_target(model, lm(outcome ~ predictor, data = clean_data)),
+  tar_target(plot, {
+    ggplot(clean_data, aes(predictor, outcome)) +
+      geom_point() +
+      geom_smooth(method = "lm")
+  })
+)
+```
+
+Run the pipeline with:
+
+```r
+targets::tar_make()
+```
+
+The first time, targets runs everything. If you modify `raw_data_file`, targets automatically knows to re-run everything that depends on it. If you only modify the plot code, only that target re-runs.
+
+# Option 3: {box}
+
+I've been using this package lately for my R projects and blogs, just to import the namespace of the package I needed. 
+
+Hot take: I freaking hate using `source()`, I feel like I bit my tongue off whenever I use it. I abandoned the `source()` habit for (quite not) a long time now after discovering this package. 
+
+## Rationale
+
+For modular code organization problem and Python-like import system, `{box}` is the most ergonomic tool, thanks for Konrad Rudolph for creating and engineering this package. As R projects grow, a common pattern emerges: you start with a single script, then split it into multiple files using `source()`. Eventually you have dozens of functions spread across multiple files, all living in the global namespace. 
+
+This creates several problems:
+
+1.  *Namespace clash:* Functions from different files can overwrite each other if they share names. Tracking down which function is actually running becomes difficult.
+
+2.  *Unclear dependencies:* When you see a function call, where is that function defined? Which file should you look in? What other functions does it depend on?
+
+3.  *Testing becomes difficult:* Testing functions that rely on global state or that modify global variables is challenging and unreliable.
+
+4.  *Reusability suffers:* You want to reuse code across directories or in a higher degree, large projects, but extracting functions from tangled dependencies is painful.
+
+R natively suffers this, and mainly because it lacks a tooling that `{box}` package eventually filled, so thank `{box}` for existing. 
+
+## How {box} functions
+
+I don't wanna write out everything here to explain how it works, because it has a huge list of things to be detailed. Please, read one of my books: https://joshuamarie.github.io/modules-in-r/, for more details instead. 
+
+On the surface level: The `{box}` package brings a module system to R, similar to Python's import system or JavaScript's modules. Instead of sourcing entire files into the global namespace, you explicitly import specific functions from specific modules.
+
+Here's a quick example:
+
+```r
+# I hate doing this:
+source("R/data_processing.r")
+source("R/plotting.r")
+
+# Instead, do this:
+box::use(
+    dm = ./data_munging[clean_data, validate_data],
+    ./plotting[make_plot], 
+    ./plotting
+)
+```
+
+This makes it crystal clear which functions you're using and where they come from.
+
+## Benefits
+
+How does it help on reproduciblity? By being explicit about what you import and gaining better code reusability, `{box}` becomes so much a valuable tool for long-term maintainability — it fills gaps that R natively lacks. This is not `{targets}` package that helps on your computational activity (it is utilized but still orthogonal), or improves *package version reproducibility* like what `{renv}` does, but improves on what I dubbed as *structural reproducibility* (e.g. involves code modularity, reusability, ...) instead. 
+
+# Option 4: {rix} and {rixpress}
+
+::: callout-note
+You may want to add the previous options I inscribed above in your "reproducibility" stack. 
+:::
+
+::: callout-warning
+Correct me if I am wrong here. I barely use Nix, let alone these toolings. 
+:::
+
+## When {renv} is not enough
+
+The renv package provides excellent package-level reproducibility, but it has limitations:
+
+1.  **System dependencies are not tracked:** Many R packages depend on system libraries. For example, the sf package requires GDAL and PROJ. The exact versions of these system libraries can affect behavior and availability.
+
+2.  **Cross-platform differences:** An analysis that works on macOS might fail on Linux or Windows due to different system configurations, compilers, or library versions.
+
+3.  **Multi-language workflows:** Projects combining R with Python, then potentially with Julia, or other languages have dependencies beyond R's package system.
+
+For most projects, these limitations are acceptable. But for long-lived research projects, production systems, or work requiring absolute reproducibility across platforms and years, you need stronger guarantees.
+
+## Rationale: 
+
+First, let's understand Nix and why it matters. Nix is a package manager and build system that provides deterministic, reproducible builds. Unlike traditional package managers, Nix uses cryptographic hashes to uniquely identify every package and its dependencies. This means:
+
+- Every package version is immutably stored and never changes
+- Dependencies are explicitly declared and tracked
+- Builds are isolated and reproducible
+- You can have multiple versions of the same software coexisting without conflict
+
+The only problem. Nix has a steep learning curve and requires learning a new configuration language. This is where rix and rixpress come in: they provide R-native interfaces to Nix's power.
+
+## The rix Package: Declarative Nix Environments from R
+
+The rix package lets you define reproducible computational environments using familiar R syntax. You specify the R version, packages, and system dependencies you need, and rix generates the appropriate Nix configuration.
+
+Here's a simple example: 
+
+```r
+# Install rix
+# install.packages("rix")
+pak::pkg_install("rix")
+
+box::use(rix[rix])
+
+rix(
+    r_ver = "4.4.1",
+    date = "2025-11-30",
+    packages = c("dplyr", "ggplot2", "tidyr", "sf", "box"),
+    system_packages = c("gdal", "proj"),
+    project_path = ".",
+    overwrite = TRUE,
+    ide = "rstudio"
+)
+```
+
+This generates a `default.nix` file in your project directory and modifies your `.Rprofile` to work with Nix. The `date` parameter pins packages to their state on that date, ensuring reproducibility even as CRAN changes.
+
+::: {.callout-tip}
+### Key parameters explained
+
+- `r_ver`: Exact R version to use
+- `date`: Pin package versions to a specific date
+- `packages`: R packages to install
+- `system_packages`: System-level dependencies (compilers, libraries, etc.)
+- `ide`: Configure integration with RStudio or other IDEs
+:::
+
+::: {.callout-tip}
+
+### Activating the environment
+Once rix has generated your Nix configuration, you activate it using:
+
+``` bash
+nix develop
+```
+
+This drops you into a shell with the exact R version, packages, and system dependencies specified. Everything is isolated from your main system, preventing conflicts.
+::: 
+
+## The rixpress Package: Nix-Powered Workflows
+
+While rix handles environment reproducibility, rixpress extends this to workflow orchestration, similar to targets but with Nix isolation. Each step in your pipeline can run in its own hermetic environment with precisely controlled dependencies.
+
+**Setting up a rixpress pipeline:**
+
+``` r
+# Install rixpress
+# remotes::install_github("b-rodrigues/rixpress")
+# devtools::install_github("b-rodrigues/rixpress")
+pak::pak("b-rodrigues/rixpress")
+
+box::use(
+    rixpress[
+        rxp_pipeline, rxp_r, rxp_py, rxp_populate
+    ],
+    dplyr[mutate, keep_when = filter], 
+    readr[read_csv, write_csv]
+)
+
+pipeline = list(
+    # R step: load and clean data
+    rxp_r(
+        name = "clean_data",
+        expr = {
+            read_csv("data/raw.csv") |> 
+                keep_when(!is.na(value)) |> 
+                write_csv("data/clean.csv")
+        },
+        rix_env = "r_env_4.4.1"
+    ),
+    
+    # Python step: run ML model
+    rxp_py(
+        name = "train_model",
+        expr = "
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+import pickle
+
+data = pd.read_csv('data/clean.csv')
+X = data[['feature1', 'feature2']]
+y = data['target']
+
+model = RandomForestRegressor()
+model.fit(X, y)
+
+with open('model.pkl', 'wb') as f:
+    pickle.dump(model, f)
+    ",
+        deps = "clean_data",
+        python_version = "3.11"
+    ),
+    
+    rxp_r(
+        name = "report",
+        expr = {
+            rmarkdown::render("report.Rmd")
+        },
+        deps = "train_model",
+        rix_env = "r_env_4.4.1"
+    )
+)
+
+rxp_populate(pipeline, build = TRUE)
+```
+
+It looks like its behavior is similar to `{targets}` but with different API and semantics. But, how rixpress differs from targets? 
+
+I'll make it simple: 
+
+-   Each step runs in an isolated Nix environment
+-   System dependencies are explicitly tracked
+-   Multi-language workflows are first-class citizens
+-   Reproducibility guarantees extend to the OS level
+-   Builds are truly deterministic and bit-for-bit reproducible
+
+## Practical Considerations for Using rix and rixpress
+
+Using this tooling is a bit tedious, especially for beginners. Here's why: 
+
+1.  Nix has a reputation for complexity, and it is deserved. Good thing, {rix} and {rixpress} abstract away much of the difficulty, but spoiler: It still has a bit steeper learning curve. You can get started with basic usage without deep Nix knowledge.
+
+2.  Before using `{rix}` or `{rixpress}`, you have to install Nix itself. On Linux and macOS, this is straightforward. On Windows, you will need to use WSL (Windows Subsystem for Linux).
+
+3.  This one can make you bite your tongue a bit: Nix stores all packages in its store, which can consume significant disk space. However, packages are shared across projects, so the cost amortizes over multiple projects.
+
+4.  *Build times*: The first time you build a Nix environment, it may take considerable time as packages are downloaded and built. Subsequent builds use cached results and are much faster.
+
+### When to use rix/rixpress
+
+-   Long-term research projects that must remain runnable for years or decades
+-   Production environment where stability is critical
+-   Cross-platform work requiring identical behavior on different operating systems
+-   Projects with complex system dependencies
+-   Multi-language pipelines combining R, Python, Julia, etc.
+-   Situations where you need to prove exact reproducibility (regulatory compliance, peer review)
+
+### When NOT to use rix/rixpress
+
+Of course, it has a bit steeper learning curve, so use it on: 
+
+-   Quick analyses or exploratory work
+-   Projects where `{renv}` provides sufficient reproducibility
+-   Situations where the learning curve cost exceeds the benefit
+-   Environments where you cannot install Nix (some corporate systems)
+
+# Option 5: Reporting with R Markdown / Quarto
+
+Reproducible reporting is where the rubber meets the road. You can have perfect package management, clean code organization, and efficient workflows. Those options above doesn't solves actual reporting, and on how you presented the code you just run. This is where R Markdown / Quarto comes in.
+
+## Rationale
+
+You can choose between R Markdown and Quarto, although the latter is currently got more updates than the former. Both tools follow the principle of *literate programming* — combining code, output, and narrative in a single document. When someone runs your `.Rmd` or `.qmd` file, they get the exact same results, figures, and tables you generated. No more "copy-paste this plot into Word" or "manually update this table with new numbers."
+
+Here's two comparison:
+
+::: panel-tabset
+
+### R Markdown
+
+For me, R Markdown is only better than Quarto if it is a quick reporting. R Markdown is nice, but it is superseded by Quarto — it also got most of R Markdown features, e.g. inline codes.
+
+Except, for now, Quarto can't do this (unless `engine: knitr` is set):
+
+```{.yaml}
+title: "Report for `r format(Sys.Date(), '%B %d, %Y')`"
+author: "John Doe"
+output: html_document
+```
+
+Hence, R Markdown is still better for quick reporting. Use RStudio to run the cells interactively, and you can have similar interface as Jupyter notebooks while being plain text. 
+
+### Quarto 
+
+Quarto have most of R markdown features, except it is more *extendable* and provides multi-language support (so, not just R, this includes Python, Julia, Observable), most especially `revealjs` is so much better for HTML presentation.
+
+```{.yaml}
+format: revealjs
+filters:
+    - social-share
+    - collapse-output
+engine: knitr
+```
+
+I recommend using `{knitr}` as the default engine when using multiple languages in 1 QMD — use `{reticulate}` for Python, `{JuliaCall}` for Julia, both are pre-configured. 
+
+:::
+
+# Combining Tools in Practice
+
+Can you combine the options being placed here? Straightforwardly, yes.  
+
+a.  In my work, I use options 1 and 3. Having them for reproducibility and maintainability, especially for my own work and make my work shareable to others, is more than enough. 
+
+b.  Options 1 + 2 + 4 is good when you're building production-grade data pipelines that need to run reliably over years.
+
+c.  You can combine either of the first 4 options then option 5 for reporting. 
+
+Except for one thing: `{targets}` + `{box}`, and it is being discussed [here](https://github.com/ropensci/targets/discussions/936) why it is a case. 
+
+I'll make it simple (this is at as far as I know): 
+
+1.  `{targets}` relies on static analysis through `{codetools}` to discover symbols in your target expressions and build a proper dependency graph (DAG) without running the code. It needs functions and objects to be statically visible. 
+
+2.  In contrast, `{box}` resolves functions at runtime inside module environments (e.g., via `$`), which hides internal symbols from static analysis. As a result, `{targets}` may not fully “see” the real function-level dependencies inside `{box}` modules.
+
+# Special Mention
+
+Here are other tools used for reproducibility, but more niche, superseded, and/or known less (by me): 
+
+1.  `{reproducible}` - it is now on its version 3.0.0, and expect to have some breaking changes. This is niche. 
+2.  `{packrat}` - this is now a legacy, mostly superseded by `{renv}`. 
+3.  `{groundhog}` - purely for packages, specialized in timing. I don't know much about this one. 
+4.  `{drake}` - mostly superseded by `{targets}`. 
+5.  `{reprex}` - only good for providing reproducible example. 

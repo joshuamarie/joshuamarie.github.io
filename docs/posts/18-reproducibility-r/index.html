@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Joshua Marie">
+<meta name="dcterms.date" content="2026-01-27">
+<title>R Reproducibility Stack – Joshua Marie</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/jm-favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0a95de2c3be981c2e03029825b16c585.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-c2a4070949356990582fa11d5da3dd57.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/quarto-contrib/social-share-1.0.0/social-share.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/social-share-1.0.0/all.min.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script><link rel="stylesheet" href="../../styles/base.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/hero.css">
+<link rel="stylesheet" href="../../styles/cards.css">
+<link rel="stylesheet" href="../../styles/about.css">
+<link rel="stylesheet" href="../../styles/dark-mode.css">
+<link rel="stylesheet" href="../Theme/code.css">
+<link rel="stylesheet" href="../Theme/table.css">
+<meta name="twitter:title" content="R Reproducibility Stack – Joshua Marie">
+<meta name="twitter:description" content="A pragmatic, layered approach to maintainable code">
+<meta name="twitter:image" content="https://joshuamarie.com/posts/18-reproducibility-r/image.png">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Joshua Marie</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+<li class="nav-item">
+    <a class="nav-link" href="../../contacts.html"> 
+<span class="menu-text">Contact</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../resources.html"> 
+<span class="menu-text">My resources</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts/index.html"> 
+<span class="menu-text">Posts</span></a>
+  </li>  
+</ul>
+<ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/joshuamarie"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/joshuamarie/"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:joshua.marie.k@gmail.com"> <i class="bi bi-envelope" role="img" aria-label="Email">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS Feed">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+</div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav></header><!-- content --><header id="title-block-header" class="quarto-title-block default page-columns page-full"><div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">R Reproducibility Stack</h1>
+            <p class="subtitle lead">A pragmatic, layered approach to maintainable code</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">programming</div>
+                <div class="quarto-category">box</div>
+                <div class="quarto-category">targets</div>
+                <div class="quarto-category">renv</div>
+                <div class="quarto-category">version-control</div>
+                <div class="quarto-category">rixpress</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Joshua Marie </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 27, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#overall-rationale-why-reproducibility-matters-in-this-date" id="toc-overall-rationale-why-reproducibility-matters-in-this-date" class="nav-link active" data-scroll-target="#overall-rationale-why-reproducibility-matters-in-this-date"><span class="header-section-number">1</span> Overall Rationale: Why Reproducibility Matters in this date</a></li>
+  <li>
+<a href="#option-1-renv-git-pak" id="toc-option-1-renv-git-pak" class="nav-link" data-scroll-target="#option-1-renv-git-pak"><span class="header-section-number">2</span> Option 1: {renv} + git + {pak}</a>
+  <ul class="collapse">
+<li><a href="#rationale" id="toc-rationale" class="nav-link" data-scroll-target="#rationale"><span class="header-section-number">2.1</span> Rationale</a></li>
+  <li><a href="#how-renv-solves-this-problem" id="toc-how-renv-solves-this-problem" class="nav-link" data-scroll-target="#how-renv-solves-this-problem"><span class="header-section-number">2.2</span> How {renv} Solves This Problem</a></li>
+  <li>
+<a href="#git-for-version-control-the-other-half-of-layer-1" id="toc-git-for-version-control-the-other-half-of-layer-1" class="nav-link" data-scroll-target="#git-for-version-control-the-other-half-of-layer-1"><span class="header-section-number">2.3</span> Git for Version Control: The Other Half of Layer 1</a>
+  <ul class="collapse">
+<li><a href="#what-to-version-control" id="toc-what-to-version-control" class="nav-link" data-scroll-target="#what-to-version-control"><span class="header-section-number">2.3.1</span> What to version control</a></li>
+  <li><a href="#what-not-to-version-control" id="toc-what-not-to-version-control" class="nav-link" data-scroll-target="#what-not-to-version-control"><span class="header-section-number">2.3.2</span> What NOT to version control</a></li>
+  </ul>
+</li>
+  <li><a href="#drawback" id="toc-drawback" class="nav-link" data-scroll-target="#drawback"><span class="header-section-number">2.4</span> Drawback</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#option-2-targets" id="toc-option-2-targets" class="nav-link" data-scroll-target="#option-2-targets"><span class="header-section-number">3</span> Option 2: {targets}</a>
+  <ul class="collapse">
+<li><a href="#rationale-1" id="toc-rationale-1" class="nav-link" data-scroll-target="#rationale-1"><span class="header-section-number">3.1</span> Rationale</a></li>
+  <li><a href="#how-targets-works" id="toc-how-targets-works" class="nav-link" data-scroll-target="#how-targets-works"><span class="header-section-number">3.2</span> How {targets} works</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#option-3-box" id="toc-option-3-box" class="nav-link" data-scroll-target="#option-3-box"><span class="header-section-number">4</span> Option 3: {box}</a>
+  <ul class="collapse">
+<li><a href="#rationale-2" id="toc-rationale-2" class="nav-link" data-scroll-target="#rationale-2"><span class="header-section-number">4.1</span> Rationale</a></li>
+  <li><a href="#how-box-functions" id="toc-how-box-functions" class="nav-link" data-scroll-target="#how-box-functions"><span class="header-section-number">4.2</span> How {box} functions</a></li>
+  <li><a href="#benefits" id="toc-benefits" class="nav-link" data-scroll-target="#benefits"><span class="header-section-number">4.3</span> Benefits</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#option-4-rix-and-rixpress" id="toc-option-4-rix-and-rixpress" class="nav-link" data-scroll-target="#option-4-rix-and-rixpress"><span class="header-section-number">5</span> Option 4: {rix} and {rixpress}</a>
+  <ul class="collapse">
+<li><a href="#when-renv-is-not-enough" id="toc-when-renv-is-not-enough" class="nav-link" data-scroll-target="#when-renv-is-not-enough"><span class="header-section-number">5.1</span> When {renv} is not enough</a></li>
+  <li><a href="#rationale-3" id="toc-rationale-3" class="nav-link" data-scroll-target="#rationale-3"><span class="header-section-number">5.2</span> Rationale:</a></li>
+  <li><a href="#the-rix-package-declarative-nix-environments-from-r" id="toc-the-rix-package-declarative-nix-environments-from-r" class="nav-link" data-scroll-target="#the-rix-package-declarative-nix-environments-from-r"><span class="header-section-number">5.3</span> The rix Package: Declarative Nix Environments from R</a></li>
+  <li><a href="#the-rixpress-package-nix-powered-workflows" id="toc-the-rixpress-package-nix-powered-workflows" class="nav-link" data-scroll-target="#the-rixpress-package-nix-powered-workflows"><span class="header-section-number">5.4</span> The rixpress Package: Nix-Powered Workflows</a></li>
+  <li>
+<a href="#practical-considerations-for-using-rix-and-rixpress" id="toc-practical-considerations-for-using-rix-and-rixpress" class="nav-link" data-scroll-target="#practical-considerations-for-using-rix-and-rixpress"><span class="header-section-number">5.5</span> Practical Considerations for Using rix and rixpress</a>
+  <ul class="collapse">
+<li><a href="#when-to-use-rixrixpress" id="toc-when-to-use-rixrixpress" class="nav-link" data-scroll-target="#when-to-use-rixrixpress"><span class="header-section-number">5.5.1</span> When to use rix/rixpress</a></li>
+  <li><a href="#when-not-to-use-rixrixpress" id="toc-when-not-to-use-rixrixpress" class="nav-link" data-scroll-target="#when-not-to-use-rixrixpress"><span class="header-section-number">5.5.2</span> When NOT to use rix/rixpress</a></li>
+  </ul>
+</li>
+  </ul>
+</li>
+  <li>
+<a href="#option-5-reporting-with-r-markdown-quarto" id="toc-option-5-reporting-with-r-markdown-quarto" class="nav-link" data-scroll-target="#option-5-reporting-with-r-markdown-quarto"><span class="header-section-number">6</span> Option 5: Reporting with R Markdown / Quarto</a>
+  <ul class="collapse">
+<li><a href="#rationale-4" id="toc-rationale-4" class="nav-link" data-scroll-target="#rationale-4"><span class="header-section-number">6.1</span> Rationale</a></li>
+  </ul>
+</li>
+  <li><a href="#combining-tools-in-practice" id="toc-combining-tools-in-practice" class="nav-link" data-scroll-target="#combining-tools-in-practice"><span class="header-section-number">7</span> Combining Tools in Practice</a></li>
+  <li><a href="#special-mention" id="toc-special-mention" class="nav-link" data-scroll-target="#special-mention"><span class="header-section-number">8</span> Special Mention</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/18-reproducibility-r/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content"><div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;text=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;title=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Reproducibility%20in%20R%20-%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/18-reproducibility-r" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/18-reproducibility-r" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;title=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;title=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/18-reproducibility-r&amp;name=Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Reproducibility in R - Joshua Marie https://joshuamarie.com/posts/18-reproducibility-r'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/18-reproducibility-r%20Reproducibility%20in%20R%20-%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<section id="overall-rationale-why-reproducibility-matters-in-this-date" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Overall Rationale: Why Reproducibility Matters in this date</h1>
+<p>Reproducibility in R has derived from theory to practice. After handling numerous data science projects, I have learned that reproducibility is rather fundamentally about maintainability and the ability to return to a project months or years later and have it actually work, not just following best practices. Thus, it matters.</p>
+<p>The core problem we face as R practitioners is simple: code that runs perfectly today may fail to other machines or in future executions. Any programming languages you’ll use, not just R, may encounter:</p>
+<ol type="1">
+<li>Packages update</li>
+<li>Dependencies changes</li>
+<li>Evolving versions evolve</li>
+<li>System libraries get upgraded.</li>
+</ol>
+<p>What worked flawlessly on your machine might throw cryptic errors on a colleague’s computer. A pipeline that ran successfully six months ago might inexplicably break when you try to reproduce your results.</p>
+<p>This post outlines my known reproducibility tools in current 2026, built around five core tools: <a href="https://rstudio.github.io/renv/">renv</a> for package management, Git for version control, <a href="https://docs.ropensci.org/targets/">targets</a> for workflow orchestration, <a href="https://klmr.me/box/">box</a> for code organization, and <a href="https://docs.ropensci.org/rixpress">rixpress</a> (powered by rix) for full-stack reproducibility when standard approaches are insufficient.</p>
+<p>I am gonna try to explain what these tools do, and when and why you should use each one, building up from simple projects to complex, long-lived data pipelines.</p>
+<p>Just remember: Over-engineering a simple analysis with unnecessary infrastructure wastes time and creates maintenance burden. Conversely, under-engineering a complex project leads to fragility and technical debt.</p>
+</section><section id="option-1-renv-git-pak" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Option 1: {renv} + git + {pak}</h1>
+<p>The <a href="https://rstudio.github.io/renv/">renv</a> package got more and more stable after years of development. It is nice that they are listening to people’s mindful criticism about its flaws, and this is the best thing we have when dealing with freezing the working environment. It is so stable, it sync with Git version properly, not perfect but that’s the best thing we had for now. Also, my recommendation is that pair it with <a href="https://pak.r-lib.org/">pak</a> as it resolves the package you want to install fast, and also it syncs well with the initialized <a href="https://rstudio.github.io/renv/">renv</a> project.</p>
+<section id="rationale" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="rationale">
+<span class="header-section-number">2.1</span> Rationale</h2>
+<p>The single biggest threat to R reproducibility is package version drift. R has little to no issue with backwards compatibility, except R’s package ecosystem updates every time. A package that worked one way last month might behave differently this month after an update — problems involves dependencies changes, functions get deprecated, or default behaviors shift. Of course, a problem arises: your code’s behavior becomes dependent on when you happened to run it, not just what the code says.</p>
+<p>Consider a concrete example. You write an analysis using <a href="https://dplyr.tidyverse.org">dplyr</a> v1.0.7. Six months later, <a href="https://dplyr.tidyverse.org">dplyr</a> v1.1.0 is released with breaking changes to certain functions. Potentially, when you or a colleague tries to re-run your analysis, it fails with mysterious errors. Without package version control, you face a frustrating choice: modify your code to work with the new version (potentially changing results) or attempt to manually downgrade packages (tedious and error-prone).</p>
+</section><section id="how-renv-solves-this-problem" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="how-renv-solves-this-problem">
+<span class="header-section-number">2.2</span> How {renv} Solves This Problem</h2>
+<p>The <a href="https://rstudio.github.io/renv/">renv</a> package creates a project-local library that isolates each project’s packages from your global R library. When you initialize <a href="https://rstudio.github.io/renv/">renv</a> in a project, it creates these core files:</p>
+<ul>
+<li>A <code>renv.lock</code> file that records the exact version of R version you used, and the exact version of every package used.</li>
+<li>A <code>renv/</code> directory containing project-specific package installations.</li>
+<li>An <code>activate.R</code> script that automatically loads the project environment. Nothing to worry about this, when <code>renv</code> initialized, <code>.Rprofile</code> is created and automatically executes <code>activate.R</code> script.</li>
+</ul>
+<p>Here is how I use <a href="https://rstudio.github.io/renv/">renv</a> in a new project:</p>
+<ol type="1">
+<li>
+<p>Install <a href="https://rstudio.github.io/renv/">renv</a> if you haven’t already</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"renv"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</li>
+<li>
+<p>Initialize <a href="https://rstudio.github.io/renv/">renv</a> in your current project directory</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">renv</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/renv/reference/init.html">init</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</li>
+<li>
+<p>Install <a href="https://pak.r-lib.org/">pak</a> package</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">renv</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/renv/reference/install.html">install</a></span><span class="op">(</span><span class="st">'pak'</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</li>
+<li>
+<p>Now, you can install the packages within the isolated environment with <code><a href="https://pak.r-lib.org/reference/pak.html">pak::pak()</a></code> or <code><a href="https://pak.r-lib.org/reference/pkg_install.html">pak::pkg_install()</a></code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html">pkg_install</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</li>
+<li>
+<p>Then, take a snapshot of the environment to automatically creates / updates the record of your current package versions</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">renv</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/renv/reference/snapshot.html">snapshot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code><a href="https://rstudio.github.io/renv/reference/snapshot.html">renv::snapshot()</a></code> command updates your <code>renv.lock</code> file to reflect your current package versions. This lockfile is a plain text JSON file that precisely records every package version, where it was installed from, and its dependencies.</p>
+</li>
+</ol>
+<p>When someone else (or future you) opens this project, they simply run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">renv</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/renv/reference/restore.html">restore</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This command reads the <code>renv.lock</code> file and installs the exact same package versions into the project-local library. The result is perfect package-level reproducibility across machines and over time. Again, it is not perfect but this is the best solution we’ve got in R currently.</p>
+</section><section id="git-for-version-control-the-other-half-of-layer-1" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="git-for-version-control-the-other-half-of-layer-1">
+<span class="header-section-number">2.3</span> Git for Version Control: The Other Half of Layer 1</h2>
+<p>While renv handles package versions, git handles code versions. I assume most readers are familiar with git basics, so I will focus on reproducibility-specific considerations.</p>
+<section id="what-to-version-control" class="level3" data-number="2.3.1"><h3 data-number="2.3.1" class="anchored" data-anchor-id="what-to-version-control">
+<span class="header-section-number">2.3.1</span> What to version control</h3>
+<p>Simple: Moderate all R scripts and analysis code, the <code>renv.lock</code> file, the <code>renv/activate.R</code> file and <code>.Rprofile</code>, documentation and README files, and some small reference data files (preferably under a few MB, only if allowed).</p>
+</section><section id="what-not-to-version-control" class="level3" data-number="2.3.2"><h3 data-number="2.3.2" class="anchored" data-anchor-id="what-not-to-version-control">
+<span class="header-section-number">2.3.2</span> What NOT to version control</h3>
+<p>List of things NOT recommendable to moderate:</p>
+<ul>
+<li>The <code>renv/library/</code> directory (large, binary, machine-specific)</li>
+<li>Large data files (use git-lfs or store separately)</li>
+<li>Temporary files and build artifacts</li>
+<li>Personal configuration files</li>
+</ul>
+<p>Here is a sensible <code>.gitignore</code> for R projects:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">.Rproj.user</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">.Rhistory</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">.RData</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">.Ruserdata</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">renv/library/</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="ex">renv/local/</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ex">renv/staging/</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ex">*.csv</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="ex">*.rds</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="ex">data/raw/*</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="ex">.DS_Store</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="ex">*.Rproj</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<blockquote class="blockquote">
+<p>Note: ignoring <code>*.Rproj</code> is totally optional.</p>
+</blockquote>
+</section></section><section id="drawback" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="drawback">
+<span class="header-section-number">2.4</span> Drawback</h2>
+<p>This tooling only helps at moderating and freezing the environment you are working on. It is good at handling isolation and moderation, but not good enough at handling:</p>
+<ol type="1">
+<li>Organization of your code (discussed later)</li>
+<li>System dependencies are not tracked (discussed later)</li>
+<li>Cross-platform differences (discussed later)</li>
+<li>Multi-language workflows — it works with Python, but went off once it crossed with multiple languages, such as Rust or C++ (discussed later)</li>
+</ol></section></section><section id="option-2-targets" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Option 2: {targets}</h1>
+<p>Although I admit that I don’t use <a href="https://docs.ropensci.org/targets/">targets</a> that often, this package is part of my stack. Take note that in this part, I am only gonna explain the surface part of this tooling.</p>
+<section id="rationale-1" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="rationale-1">
+<span class="header-section-number">3.1</span> Rationale</h2>
+<p>This package is inspired by <a href="https://www.gnu.org/software/make/">GNU Make</a>, suitable for bulky pipeline in statistics and data science, which of course, uses R. R is historically bad at being a proper programming language when handling such huge pipelines you handle. This package fills the gap, and this is only a good tool we have, before <a href="https://docs.ropensci.org/drake">drake</a>, of course, as most “pipeline tools” are mostly Python-focused. Sad? I am sad.</p>
+<p>I’d say that <a href="https://docs.ropensci.org/targets/">targets</a> is not actually good for reproducibility, but having this in your stack is unsurprisingly good. For instance, simple scripts waste time on long-running analyses. If step 5 of your 10-step pipeline fails, you don’t want to re-run steps 1-4 again. You want to fix step 5 and continue from there.</p>
+</section><section id="how-targets-works" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="how-targets-works">
+<span class="header-section-number">3.2</span> How {targets} works</h2>
+<p>At its core, targets is simple: you define a pipeline in a <code>_targets.R</code> file where each “target” is a named R object produced by running some code. Here’s a minimal example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># _targets.R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/targets/">targets</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/tarchetypes/">tarchetypes</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tar_option_set</span><span class="op">(</span>packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dplyr"</span>, <span class="st">"readr"</span>, <span class="st">"ggplot2"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu">tar_target</span><span class="op">(</span><span class="va">raw_data_file</span>, <span class="st">"data/raw.csv"</span>, format <span class="op">=</span> <span class="st">"file"</span><span class="op">)</span>,</span>
+<span>  <span class="fu">tar_target</span><span class="op">(</span><span class="va">raw_data</span>, <span class="fu">read_csv</span><span class="op">(</span><span class="va">raw_data_file</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu">tar_target</span><span class="op">(</span><span class="va">clean_data</span>, <span class="va">raw_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu">tar_target</span><span class="op">(</span><span class="va">model</span>, <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">~</span> <span class="va">predictor</span>, data <span class="op">=</span> <span class="va">clean_data</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu">tar_target</span><span class="op">(</span><span class="va">plot</span>, <span class="op">{</span></span>
+<span>    <span class="fu">ggplot</span><span class="op">(</span><span class="va">clean_data</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">predictor</span>, <span class="va">outcome</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu">geom_smooth</span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Run the pipeline with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">targets</span><span class="fu">::</span><span class="fu">tar_make</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The first time, targets runs everything. If you modify <code>raw_data_file</code>, targets automatically knows to re-run everything that depends on it. If you only modify the plot code, only that target re-runs.</p>
+</section></section><section id="option-3-box" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Option 3: {box}</h1>
+<p>I’ve been using this package lately for my R projects and blogs, just to import the namespace of the package I needed.</p>
+<p>Hot take: I freaking hate using <code><a href="https://rdrr.io/r/base/source.html">source()</a></code>, I feel like I bit my tongue off whenever I use it. I abandoned the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> habit for (quite not) a long time now after discovering this package.</p>
+<section id="rationale-2" class="level2" data-number="4.1"><h2 data-number="4.1" class="anchored" data-anchor-id="rationale-2">
+<span class="header-section-number">4.1</span> Rationale</h2>
+<p>For modular code organization problem and Python-like import system, <a href="https://klmr.me/box/">box</a> is the most ergonomic tool, thanks for Konrad Rudolph for creating and engineering this package. As R projects grow, a common pattern emerges: you start with a single script, then split it into multiple files using <code><a href="https://rdrr.io/r/base/source.html">source()</a></code>. Eventually you have dozens of functions spread across multiple files, all living in the global namespace.</p>
+<p>This creates several problems:</p>
+<ol type="1">
+<li><p><em>Namespace clash:</em> Functions from different files can overwrite each other if they share names. Tracking down which function is actually running becomes difficult.</p></li>
+<li><p><em>Unclear dependencies:</em> When you see a function call, where is that function defined? Which file should you look in? What other functions does it depend on?</p></li>
+<li><p><em>Testing becomes difficult:</em> Testing functions that rely on global state or that modify global variables is challenging and unreliable.</p></li>
+<li><p><em>Reusability suffers:</em> You want to reuse code across directories or in a higher degree, large projects, but extracting functions from tangled dependencies is painful.</p></li>
+</ol>
+<p>R natively suffers this, and mainly because it lacks a tooling that <a href="https://klmr.me/box/">box</a> package eventually filled, so thank <a href="https://klmr.me/box/">box</a> for existing.</p>
+</section><section id="how-box-functions" class="level2" data-number="4.2"><h2 data-number="4.2" class="anchored" data-anchor-id="how-box-functions">
+<span class="header-section-number">4.2</span> How {box} functions</h2>
+<p>I don’t wanna write out everything here to explain how it works, because it has a huge list of things to be detailed. Please, read one of my books: https://joshuamarie.github.io/modules-in-r/, for more details instead.</p>
+<p>On the surface level: The <a href="https://klmr.me/box/">box</a> package brings a module system to R, similar to Python’s import system or JavaScript’s modules. Instead of sourcing entire files into the global namespace, you explicitly import specific functions from specific modules.</p>
+<p>Here’s a quick example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># I hate doing this:</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"R/data_processing.r"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"R/plotting.r"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Instead, do this:</span></span>
+<span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    dm <span class="op">=</span> <span class="va">.</span><span class="op">/</span><span class="va">data_munging</span><span class="op">[</span><span class="va">clean_data</span>, <span class="va">validate_data</span><span class="op">]</span>,</span>
+<span>    <span class="va">.</span><span class="op">/</span><span class="va">plotting</span><span class="op">[</span><span class="va">make_plot</span><span class="op">]</span>, </span>
+<span>    <span class="va">.</span><span class="op">/</span><span class="va">plotting</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This makes it crystal clear which functions you’re using and where they come from.</p>
+</section><section id="benefits" class="level2" data-number="4.3"><h2 data-number="4.3" class="anchored" data-anchor-id="benefits">
+<span class="header-section-number">4.3</span> Benefits</h2>
+<p>How does it help on reproduciblity? By being explicit about what you import and gaining better code reusability, <a href="https://klmr.me/box/">box</a> becomes so much a valuable tool for long-term maintainability — it fills gaps that R natively lacks. This is not <a href="https://docs.ropensci.org/targets/">targets</a> package that helps on your computational activity (it is utilized but still orthogonal), or improves <em>package version reproducibility</em> like what <a href="https://rstudio.github.io/renv/">renv</a> does, but improves on what I dubbed as <em>structural reproducibility</em> (e.g.&nbsp;involves code modularity, reusability, …) instead.</p>
+</section></section><section id="option-4-rix-and-rixpress" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Option 4: {rix} and {rixpress}</h1>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You may want to add the previous options I inscribed above in your “reproducibility” stack.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Correct me if I am wrong here. I barely use Nix, let alone these toolings.</p>
+</div>
+</div>
+<section id="when-renv-is-not-enough" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="when-renv-is-not-enough">
+<span class="header-section-number">5.1</span> When {renv} is not enough</h2>
+<p>The renv package provides excellent package-level reproducibility, but it has limitations:</p>
+<ol type="1">
+<li><p><strong>System dependencies are not tracked:</strong> Many R packages depend on system libraries. For example, the sf package requires GDAL and PROJ. The exact versions of these system libraries can affect behavior and availability.</p></li>
+<li><p><strong>Cross-platform differences:</strong> An analysis that works on macOS might fail on Linux or Windows due to different system configurations, compilers, or library versions.</p></li>
+<li><p><strong>Multi-language workflows:</strong> Projects combining R with Python, then potentially with Julia, or other languages have dependencies beyond R’s package system.</p></li>
+</ol>
+<p>For most projects, these limitations are acceptable. But for long-lived research projects, production systems, or work requiring absolute reproducibility across platforms and years, you need stronger guarantees.</p>
+</section><section id="rationale-3" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="rationale-3">
+<span class="header-section-number">5.2</span> Rationale:</h2>
+<p>First, let’s understand Nix and why it matters. Nix is a package manager and build system that provides deterministic, reproducible builds. Unlike traditional package managers, Nix uses cryptographic hashes to uniquely identify every package and its dependencies. This means:</p>
+<ul>
+<li>Every package version is immutably stored and never changes</li>
+<li>Dependencies are explicitly declared and tracked</li>
+<li>Builds are isolated and reproducible</li>
+<li>You can have multiple versions of the same software coexisting without conflict</li>
+</ul>
+<p>The only problem. Nix has a steep learning curve and requires learning a new configuration language. This is where rix and rixpress come in: they provide R-native interfaces to Nix’s power.</p>
+</section><section id="the-rix-package-declarative-nix-environments-from-r" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="the-rix-package-declarative-nix-environments-from-r">
+<span class="header-section-number">5.3</span> The rix Package: Declarative Nix Environments from R</h2>
+<p>The rix package lets you define reproducible computational environments using familiar R syntax. You specify the R version, packages, and system dependencies you need, and rix generates the appropriate Nix configuration.</p>
+<p>Here’s a simple example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Install rix</span></span>
+<span><span class="co"># install.packages("rix")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html">pkg_install</a></span><span class="op">(</span><span class="st">"rix"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">rix</span><span class="op">[</span><span class="va">rix</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">rix</span><span class="op">(</span></span>
+<span>    r_ver <span class="op">=</span> <span class="st">"4.4.1"</span>,</span>
+<span>    date <span class="op">=</span> <span class="st">"2025-11-30"</span>,</span>
+<span>    packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dplyr"</span>, <span class="st">"ggplot2"</span>, <span class="st">"tidyr"</span>, <span class="st">"sf"</span>, <span class="st">"box"</span><span class="op">)</span>,</span>
+<span>    system_packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gdal"</span>, <span class="st">"proj"</span><span class="op">)</span>,</span>
+<span>    project_path <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>    overwrite <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    ide <span class="op">=</span> <span class="st">"rstudio"</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This generates a <code>default.nix</code> file in your project directory and modifies your <code>.Rprofile</code> to work with Nix. The <code>date</code> parameter pins packages to their state on that date, ensuring reproducibility even as CRAN changes.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Key parameters explained
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>
+<code>r_ver</code>: Exact R version to use</li>
+<li>
+<code>date</code>: Pin package versions to a specific date</li>
+<li>
+<code>packages</code>: R packages to install</li>
+<li>
+<code>system_packages</code>: System-level dependencies (compilers, libraries, etc.)</li>
+<li>
+<code>ide</code>: Configure integration with RStudio or other IDEs</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activating the environment
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Once rix has generated your Nix configuration, you activate it using:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nix</span> develop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This drops you into a shell with the exact R version, packages, and system dependencies specified. Everything is isolated from your main system, preventing conflicts.</p>
+</div>
+</div>
+</section><section id="the-rixpress-package-nix-powered-workflows" class="level2" data-number="5.4"><h2 data-number="5.4" class="anchored" data-anchor-id="the-rixpress-package-nix-powered-workflows">
+<span class="header-section-number">5.4</span> The rixpress Package: Nix-Powered Workflows</h2>
+<p>While rix handles environment reproducibility, rixpress extends this to workflow orchestration, similar to targets but with Nix isolation. Each step in your pipeline can run in its own hermetic environment with precisely controlled dependencies.</p>
+<p><strong>Setting up a rixpress pipeline:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Install rixpress</span></span>
+<span><span class="co"># remotes::install_github("b-rodrigues/rixpress")</span></span>
+<span><span class="co"># devtools::install_github("b-rodrigues/rixpress")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html">pak</a></span><span class="op">(</span><span class="st">"b-rodrigues/rixpress"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="http://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span></span>
+<span>    <span class="va">rixpress</span><span class="op">[</span></span>
+<span>        <span class="va">rxp_pipeline</span>, <span class="va">rxp_r</span>, <span class="va">rxp_py</span>, <span class="va">rxp_populate</span></span>
+<span>    <span class="op">]</span>,</span>
+<span>    <span class="va">dplyr</span><span class="op">[</span><span class="va">mutate</span>, keep_when <span class="op">=</span> <span class="va">filter</span><span class="op">]</span>, </span>
+<span>    <span class="va">readr</span><span class="op">[</span><span class="va">read_csv</span>, <span class="va">write_csv</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pipeline</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    <span class="co"># R step: load and clean data</span></span>
+<span>    <span class="fu">rxp_r</span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"clean_data"</span>,</span>
+<span>        expr <span class="op">=</span> <span class="op">{</span></span>
+<span>            <span class="fu">read_csv</span><span class="op">(</span><span class="st">"data/raw.csv"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>                <span class="fu">keep_when</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>                <span class="fu">write_csv</span><span class="op">(</span><span class="st">"data/clean.csv"</span><span class="op">)</span></span>
+<span>        <span class="op">}</span>,</span>
+<span>        rix_env <span class="op">=</span> <span class="st">"r_env_4.4.1"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    <span class="co"># Python step: run ML model</span></span>
+<span>    <span class="fu">rxp_py</span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"train_model"</span>,</span>
+<span>        expr <span class="op">=</span> <span class="st">"</span></span>
+<span><span class="st">import pandas as pd</span></span>
+<span><span class="st">from sklearn.ensemble import RandomForestRegressor</span></span>
+<span><span class="st">import pickle</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">data = pd.read_csv('data/clean.csv')</span></span>
+<span><span class="st">X = data[['feature1', 'feature2']]</span></span>
+<span><span class="st">y = data['target']</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">model = RandomForestRegressor()</span></span>
+<span><span class="st">model.fit(X, y)</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">with open('model.pkl', 'wb') as f:</span></span>
+<span><span class="st">    pickle.dump(model, f)</span></span>
+<span><span class="st">    "</span>,</span>
+<span>        deps <span class="op">=</span> <span class="st">"clean_data"</span>,</span>
+<span>        python_version <span class="op">=</span> <span class="st">"3.11"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    <span class="fu">rxp_r</span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"report"</span>,</span>
+<span>        expr <span class="op">=</span> <span class="op">{</span></span>
+<span>            <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html">render</a></span><span class="op">(</span><span class="st">"report.Rmd"</span><span class="op">)</span></span>
+<span>        <span class="op">}</span>,</span>
+<span>        deps <span class="op">=</span> <span class="st">"train_model"</span>,</span>
+<span>        rix_env <span class="op">=</span> <span class="st">"r_env_4.4.1"</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">rxp_populate</span><span class="op">(</span><span class="va">pipeline</span>, build <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>It looks like its behavior is similar to <a href="https://docs.ropensci.org/targets/">targets</a> but with different API and semantics. But, how rixpress differs from targets?</p>
+<p>I’ll make it simple:</p>
+<ul>
+<li>Each step runs in an isolated Nix environment</li>
+<li>System dependencies are explicitly tracked</li>
+<li>Multi-language workflows are first-class citizens</li>
+<li>Reproducibility guarantees extend to the OS level</li>
+<li>Builds are truly deterministic and bit-for-bit reproducible</li>
+</ul></section><section id="practical-considerations-for-using-rix-and-rixpress" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="practical-considerations-for-using-rix-and-rixpress">
+<span class="header-section-number">5.5</span> Practical Considerations for Using rix and rixpress</h2>
+<p>Using this tooling is a bit tedious, especially for beginners. Here’s why:</p>
+<ol type="1">
+<li><p>Nix has a reputation for complexity, and it is deserved. Good thing, {rix} and {rixpress} abstract away much of the difficulty, but spoiler: It still has a bit steeper learning curve. You can get started with basic usage without deep Nix knowledge.</p></li>
+<li><p>Before using <a href="https://docs.ropensci.org/rix/">rix</a> or <a href="https://docs.ropensci.org/rixpress">rixpress</a>, you have to install Nix itself. On Linux and macOS, this is straightforward. On Windows, you will need to use WSL (Windows Subsystem for Linux).</p></li>
+<li><p>This one can make you bite your tongue a bit: Nix stores all packages in its store, which can consume significant disk space. However, packages are shared across projects, so the cost amortizes over multiple projects.</p></li>
+<li><p><em>Build times</em>: The first time you build a Nix environment, it may take considerable time as packages are downloaded and built. Subsequent builds use cached results and are much faster.</p></li>
+</ol>
+<section id="when-to-use-rixrixpress" class="level3" data-number="5.5.1"><h3 data-number="5.5.1" class="anchored" data-anchor-id="when-to-use-rixrixpress">
+<span class="header-section-number">5.5.1</span> When to use rix/rixpress</h3>
+<ul>
+<li>Long-term research projects that must remain runnable for years or decades</li>
+<li>Production environment where stability is critical</li>
+<li>Cross-platform work requiring identical behavior on different operating systems</li>
+<li>Projects with complex system dependencies</li>
+<li>Multi-language pipelines combining R, Python, Julia, etc.</li>
+<li>Situations where you need to prove exact reproducibility (regulatory compliance, peer review)</li>
+</ul></section><section id="when-not-to-use-rixrixpress" class="level3" data-number="5.5.2"><h3 data-number="5.5.2" class="anchored" data-anchor-id="when-not-to-use-rixrixpress">
+<span class="header-section-number">5.5.2</span> When NOT to use rix/rixpress</h3>
+<p>Of course, it has a bit steeper learning curve, so use it on:</p>
+<ul>
+<li>Quick analyses or exploratory work</li>
+<li>Projects where <a href="https://rstudio.github.io/renv/">renv</a> provides sufficient reproducibility</li>
+<li>Situations where the learning curve cost exceeds the benefit</li>
+<li>Environments where you cannot install Nix (some corporate systems)</li>
+</ul></section></section></section><section id="option-5-reporting-with-r-markdown-quarto" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Option 5: Reporting with R Markdown / Quarto</h1>
+<p>Reproducible reporting is where the rubber meets the road. You can have perfect package management, clean code organization, and efficient workflows. Those options above doesn’t solves actual reporting, and on how you presented the code you just run. This is where R Markdown / Quarto comes in.</p>
+<section id="rationale-4" class="level2" data-number="6.1"><h2 data-number="6.1" class="anchored" data-anchor-id="rationale-4">
+<span class="header-section-number">6.1</span> Rationale</h2>
+<p>You can choose between R Markdown and Quarto, although the latter is currently got more updates than the former. Both tools follow the principle of <em>literate programming</em> — combining code, output, and narrative in a single document. When someone runs your <code>.Rmd</code> or <code>.qmd</code> file, they get the exact same results, figures, and tables you generated. No more “copy-paste this plot into Word” or “manually update this table with new numbers.”</p>
+<p>Here’s two comparison:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">R Markdown</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Quarto</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>For me, R Markdown is only better than Quarto if it is a quick reporting. R Markdown is nice, but it is superseded by Quarto — it also got most of R Markdown features, e.g.&nbsp;inline codes.</p>
+<p>Except, for now, Quarto can’t do this (unless <code>engine: knitr</code> is set):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"Report for February 07, 2026"</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">"John Doe"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> html_document</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Hence, R Markdown is still better for quick reporting. Use RStudio to run the cells interactively, and you can have similar interface as Jupyter notebooks while being plain text.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Quarto have most of R markdown features, except it is more <em>extendable</em> and provides multi-language support (so, not just R, this includes Python, Julia, Observable), most especially <code>revealjs</code> is so much better for HTML presentation.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span><span class="at"> revealjs</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filters</span><span class="kw">:</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> social-share</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> collapse-output</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">engine</span><span class="kw">:</span><span class="at"> knitr</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>I recommend using <a href="https://yihui.org/knitr/">knitr</a> as the default engine when using multiple languages in 1 QMD — use <a href="https://rstudio.github.io/reticulate/">reticulate</a> for Python, <a href="https://github.com/JuliaInterop/JuliaCall">JuliaCall</a> for Julia, both are pre-configured.</p>
+</div>
+</div>
+</div>
+</section></section><section id="combining-tools-in-practice" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> Combining Tools in Practice</h1>
+<p>Can you combine the options being placed here? Straightforwardly, yes.</p>
+<ol type="a">
+<li><p>In my work, I use options 1 and 3. Having them for reproducibility and maintainability, especially for my own work and make my work shareable to others, is more than enough.</p></li>
+<li><p>Options 1 + 2 + 4 is good when you’re building production-grade data pipelines that need to run reliably over years.</p></li>
+<li><p>You can combine either of the first 4 options then option 5 for reporting.</p></li>
+</ol>
+<p>Except for one thing: <a href="https://docs.ropensci.org/targets/">targets</a> + <a href="https://klmr.me/box/">box</a>, and it is being discussed <a href="https://github.com/ropensci/targets/discussions/936">here</a> why it is a case.</p>
+<p>I’ll make it simple (this is at as far as I know):</p>
+<ol type="1">
+<li><p><a href="https://docs.ropensci.org/targets/">targets</a> relies on static analysis through <a href="https://gitlab.com/luke-tierney/codetools">codetools</a> to discover symbols in your target expressions and build a proper dependency graph (DAG) without running the code. It needs functions and objects to be statically visible.</p></li>
+<li><p>In contrast, <a href="https://klmr.me/box/">box</a> resolves functions at runtime inside module environments (e.g., via <code>$</code>), which hides internal symbols from static analysis. As a result, <a href="https://docs.ropensci.org/targets/">targets</a> may not fully “see” the real function-level dependencies inside <a href="https://klmr.me/box/">box</a> modules.</p></li>
+</ol></section><section id="special-mention" class="level1" data-number="8"><h1 data-number="8">
+<span class="header-section-number">8</span> Special Mention</h1>
+<p>Here are other tools used for reproducibility, but more niche, superseded, and/or known less (by me):</p>
+<ol type="1">
+<li>
+<a href="https://reproducible.predictiveecology.org">reproducible</a> - it is now on its version 3.0.0, and expect to have some breaking changes. This is niche.</li>
+<li>
+<a href="https://github.com/rstudio/packrat">packrat</a> - this is now a legacy, mostly superseded by <a href="https://rstudio.github.io/renv/">renv</a>.</li>
+<li>
+<a href="https://groundhogr.com/">groundhog</a> - purely for packages, specialized in timing. I don’t know much about this one.</li>
+<li>
+<a href="https://docs.ropensci.org/drake">drake</a> - mostly superseded by <a href="https://docs.ropensci.org/targets/">targets</a>.</li>
+<li>
+<a href="https://reprex.tidyverse.org">reprex</a> - only good for providing reproducible example.</li>
+</ol>
+
+
+</section></main><!-- /main --><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Light theme variables */
+:root {
+  --primary-color: #3b82f6;
+  --primary-dark: #2563eb;
+  --secondary-color: #64748b;
+  --accent-color: #06b6d4;
+  --background: #ffffff;
+  --surface: #f8fafc;
+  --surface-hover: #f1f5f9;
+  --surface-light: #e2e8f0;
+  --border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+  --primary-color: #60a5fa;
+  --primary-dark: #3b82f6;
+  --secondary-color: #94a3b8;
+  --accent-color: #22d3ee;
+  --background: #0f172a;
+  --surface: #1e293b;
+  --surface-hover: #334155;
+  --surface-light: #475569;
+  --border: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+}
+
+/* =========================
+   Navbar Theme Fix
+   ========================= */
+
+/* Target all navbar elements to use theme colors */
+.navbar,
+.navbar-default,
+.navbar-expand-lg,
+nav.navbar,
+header.navbar,
+#quarto-header,
+.quarto-navbar,
+nav[role="navigation"] {
+  background: var(--background) !important;
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* =========================
+   Title Block Banner Theme Fix
+   ========================= */
+
+/* Target title block banner area */
+#title-block-header,
+.quarto-title-block,
+header#title-block-header,
+.quarto-title-banner {
+  background: var(--background) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Title block container */
+.quarto-title-block .quarto-title,
+#title-block-header .quarto-title {
+  background: var(--background) !important;
+}
+
+/* =========================
+   Listing Controls Theme Fix (Sorter/Filter)
+   ========================= */
+
+/* Order By / Sort dropdown and Filter input */
+.listing-option-group,
+.listing-actions,
+.listing-controls,
+div[class*="listing"] {
+  background: var(--background) !important;
+}
+
+/* Dropdowns and inputs in listing controls */
+.listing-option-group select,
+.listing-option-group input,
+#listing-order-by,
+select,
+input[type="text"],
+input[type="search"] {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.listing-option-group select:hover,
+.listing-option-group input:hover,
+select:hover,
+input[type="text"]:hover,
+input[type="search"]:hover {
+  background: var(--surface-hover) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Labels in listing controls */
+.listing-option-group label,
+.listing-controls label {
+  color: var(--text-primary) !important;
+}
+
+/* =========================
+   Footer Theme Fix
+   ========================= */
+
+/* Footer area */
+footer,
+.footer,
+.nav-footer,
+.quarto-footer,
+body > footer,
+#quarto-footer {
+  background: var(--surface) !important;
+  color: var(--text-secondary) !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+/* Footer links */
+footer a,
+.footer a,
+.nav-footer a,
+.quarto-footer a {
+  color: var(--text-secondary) !important;
+}
+
+footer a:hover,
+.footer a:hover,
+.nav-footer a:hover,
+.quarto-footer a:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Footer text */
+footer p,
+footer div,
+.footer p,
+.footer div,
+.nav-footer p,
+.nav-footer div {
+  color: var(--text-secondary) !important;
+}
+
+/* Navbar brand/logo */
+.navbar-brand,
+.navbar-title,
+a.navbar-brand {
+  color: var(--text-primary) !important;
+}
+
+/* Navbar links */
+.navbar-nav .nav-link,
+.navbar .nav-link,
+.navbar a,
+.nav-link {
+  color: var(--text-secondary) !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar .nav-link:hover,
+.navbar a:hover,
+.nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Active navbar link */
+.navbar-nav .nav-link.active,
+.navbar .nav-link.active,
+.nav-link.active {
+  color: var(--primary-color) !important;
+}
+
+/* Navbar toggler*/
+.navbar-toggler {
+  border-color: var(--border) !important;
+  padding: 0.25rem 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+/* Create custom hamburger icon that respects theme */
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(71, 85, 105, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+}
+
+/* Dark theme hamburger icon */
+[data-theme="dark"] .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(203, 213, 225, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Search button and icons in navbar */
+.navbar .quarto-navbar-tools,
+.navbar-nav .nav-item i,
+.navbar i {
+  color: var(--text-secondary) !important;
+}
+
+.navbar .quarto-navbar-tools:hover,
+.navbar-nav .nav-item i:hover,
+.navbar i:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Theme toggle button - repositioned to avoid navbar overlap */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  background: var(--primary-dark);
+  transform: scale(1.1);
+  box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.3);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Base styles with smooth transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Remove automatic numbering for headings */
+body {
+  counter-reset: none;
+}
+
+h1::before,
+h2::before,
+h3::before,
+h4::before,
+h5::before,
+h6::before {
+  content: none !important;
+}
+
+/* Override any automatic numbering */
+.section .header-section-number {
+  display: none !important;
+}
+
+.header-section-number {
+  display: none !important;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background: var(--background);
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container styling */
+.container-fluid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  padding-top: 4rem; 
+}
+
+/* Header styling with enhanced animations */
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: slideInFromTop 0.8s ease-out;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-weight: 400;
+  animation: slideInFromTop 0.8s ease-out 0.2s both;
+}
+
+.author, .date {
+  color: var(--text-muted);
+  font-size: 1.325rem;
+  margin-bottom: 0.5rem;
+  animation: slideInFromTop 0.8s ease-out 0.4s both;
+}
+
+/* Animations */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================
+   Table of Contents
+   ========================= */
+
+#TOC {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+/* Force all TOC elements to use theme colors */
+#TOC,
+#TOC ul,
+#TOC li,
+#TOC div {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Hide "on this page" text in TOC - Multiple selectors for compatibility */
+body.quarto-post #TOC .toc-title,
+#TOC .toc-title,
+.toc-title,
+#quarto-margin-sidebar .toc-title,
+.sidebar nav[role="doc-toc"] > h2,
+.sidebar nav[role="doc-toc"] > .h2,
+#quarto-margin-sidebar h2,
+aside[role="complementary"] h2,
+nav[role="doc-toc"] h2 {
+  display: none !important;
+}
+
+#TOC ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: none;
+  background: var(--surface) !important;
+}
+
+#TOC > ul {
+  padding-left: 0;
+  background: var(--surface) !important;
+}
+
+#TOC li {
+  margin: 0.5rem 0;
+  position: relative;
+  transform: translateX(0);
+  transition: transform 0.2s ease;
+  background: var(--surface) !important;
+}
+
+#TOC li:hover {
+  transform: translateX(5px);
+  background: var(--surface) !important;
+}
+
+#TOC li::before {
+  content: "→";
+  color: var(--primary-color);
+  font-weight: bold;
+  position: absolute;
+  left: -1rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#TOC li:hover::before {
+  opacity: 1;
+}
+
+#TOC a {
+  color: var(--text-primary) !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: block;
+  padding: 0.25rem 0;
+  border-radius: var(--radius);
+  padding-left: 0.5rem;
+  background: transparent !important;
+}
+
+#TOC a:hover {
+  color: var(--primary-color) !important;
+  background: var(--surface-hover) !important;
+}
+
+/* Target specific R Markdown TOC structure */
+.tocify-wrapper,
+.tocify-extend-page {
+  background: var(--surface) !important;
+}
+
+/* Override any white backgrounds in TOC */
+#TOC * {
+  background-color: var(--surface) !important;
+}
+
+#TOC a * {
+  background-color: transparent !important;
+}
+
+/* Floating TOC with enhanced styling */
+.tocify {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.tocify-header {
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.tocify-item {
+  padding: 0.25rem 0;
+}
+
+.tocify-item a {
+  color: var(--text-secondary) !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  display: block;
+}
+
+.tocify-item a:hover,
+.tocify-item.active a {
+  color: var(--primary-color) !important;
+  background: var(--surface-hover) !important;
+}
+
+/* Headers styling */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2.25rem;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+h1::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: -100%;
+  right: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    left: -100%;
+    right: 100%;
+  }
+  50% {
+    left: 0%;
+    right: 0%;
+  }
+}
+
+h2 {
+  font-size: 1.875rem;
+  color: var(--primary-dark);
+  position: relative;
+  padding-left: 1rem;
+}
+
+h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+  border-radius: 2px;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.3s ease;
+}
+
+h2:hover::before {
+  transform: scaleY(1);
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
+h4 {
+  font-size: 1.25rem;
+  color: var(--secondary-color);
+}
+
+/* Interactive code folding button */
+.code-folding-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.code-folding-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.code-folding-btn:active {
+  transform: translateY(0);
+}
+
+.code-folding-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.code-folding-btn:hover::after {
+  left: 100%;
+}
+
+/* =========================
+   Callout title
+   ========================= */
+
+.callout-title-container {
+  color: #19183B !important;
+}
+
+/* =========================
+   Global hyperlink styling
+   ========================= */
+
+/* Global styling - Light mode */
+a:not(.quarto-category):not(.listing-category),
+a:visited:not(.quarto-category):not(.listing-category) {
+  color: #3A6F43 !important;
+  text-decoration: none;
+}
+
+a:hover:not(.quarto-category):not(.listing-category) {
+  color: #333333 !important;
+}
+
+/* Dark mode hyperlinks */
+[data-theme="dark"] a:not(.quarto-category):not(.listing-category),
+[data-theme="dark"] a:visited:not(.quarto-category):not(.listing-category) {
+  color: #8BAE66 !important;
+}
+
+[data-theme="dark"] a:hover:not(.quarto-category):not(.listing-category) {
+  color: #a8cc88 !important;
+}
+
+/* =========================
+   Category Links Fix
+   ========================= */
+
+/* Ensure category links remain functional */
+.quarto-category,
+a.quarto-category,
+.quarto-categories .quarto-category,
+.listing-category,
+a.listing-category {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.quarto-category:hover,
+.listing-category:hover {
+  opacity: 0.8 !important;
+  text-decoration: none !important;
+}
+
+/* =========================
+   Strong Global bold text
+   ========================= */
+
+strong, b {
+  font-weight: 700;
+}
+
+/* Enhanced blockquotes */
+blockquote {
+  border-left: 4px solid var(--accent-color);
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--text-secondary);
+  font-style: italic;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+blockquote::before {
+  content: """;
+  font-size: 3rem;
+  color: var(--accent-color);
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  opacity: 0.3;
+}
+
+/* Smooth scrolling and enhanced focus */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styling */
+::selection {
+  background: var(--primary-color);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Enhanced focus styles */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 6px;
+  border: 2px solid var(--surface);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .theme-toggle {
+    bottom: 15px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+  
+  .container-fluid {
+    padding: 1rem;
+    padding-top: 3rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1.725rem;
+  }
+  
+  h1 {
+    font-size: 1.875rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  pre {
+    padding: 1rem;
+  }
+  
+  pre code {
+    font-size: 0.9rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .theme-toggle {
+    display: none;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: black;
+    background: white;
+  }
+  
+  .title {
+    color: black;
+    -webkit-text-fill-color: black;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: black;
+    page-break-after: avoid;
+  }
+  
+  pre, blockquote {
+    page-break-inside: avoid;
+  }
+  
+  .tocify {
+    display: none;
+  }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const themeToggle = document.createElement('button');
+  themeToggle.className = 'theme-toggle';
+  themeToggle.innerHTML = '🌙';
+  themeToggle.setAttribute('aria-label', 'Toggle dark mode');
+  themeToggle.setAttribute('title', 'Toggle dark/light mode');
+  
+  document.body.appendChild(themeToggle);
+  
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeToggle.innerHTML = savedTheme === 'dark' ? '🌙' : '☀️';
+  
+  themeToggle.addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeToggle.innerHTML = newTheme === 'dark' ? '🌙' : '☀️';
+    
+    themeToggle.style.transform = 'rotate(360deg)';
+    setTimeout(() => {
+      themeToggle.style.transform = 'rotate(0deg)';
+    }, 300);
+  });
+  
+  setTimeout(function() {
+    const tocTitles = document.querySelectorAll('.toc-title, #quarto-margin-sidebar h2, nav[role="doc-toc"] h2');
+    tocTitles.forEach(function(title) {
+      title.style.display = 'none';
+    });
+  }, 100);
+  
+  const tocLinks = document.querySelectorAll('#TOC a, .tocify a');
+  tocLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }
+    });
+  });
+  
+  const images = document.querySelectorAll('img');
+  images.forEach(function(img) {
+    if (img.complete) {
+      img.style.opacity = '1';
+    } else {
+      img.style.opacity = '0';
+      img.style.transition = 'opacity 0.5s ease';
+      
+      img.addEventListener('load', function() {
+        this.style.opacity = '1';
+      });
+    }
+  });
+});
+</script><style>
+    /* Modal Styles */
+    .code-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+    }
+
+    .code-modal-content {
+        position: relative;
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 1200px;
+        max-height: 80vh;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .code-modal-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .code-modal-title {
+        font-size: 1.2em;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .code-modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+    }
+
+    .code-modal-close:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .code-modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+    }
+
+    .code-modal-section {
+        margin-bottom: 20px;
+    }
+
+    .code-modal-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .code-modal-section h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+        color: #333;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #1e3a8a;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .code-modal-code {
+        background-color: #0f172a;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 0.9em;
+        line-height: 1.4;
+        overflow-x: auto;
+        white-space: pre;
+        margin: 0;
+    }
+
+    .code-modal-output {
+        background-color: #fff;
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 0.9em;
+        line-height: 1.4;
+        white-space: pre-wrap;
+        margin: 0;
+        color: #2d3748;
+    }
+
+    /* Button to open modal */
+    .code-open-btn {
+        background: #0f172a;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85em;
+        font-weight: 500;
+        margin: 5px 0;
+        transition: all 0.3s ease;
+    }
+
+    .code-open-btn:hover {
+        background: #1e293b;
+        transform: translateY(-1px);
+    }
+
+    /* Copy button styles */
+    .copy-btn {
+        background: #1e3a8a;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.75em;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+        background: #1e40af;
+    }
+
+    .copy-btn.copied {
+        background: #059669;
+    }
+
+    .copy-icon {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
+    }
+
+    /* Hide original code blocks that have code-open */
+    .cell[data-code-open="true"] .sourceCode {
+        display: none;
+    }
+
+    .cell[data-code-open="true"] .cell-output {
+        display: none;
+    }
+
+    /* Animation */
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .code-modal.show .code-modal-content {
+        animation: modalFadeIn 0.3s ease-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .code-modal-content {
+            width: 95%;
+            margin: 2% auto;
+            max-height: 90vh;
+        }
+
+        .code-modal-header {
+            padding: 10px 15px;
+        }
+
+        .code-modal-body {
+            padding: 15px;
+        }
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to create modal
+        function createModal() {
+            const modal = document.createElement('div');
+            modal.className = 'code-modal';
+            document.body.appendChild(modal);
+            return modal;
+        }
+
+        // Create the modal
+        const modal = createModal();
+        const modalContent = modal.querySelector('.code-modal-content');
+        const closeBtn = modal.querySelector('.code-modal-close');
+        const codeElement = modal.querySelector('.code-modal-code');
+        const outputElement = modal.querySelector('.code-modal-output');
+
+        // Function to open modal
+        function openModal(codeText, outputText, title = 'Code & Output') {
+            modal.querySelector('.code-modal-title').textContent = title;
+            codeElement.textContent = codeText;
+            outputElement.textContent = outputText || 'No output';
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('show'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // Event listeners for modal
+        closeBtn.addEventListener('click', closeModal);
+
+        // Copy functionality
+        const copyCodeBtn = modal.querySelector('#copy-code-btn');
+        const copyOutputBtn = modal.querySelector('#copy-output-btn');
+
+        copyCodeBtn.addEventListener('click', async function() {
+            try {
+                await navigator.clipboard.writeText(codeElement.textContent);
+                copyCodeBtn.innerHTML = `
+                    <svg class="copy-icon" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Copied!
+                `;
+                copyCodeBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyCodeBtn.innerHTML = `
+                        <svg class="copy-icon" viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy
+                    `;
+                    copyCodeBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy code:', err);
+            }
+        });
+
+        copyOutputBtn.addEventListener('click', async function() {
+            try {
+                await navigator.clipboard.writeText(outputElement.textContent);
+                copyOutputBtn.innerHTML = `
+                    <svg class="copy-icon" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Copied!
+                `;
+                copyOutputBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyOutputBtn.innerHTML = `
+                        <svg class="copy-icon" viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy
+                    `;
+                    copyOutputBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy output:', err);
+            }
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+
+        // Function to extract title from Quarto cell metadata
+        function extractTitleFromCell(cell) {
+            // Look for code-modal-title in various places
+            let title = null;
+
+            // 1. Check for data attribute on the cell
+            if (cell.hasAttribute('data-code-modal-title')) {
+                title = cell.getAttribute('data-code-modal-title');
+            }
+
+            // 2. Check for code-modal-title in cell options (Quarto metadata)
+            const cellOptions = cell.querySelector('.cell-meta, .cell-code-meta');
+            if (cellOptions && !title) {
+                const optionsText = cellOptions.textContent;
+                const titleMatch = optionsText.match(/code-modal-title:\s*["']([^"']+)["']/);
+                if (titleMatch) {
+                    title = titleMatch[1];
+                }
+            }
+
+            // 3. Look for title in HTML comments (Quarto sometimes puts metadata there)
+            const htmlContent = cell.innerHTML;
+            const commentMatch = htmlContent.match(/<!--.*?code-modal-title:\s*["']([^"']+)["'].*?-->/s);
+            if (commentMatch && !title) {
+                title = commentMatch[1];
+            }
+
+            // 4. Look for title in the cell's script tags or data attributes
+            const scripts = cell.querySelectorAll('script[type="application/json"]');
+            scripts.forEach(script => {
+                if (!title) {
+                    try {
+                        const data = JSON.parse(script.textContent);
+                        if (data['code-modal-title']) {
+                            title = data['code-modal-title'];
+                        }
+                    } catch (e) {
+                        // Ignore JSON parse errors
+                    }
+                }
+            });
+
+            // 5. Look in the raw text content for the pattern
+            if (!title) {
+                const rawText = cell.textContent;
+                const rawMatch = rawText.match(/code-modal-title:\s*["']?([^"'\n]+)["']?/);
+                if (rawMatch) {
+                    title = rawMatch[1].trim().replace(/["']/g, '');
+                }
+            }
+
+            // 6. Alternative pattern matching for YAML-like syntax
+            if (!title) {
+                const yamlMatch = htmlContent.match(/code-modal-title:\s*(.+)/);
+                if (yamlMatch) {
+                    title = yamlMatch[1].trim().replace(/["']/g, '');
+                }
+            }
+
+            return title;
+        }
+
+        // Function to process code blocks with code-open attribute
+        function processCodeOpenBlocks() {
+            // Look for cells with code-open attribute in Quarto
+            const cells = document.querySelectorAll('.cell');
+
+            cells.forEach((cell, index) => {
+                // Skip if already processed
+                if (cell.hasAttribute('data-processed')) return;
+
+                // Check if this cell should have code-open functionality
+                const hasCodeOpen = cell.querySelector('[data-code-open="true"]') ||
+                    cell.hasAttribute('data-code-open') ||
+                    cell.innerHTML.includes('code-open: true') ||
+                    cell.textContent.includes('code-open: true');
+
+                if (hasCodeOpen) {
+                    // Mark the cell as processed
+                    cell.setAttribute('data-code-open', 'true');
+                    cell.setAttribute('data-processed', 'true');
+
+                    // Extract custom title
+                    const customTitle = extractTitleFromCell(cell);
+
+                    // Find source code
+                    const sourceCode = cell.querySelector('.sourceCode code, pre code, .r code');
+                    const codeText = sourceCode ? sourceCode.textContent : '';
+
+                    // Find output
+                    const outputElements = cell.querySelectorAll('.cell-output pre, .cell-output .output');
+                    let outputText = '';
+                    outputElements.forEach(output => {
+                        outputText += output.textContent + '\n';
+                    });
+
+                    // Create open button
+                    const openBtn = document.createElement('button');
+                    openBtn.className = 'code-open-btn';
+                    openBtn.textContent = 'View Code & Output';
+
+                    openBtn.addEventListener('click', function() {
+                        // Use custom title if available, otherwise default
+                        const title = customTitle || `Code Block ${index + 1}`;
+                        openModal(codeText, outputText.trim(), title);
+                    });
+
+                    // Insert button at the beginning of the cell
+                    cell.insertBefore(openBtn, cell.firstChild);
+                }
+            });
+        }
+
+        // Alternative approach for direct code blocks
+        function processDirectCodeBlocks() {
+            const codeBlocks = document.querySelectorAll('pre code');
+
+            codeBlocks.forEach(code => {
+                const preElement = code.parentElement;
+                const container = preElement.parentElement;
+
+                // Skip if already processed
+                if (container.hasAttribute('data-processed')) return;
+
+                // Check for code-open in various ways
+                if (container.hasAttribute('data-code-open') ||
+                    container.classList.contains('code-open') ||
+                    preElement.hasAttribute('data-code-open') ||
+                    container.innerHTML.includes('code-open: true')) {
+
+                    // Mark as processed
+                    container.setAttribute('data-processed', 'true');
+
+                    // Extract custom title
+                    const customTitle = extractTitleFromCell(container);
+
+                    const codeText = code.textContent;
+
+                    // Look for adjacent output
+                    let outputText = '';
+                    let nextElement = container.nextElementSibling;
+                    if (nextElement && (nextElement.tagName === 'PRE' || nextElement.classList.contains('output'))) {
+                        outputText = nextElement.textContent;
+                    }
+
+                    // Create and insert button
+                    const openBtn = document.createElement('button');
+                    openBtn.className = 'code-open-btn';
+                    openBtn.textContent = 'View Code & Output';
+
+                    openBtn.addEventListener('click', function() {
+                        const title = customTitle || 'Code Block';
+                        openModal(codeText, outputText, title);
+                    });
+
+                    // Hide original and add button
+                    container.style.display = 'none';
+                    if (nextElement && outputText) {
+                        nextElement.style.display = 'none';
+                    }
+
+                    container.parentElement.insertBefore(openBtn, container);
+                }
+            });
+        }
+
+        // Run processing functions
+        processCodeOpenBlocks();
+        processDirectCodeBlocks();
+
+        // Also run after a short delay to catch dynamically loaded content
+        setTimeout(() => {
+            processCodeOpenBlocks();
+            processDirectCodeBlocks();
+        }, 1000);
+
+        // Run again after a longer delay for slow-loading content
+        setTimeout(() => {
+            processCodeOpenBlocks();
+            processDirectCodeBlocks();
+        }, 3000);
+    });
+
+    // Manual function to add code-open functionality
+    function addCodeOpen(codeElement, outputElement, title) {
+        const openBtn = document.createElement('button');
+        openBtn.className = 'code-open-btn';
+        openBtn.textContent = 'View Code & Output';
+
+        openBtn.addEventListener('click', function() {
+            const codeText = codeElement.textContent;
+            const outputText = outputElement ? outputElement.textContent : '';
+
+            // Trigger the modal (assuming the modal is already created)
+            const modal = document.querySelector('.code-modal');
+            if (modal) {
+                const event = new CustomEvent('openCodeModal', {
+                    detail: { codeText, outputText, title }
+                });
+                document.dispatchEvent(event);
+            }
+        });
+
+        return openBtn;
+    }
+
+    // Listen for custom events
+    document.addEventListener('openCodeModal', function(e) {
+        const { codeText, outputText, title } = e.detail;
+        const modal = document.querySelector('.code-modal');
+        if (modal) {
+            modal.querySelector('.code-modal-title').textContent = title || 'Code & Output';
+            modal.querySelector('.code-modal-code').textContent = codeText;
+            modal.querySelector('.code-modal-output').textContent = outputText || 'No output';
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('show'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+    });
+</script><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/joshuamarie\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><script src="https://utteranc.es/client.js" repo="joshuamarie/joshuamarie.github.io" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Design inspired by <a href="https://github.com/statichunt/geeky-hugo">Geeky Hugo</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/18-reproducibility-r/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+</body></html>

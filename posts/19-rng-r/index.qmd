@@ -1,0 +1,261 @@
+---
+title: "How usual or unusual R's random number generation can be?"
+subtitle: "Observations about R's functionality to generate random numbers"
+date: "2026-05-31"
+image: "image.png"
+categories: [R, rng, statistics, random-sampling]
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/19-rng-r"
+    description: "RNG in R - Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+# Brief Intro
+
+It's been a while since I wrote a blog, but this time, it's some kind of case study after what I observed. Let me discuss some usual (or unusual?) things in R's random number generation. R has a surprisingly rich set of behaviors around randomness that caught me off guard. The question is, have you already encountered them? Let's walk through them.
+
+# Vectorized Distribution Parameters
+
+Not random sampling *by group* in the `dplyr::slice_sample()` sense, this is about the random number generators from a certain probability distribution you are using, such as `runif()` or `rnorm()`. Anecdotally, I've seen few to no blogs cover this.
+
+Most people know that the first argument of these functions, `n`, controls how many draws to make. What's less obvious (but intended — it is documented by core R team themselves) is that the *distribution parameters*, like `min`/`max` in `runif()` or `mean`/`sd` in `rnorm()`, can themselves be vectors. When they are, R recycles them across the `n` draws *alternatively*, giving you a different distribution per draw.
+
+```{r}
+set.seed(42)
+runif(
+    n = 5,
+    min = c(0, 10, 20, 30, 40),
+    max = c(1, 11, 21, 31, 41)
+)
+```
+
+Each of the 5 values is drawn from its own `[min, max]` interval. Compare this to the naive reading of `runif(5, min = 0, max = 40)`, which draws all 5 from the same range:
+
+```{r}
+set.seed(42)
+runif(5, min = 0, max = 40)
+```
+
+Completely different. The same applies to `rnorm()`:
+
+```{r}
+set.seed(1)
+rnorm(6, mean = c(-10, 0, 10), sd = c(0.5, 1, 2))
+```
+
+Here, `n = 6` but only 3 `mean` / `sd` pairs are supplied, R recycles them, so draws 1 and 4 share `mean = -10, sd = 0.5`, draws 2 and 5 share `mean = 0, sd = 1`, and so on.
+
+This can be useful for simulating heterogeneous populations in a single call, but it can catch you off guard if you pass a vector parameter by accident. R won't warn you, just recycles silently.
+
+```{r}
+# Accidentally passing a two-element vector for mean
+set.seed(5)
+rnorm(4, mean = c(0, 100)) # draws alternate between mean = 0 and mean = 100!
+```
+
+At first I thought calling `rnorm(4, mean = c(0, 100))` is the same as `c(rnorm(2, 0), rnorm(2, 100))`, but it turns out the random numbers are generated alternatively — the recycling is index-based (draw `i` uses `mean[(i - 1) %% length(mean) + 1]`), not a chunked split. So with `n = 4` and a 2-element vector, draws 1 and 3 come from `mean = 0`, while draws 2 and 4 come from `mean = 100`. Thus, be careful when conducting an analysis.
+
+## What about NumPy?
+
+If you're coming from Python, this is worth a pause. NumPy's `numpy.random.*()` does accept array-valued distribution parameters, but it broadcasts them against the *output shape*, and it does not recycle a short parameter array across a longer `size` the way R does.
+
+```{python}
+#| error: true
+import numpy as np
+
+rng = np.random.default_rng(42)
+rng.normal(loc = [0, 100], scale = 1, size = 4)
+```
+
+This raises a broadcast error rather than recycling, `size = 4` can't broadcast against a `loc` of shape `(2, )`. To get R's behavior in NumPy, you'd have to do the recycling yourself:
+
+```{python}
+loc = np.array([0, 100])
+size = 4
+rng.normal(loc = np.tile(loc, size // len(loc)), scale = 1, size = size)
+```
+
+# RNG Semantics
+
+Before getting into specific gotchas, it helps to separate two things that are easy to conflate: the *seed* (a starting value you set) and the *RNG kind* (the algorithm that turns that seed into a sequence of numbers). `set.seed()` controls the former, `RNGkind()` controls the latter, and both — along with version-specific defaults like `sample.kind` — feed into what `.Random.seed` actually stores. Mixing these up is where most reproducibility surprises come from.
+
+## set.seed() is not a complete silver bullet
+
+`set.seed()` resets R's global RNG state. Most people know that. What fewer people know is that the generated random numbers of the same seed can differ depending on:
+
+1. The RNG kind in use
+2. The R version
+3. The `sample.kind` argument introduced in R 3.6.0
+
+```{r}
+# Default behavior (R >= 3.6.0)
+set.seed(1)
+sample(1:1000, 5)
+
+# Old behavior pre-R 3.6.0
+set.seed(1, sample.kind = "Rounding")
+sample(1:1000, 5)
+```
+
+In R 3.6.0, the default `sample.kind` changed from `"Rounding"` to `"Rejection"` to fix a known bias in discrete uniform sampling on large populations (R Project Bugzilla, 2019). This broke reproducibility for any code that used `set.seed()` and `sample()` across that version boundary.
+
+## The RNG Kind
+
+R supports multiple RNG algorithms, selectable via `RNGkind()`. By default, `RNGkind()` is set to Mersenne-Twister. How to verify? Run `RNGkind()` call to check the current kind:
+
+```{r}
+RNGkind()
+```
+
+Switching kinds with the same seed produces entirely different sequences.
+
+```{r}
+RNGkind("L'Ecuyer-CMRG")
+set.seed(1)
+runif(5)
+```
+
+`"L'Ecuyer-CMRG"` is particularly relevant in parallel computing. It supports *substreams*, so each worker gets an independent, non-overlapping sequence. Using Mersenne-Twister naively across workers risks draws from overlapping sequences:
+
+```{r}
+RNGkind("Mersenne-Twister")
+set.seed(1)
+runif(5)
+```
+
+::: {.callout-note title="Take note"}
+When calling `RNGkind()` in R, it completely overrides the current RNG kind in global environment. And here I thought calling `RNGkind()` only applies on the current environment, not necessarily the global environment itself.
+:::
+
+So, if you're sharing code meant to be reproduced across R versions, it's worth being explicit:
+
+```{r}
+set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion", sample.kind = "Rejection")
+sample(1:100, 10)
+```
+
+# Making the sampling faster with dqrng
+
+Another thing that surprises me is that the package `{dqrng}` can speed up base R sampling process, at least some of them as far as I know. Unusual, isn't it? `{dqrng}` provides alternative generators: PCG64, Xoroshiro128++, etc..., that are substantially faster than base R's Mersenne-Twister, especially for large draws.
+
+The most direct way to use them is to call `dqrng::dqrnorm()`, `dqrng::dqrunif()`, etc. directly:
+
+```{r}
+box::use(dqrng[...])
+
+dqset.seed(42)
+bench::mark(
+    rnorm(1e6L),
+    dqrnorm(1e6L),
+    check = FALSE
+)
+```
+
+There's also a way to make *base* `rnorm()` / `runif()` themselves run on a `{dqrng}` generator, via `register_methods()` and `dqRNGkind()`. This works because of R's "user-supplied RNG" mechanism (R Core Team, n.d.-b): R's internal `r<dist>` algorithms, the so-called Inversion method for `rnorm()`, the standard transform for `runif()`, don't generate their own raw bits. 
+
+They call out to a C-level uniform random bit generator, and `RNGkind("user-supplied")` lets a package substitute its own C function for that step. `register_methods()` points that hook at `{dqrng}`'s fast generators (e.g. Xoroshiro128++, PCG64), so `runif()` and `rnorm()` still run R's own algorithms on top, but draw their underlying bits from `{dqrng}` instead of Mersenne-Twister.
+
+This also explains why `runif()` / `rnorm()` after `register_methods()` produce *identical* output to `dqrunif()`/`dqrnorm()` given the same seed. Both paths use the same underlying bit generator and the same transform (Inversion, by default). 
+
+`rexp()`, however, will *not* match `dqrexp()` even after registering, because `{dqrng}`'s exponential sampler uses a different algorithm (Ziggurat) than R's built-in `rexp()`. The registration only swaps the uniform-bit source, not every distribution's sampling algorithm (Stubner, n.d.-b).
+
+Here's a simple benchmark: 
+
+```{r}
+bench::mark(
+    `base R` = rnorm(1e6L), 
+    pcg = {
+        register_methods()
+        dqRNGkind("pcg64")
+        rnorm(1e6L)
+        restore_methods()
+    },
+    xor = {
+        register_methods()
+        dqRNGkind("Xoroshiro128++")
+        rnorm(1e6L)
+        restore_methods()
+    },
+    dqrnorm(1e6L),
+    check = FALSE
+)
+```
+
+Interestingly, in this particular run the swapped-in base `rnorm()` was faster than the default base `rnorm()`, though still noticeably slower than calling `dqrnorm()` directly. Part of that gap likely comes from the explanation above: `dqrnorm()` uses dqrng's own Ziggurat-based normal sampler directly, while the registered `rnorm()` still goes through R's own Inversion-method machinery, it's just drawing faster uniform bits underneath. 
+
+The registration swap gets you a faster *bit source* under the same algorithm, not the faster *algorithm* that `dqrnorm()` uses outright. Though I can't guarantee the usefulness, I haven't yet isolated how much of the remaining gap is this algorithmic difference versus the overhead of `register_methods()` / `restore_methods()` themselves. That's worth checking before treating this as a reliable speedup, since the swap mechanism is more useful as a way to get *some* benefit in code you can't easily rewrite to call `dq*` functions directly, rather than as a path to the full speedup.
+
+As before, the two seed pools are independent: `set.seed()` controls base R's `.Random.seed`, while `dqset.seed()` controls `dqrng`'s own state. Calling one has no effect on the other, so switching to `dqrng` functions for performance doesn't interfere with reproducibility of your base R code, and vice versa.
+
+# Saving and Restoring RNG State
+
+This is unusual but useful when you want to rewind to a checkpoint mid-simulation without replaying everything from the start. Just save `.Random.seed` before the section you might want to re-run, and restore it as needed. The global RNG state lives in `.Random.seed`. You can snapshot and restore it.
+
+```{r}
+#| collapse: true
+set.seed(100)
+runif(3)                  # advance state a bit
+
+saved_seed = .Random.seed # snapshot
+runif(5)                  # advance further
+
+.Random.seed = saved_seed # restore
+runif(5)                  # same 5 numbers as before the second runif(5)
+```
+
+One gotcha worth flagging: `.Random.seed` is a vector with a specific structure (its first element encodes the RNG kind, normal kind, and sample kind as a packed integer). Assigning a malformed or hand-edited vector to `.Random.seed` can cause R to throw an error or silently fall back to reseeding, so treat it as an opaque object you only ever get from snapshotting — never construct one by hand.
+
+# Closing Thoughts
+
+A few threads ran through this post:
+
+i.  Distribution parameters in `r<dist>` functions like `runif()` and `rnorm()` recycle index-by-index across draws, not in chunks, so a stray vector where you meant a scalar changes your results without any warning. 
+
+ii.  `set.seed()` alone doesn't guarantee reproducibility across R versions or RNG kinds. The `sample.kind` change in R 3.6.0 is a good example of how a "fixed" bug can break old code. 
+
+iii.  `{dqrng}` gives you faster generators via direct calls (the clear win) or, with some open questions about the actual gain, via swapping out base R's generator entirely, with its own seed pool kept fully separate from `.Random.seed`.
+
+None of these are bugs, exactly. They're documented, intentional behaviors. But they're the kind of thing you only learn by getting bitten once.
+
+# References
+
+R Core Team. (n.d.-a). *Random number generation* [Documentation]. The R Project for Statistical Computing. https://stat.ethz.ch/R-manual/R-devel/library/base/html/Random.html
+
+R Core Team. (n.d.-b). *Random.user: User-supplied random number generation* [Documentation]. The R Project for Statistical Computing. https://stat.ethz.ch/R-manual/R-devel/library/base/html/Random.user.html
+
+R Project Bugzilla. (2019). *PR#17494: sample() bias on large populations* [Bug report]. https://bugs.r-project.org/show_bug.cgi?id=17494
+
+Stubner, R. (n.d.-a). *dqrng: Fast pseudo random number generators* [R package documentation]. CRAN. https://cran.r-project.org/web/packages/dqrng/index.html
+
+Stubner, R. (n.d.-b). *Registering as user-supplied RNG* [R package documentation]. dqrng. https://daqana.github.io/dqrng/reference/user-supplied-rng.html
+
+Stubner, R. (2023, September 24). *Using dqrng as user-supplied RNG*. https://stubner.me/post/2023-09-24-using-dqrng-as-user-supplied-rng/

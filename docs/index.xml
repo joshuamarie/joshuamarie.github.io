@@ -10,7 +10,814 @@
 <atom:link href="https://joshuamarie.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Mon, 26 Jan 2026 16:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 30 May 2026 16:00:00 GMT</lastBuildDate>
+<item>
+  <title>How usual or unusual R’s random number generation can be?</title>
+  <dc:creator>Joshua Marie</dc:creator>
+  <link>https://joshuamarie.com/posts/19-rng-r/</link>
+  <description><![CDATA[ <div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/19-rng-r&amp;text=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/19-rng-r&amp;title=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=RNG%20in%20R%20-%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/19-rng-r" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/19-rng-r" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/19-rng-r&amp;title=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/19-rng-r&amp;title=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/19-rng-r&amp;name=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=RNG in R - Joshua Marie https://joshuamarie.com/posts/19-rng-r'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/19-rng-r%20RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<section id="brief-intro" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Brief Intro</h1>
+<p>It’s been a while since I wrote a blog, but this time, it’s some kind of case study after what I observed. Let me discuss some usual (or unusual?) things in R’s random number generation. R has a surprisingly rich set of behaviors around randomness that caught me off guard. The question is, have you already encountered them? Let’s walk through them.</p>
+</section><section id="vectorized-distribution-parameters" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Vectorized Distribution Parameters</h1>
+<p>Not random sampling <em>by group</em> in the <code><a href="https://dplyr.tidyverse.org/reference/slice.html">dplyr::slice_sample()</a></code> sense, this is about the random number generators from a certain probability distribution you are using, such as <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> or <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>. Anecdotally, I’ve seen few to no blogs cover this.</p>
+<p>Most people know that the first argument of these functions, <code>n</code>, controls how many draws to make. What’s less obvious (but intended — it is documented by core R team themselves) is that the <em>distribution parameters</em>, like <code>min</code>/<code>max</code> in <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> or <code>mean</code>/<code>sd</code> in <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>, can themselves be vectors. When they are, R recycles them across the <code>n</code> draws <em>alternatively</em>, giving you a different distribution per draw.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>,</span>
+<span>    min <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    max <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">21</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">31</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">41</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  0.914806 10.937075 20.286140 30.830448 40.641746</code></pre>
+</div>
+</div>
+<p>Each of the 5 values is drawn from its own <code>[min, max]</code> interval. Compare this to the naive reading of <code>runif(5, min = 0, max = 40)</code>, which draws all 5 from the same range:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, min <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, max <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 36.59224 37.48302 11.44558 33.21791 25.66982</code></pre>
+</div>
+</div>
+<p>Completely different. The same applies to <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, mean <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, sd <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -10.3132269   0.1836433   8.3287428  -9.2023596   0.3295078   8.3590632</code></pre>
+</div>
+</div>
+<p>Here, <code>n = 6</code> but only 3 <code>mean</code> / <code>sd</code> pairs are supplied, R recycles them, so draws 1 and 4 share <code>mean = -10, sd = 0.5</code>, draws 2 and 5 share <code>mean = 0, sd = 1</code>, and so on.</p>
+<p>This can be useful for simulating heterogeneous populations in a single call, but it can catch you off guard if you pass a vector parameter by accident. R won’t warn you, just recycles silently.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Accidentally passing a two-element vector for mean</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, mean <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># draws alternate between mean = 0 and mean = 100!</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  -0.8408555 101.3843593  -1.2554919 100.0701428</code></pre>
+</div>
+</div>
+<p>At first I thought calling <code>rnorm(4, mean = c(0, 100))</code> is the same as <code>c(rnorm(2, 0), rnorm(2, 100))</code>, but it turns out the random numbers are generated alternatively — the recycling is index-based (draw <code>i</code> uses <code>mean[(i - 1) %% length(mean) + 1]</code>), not a chunked split. So with <code>n = 4</code> and a 2-element vector, draws 1 and 3 come from <code>mean = 0</code>, while draws 2 and 4 come from <code>mean = 100</code>. Thus, be careful when conducting an analysis.</p>
+<section id="what-about-numpy" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="what-about-numpy">
+<span class="header-section-number">2.1</span> What about NumPy?</h2>
+<p>If you’re coming from Python, this is worth a pause. NumPy’s <code>numpy.random.*()</code> does accept array-valued distribution parameters, but it broadcasts them against the <em>output shape</em>, and it does not recycle a short parameter array across a longer <code>size</code> the way R does.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb9-2"></span>
+<span id="cb9-3">rng <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.random.default_rng(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span>
+<span id="cb9-4">rng.normal(loc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>], scale <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ValueError: shape mismatch: objects cannot be broadcast to a single shape.  Mismatch is between arg 0 with shape (4,) and arg 1 with shape (2,).</code></pre>
+</div>
+</div>
+<p>This raises a broadcast error rather than recycling, <code>size = 4</code> can’t broadcast against a <code>loc</code> of shape <code>(2, )</code>. To get R’s behavior in NumPy, you’d have to do the recycling yourself:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">loc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>])</span>
+<span id="cb11-2">size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span></span>
+<span id="cb11-3">rng.normal(loc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.tile(loc, size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(loc)), scale <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> size)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>array([  0.30471708,  98.96001589,   0.7504512 , 100.94056472])</code></pre>
+</div>
+</div>
+</section></section><section id="rng-semantics" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> RNG Semantics</h1>
+<p>Before getting into specific gotchas, it helps to separate two things that are easy to conflate: the <em>seed</em> (a starting value you set) and the <em>RNG kind</em> (the algorithm that turns that seed into a sequence of numbers). <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> controls the former, <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> controls the latter, and both — along with version-specific defaults like <code>sample.kind</code> — feed into what <code>.Random.seed</code> actually stores. Mixing these up is where most reproducibility surprises come from.</p>
+<section id="set.seed-is-not-a-complete-silver-bullet" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="set.seed-is-not-a-complete-silver-bullet">
+<span class="header-section-number">3.1</span> set.seed() is not a complete silver bullet</h2>
+<p><code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> resets R’s global RNG state. Most people know that. What fewer people know is that the generated random numbers of the same seed can differ depending on:</p>
+<ol type="1">
+<li>The RNG kind in use</li>
+<li>The R version</li>
+<li>The <code>sample.kind</code> argument introduced in R 3.6.0</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Default behavior (R &gt;= 3.6.0)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 836 679 129 930 509</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Old behavior pre-R 3.6.0</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, sample.kind <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Rounding"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 266 372 572 906 201</code></pre>
+</div>
+</div>
+<p>In R 3.6.0, the default <code>sample.kind</code> changed from <code>"Rounding"</code> to <code>"Rejection"</code> to fix a known bias in discrete uniform sampling on large populations (R Project Bugzilla, 2019). This broke reproducibility for any code that used <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> and <code><a href="https://rdrr.io/r/base/sample.html">sample()</a></code> across that version boundary.</p>
+</section><section id="the-rng-kind" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="the-rng-kind">
+<span class="header-section-number">3.2</span> The RNG Kind</h2>
+<p>R supports multiple RNG algorithms, selectable via <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code>. By default, <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> is set to Mersenne-Twister. How to verify? Run <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> call to check the current kind:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">RNGkind</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Mersenne-Twister" "Inversion"        "Rounding"        </code></pre>
+</div>
+</div>
+<p>Switching kinds with the same seed produces entirely different sequences.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">RNGkind</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"L'Ecuyer-CMRG"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6775328 0.4273457 0.9103805 0.9557282 0.8406586</code></pre>
+</div>
+</div>
+<p><code>"L'Ecuyer-CMRG"</code> is particularly relevant in parallel computing. It supports <em>substreams</em>, so each worker gets an independent, non-overlapping sequence. Using Mersenne-Twister naively across workers risks draws from overlapping sequences:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">RNGkind</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Mersenne-Twister"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2655087 0.3721239 0.5728534 0.9082078 0.2016819</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Take note">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Take note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When calling <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> in R, it completely overrides the current RNG kind in global environment. And here I thought calling <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> only applies on the current environment, not necessarily the global environment itself.</p>
+</div>
+</div>
+<p>So, if you’re sharing code meant to be reproduced across R versions, it’s worth being explicit:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>, kind <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Mersenne-Twister"</span>, normal.kind <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Inversion"</span>, sample.kind <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Rejection"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  49  65  25  74  18 100  47  24  71  89</code></pre>
+</div>
+</div>
+</section></section><section id="making-the-sampling-faster-with-dqrng" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Making the sampling faster with dqrng</h1>
+<p>Another thing that surprises me is that the package <a href="https://daqana.github.io/dqrng/">dqrng</a> can speed up base R sampling process, at least some of them as far as I know. Unusual, isn’t it? <a href="https://daqana.github.io/dqrng/">dqrng</a> provides alternative generators: PCG64, Xoroshiro128++, etc…, that are substantially faster than base R’s Mersenne-Twister, especially for large draws.</p>
+<p>The most direct way to use them is to call <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html">dqrng::dqrnorm()</a></code>, <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html">dqrng::dqrunif()</a></code>, etc. directly:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">box</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://klmr.me/box/reference/use.html">use</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">dqrng</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">...</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dqset.seed</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bench</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://bench.r-lib.org/reference/mark.html">mark</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e6L</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dqrnorm</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e6L</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    check <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  expression             min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 rnorm(1000000L)     84.6ms   90.5ms      11.3    7.63MB     2.25
+2 dqrnorm(1000000L)   11.8ms   16.1ms      60.6    7.63MB    15.8 </code></pre>
+</div>
+</div>
+<p>There’s also a way to make <em>base</em> <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> / <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> themselves run on a <a href="https://daqana.github.io/dqrng/">dqrng</a> generator, via <code>register_methods()</code> and <code>dqRNGkind()</code>. This works because of R’s “user-supplied RNG” mechanism (R Core Team, n.d.-b): R’s internal <code>r&lt;dist&gt;</code> algorithms, the so-called Inversion method for <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>, the standard transform for <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code>, don’t generate their own raw bits.</p>
+<p>They call out to a C-level uniform random bit generator, and <code>RNGkind("user-supplied")</code> lets a package substitute its own C function for that step. <code>register_methods()</code> points that hook at <a href="https://daqana.github.io/dqrng/">dqrng</a>’s fast generators (e.g.&nbsp;Xoroshiro128++, PCG64), so <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> and <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> still run R’s own algorithms on top, but draw their underlying bits from <a href="https://daqana.github.io/dqrng/">dqrng</a> instead of Mersenne-Twister.</p>
+<p>This also explains why <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> / <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> after <code>register_methods()</code> produce <em>identical</em> output to <code>dqrunif()</code>/<code>dqrnorm()</code> given the same seed. Both paths use the same underlying bit generator and the same transform (Inversion, by default).</p>
+<p><code><a href="https://rdrr.io/r/stats/Exponential.html">rexp()</a></code>, however, will <em>not</em> match <code>dqrexp()</code> even after registering, because <a href="https://daqana.github.io/dqrng/">dqrng</a>’s exponential sampler uses a different algorithm (Ziggurat) than R’s built-in <code><a href="https://rdrr.io/r/stats/Exponential.html">rexp()</a></code>. The registration only swaps the uniform-bit source, not every distribution’s sampling algorithm (Stubner, n.d.-b).</p>
+<p>Here’s a simple benchmark:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bench</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://bench.r-lib.org/reference/mark.html">mark</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span></span>
+<span>    `base R` <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e6L</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>, </span>
+<span>    pcg <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">register_methods</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dqRNGkind</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pcg64"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e6L</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">restore_methods</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span>,</span>
+<span>    xor <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">register_methods</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dqRNGkind</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Xoroshiro128++"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e6L</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">restore_methods</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span>    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span>,</span>
+<span>    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dqrnorm</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e6L</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>,</span>
+<span>    check <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span></span>
+<span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 6
+  expression             min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 base R              80.4ms   85.4ms      11.8    7.63MB     5.91
+2 pcg                 50.7ms     51ms      18.6    7.63MB     7.99
+3 xor                 49.8ms   50.9ms      19.1    7.63MB     8.18
+4 dqrnorm(1000000L)   15.7ms   16.3ms      59.9    7.63MB    25.7 </code></pre>
+</div>
+</div>
+<p>Interestingly, in this particular run the swapped-in base <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> was faster than the default base <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>, though still noticeably slower than calling <code>dqrnorm()</code> directly. Part of that gap likely comes from the explanation above: <code>dqrnorm()</code> uses dqrng’s own Ziggurat-based normal sampler directly, while the registered <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> still goes through R’s own Inversion-method machinery, it’s just drawing faster uniform bits underneath.</p>
+<p>The registration swap gets you a faster <em>bit source</em> under the same algorithm, not the faster <em>algorithm</em> that <code>dqrnorm()</code> uses outright. Though I can’t guarantee the usefulness, I haven’t yet isolated how much of the remaining gap is this algorithmic difference versus the overhead of <code>register_methods()</code> / <code>restore_methods()</code> themselves. That’s worth checking before treating this as a reliable speedup, since the swap mechanism is more useful as a way to get <em>some</em> benefit in code you can’t easily rewrite to call <code>dq*</code> functions directly, rather than as a path to the full speedup.</p>
+<p>As before, the two seed pools are independent: <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> controls base R’s <code>.Random.seed</code>, while <code>dqset.seed()</code> controls <code>dqrng</code>’s own state. Calling one has no effect on the other, so switching to <code>dqrng</code> functions for performance doesn’t interfere with reproducibility of your base R code, and vice versa.</p>
+</section><section id="saving-and-restoring-rng-state" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Saving and Restoring RNG State</h1>
+<p>This is unusual but useful when you want to rewind to a checkpoint mid-simulation without replaying everything from the start. Just save <code>.Random.seed</code> before the section you might want to re-run, and restore it as needed. The global RNG state lives in <code>.Random.seed</code>. You can snapshot and restore it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29" style="background: #f1f3f5;"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>                  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># advance state a bit</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## [1] 0.3077661 0.2576725 0.5523224</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">saved_seed</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.Random.seed</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># snapshot</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>                  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># advance further</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## [1] 0.05638315 0.46854928 0.48377074 0.81240262 0.37032054</span></span>
+<span></span>
+<span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">.Random.seed</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">saved_seed</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># restore</span></span>
+<span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span>                  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># same 5 numbers as before the second runif(5)</span></span>
+<span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## [1] 0.05638315 0.46854928 0.48377074 0.81240262 0.37032054</span></span></code></pre></div></div>
+</div>
+<p>One gotcha worth flagging: <code>.Random.seed</code> is a vector with a specific structure (its first element encodes the RNG kind, normal kind, and sample kind as a packed integer). Assigning a malformed or hand-edited vector to <code>.Random.seed</code> can cause R to throw an error or silently fall back to reseeding, so treat it as an opaque object you only ever get from snapshotting — never construct one by hand.</p>
+</section><section id="closing-thoughts" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Closing Thoughts</h1>
+<p>A few threads ran through this post:</p>
+<ol type="i">
+<li><p>Distribution parameters in <code>r&lt;dist&gt;</code> functions like <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> and <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> recycle index-by-index across draws, not in chunks, so a stray vector where you meant a scalar changes your results without any warning.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> alone doesn’t guarantee reproducibility across R versions or RNG kinds. The <code>sample.kind</code> change in R 3.6.0 is a good example of how a “fixed” bug can break old code.</p></li>
+<li><p><a href="https://daqana.github.io/dqrng/">dqrng</a> gives you faster generators via direct calls (the clear win) or, with some open questions about the actual gain, via swapping out base R’s generator entirely, with its own seed pool kept fully separate from <code>.Random.seed</code>.</p></li>
+</ol>
+<p>None of these are bugs, exactly. They’re documented, intentional behaviors. But they’re the kind of thing you only learn by getting bitten once.</p>
+</section><section id="references" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> References</h1>
+<p>R Core Team. (n.d.-a). <em>Random number generation</em> [Documentation]. The R Project for Statistical Computing. https://stat.ethz.ch/R-manual/R-devel/library/base/html/Random.html</p>
+<p>R Core Team. (n.d.-b). <em>Random.user: User-supplied random number generation</em> [Documentation]. The R Project for Statistical Computing. https://stat.ethz.ch/R-manual/R-devel/library/base/html/Random.user.html</p>
+<p>R Project Bugzilla. (2019). <em>PR#17494: sample() bias on large populations</em> [Bug report]. https://bugs.r-project.org/show_bug.cgi?id=17494</p>
+<p>Stubner, R. (n.d.-a). <em>dqrng: Fast pseudo random number generators</em> [R package documentation]. CRAN. https://cran.r-project.org/web/packages/dqrng/index.html</p>
+<p>Stubner, R. (n.d.-b). <em>Registering as user-supplied RNG</em> [R package documentation]. dqrng. https://daqana.github.io/dqrng/reference/user-supplied-rng.html</p>
+<p>Stubner, R. (2023, September 24). <em>Using dqrng as user-supplied RNG</em>. https://stubner.me/post/2023-09-24-using-dqrng-as-user-supplied-rng/</p>
+
+
+</section> ]]></description>
+  <category>R</category>
+  <category>rng</category>
+  <category>statistics</category>
+  <category>random-sampling</category>
+  <guid>https://joshuamarie.com/posts/19-rng-r/</guid>
+  <pubDate>Sat, 30 May 2026 16:00:00 GMT</pubDate>
+  <media:content url="https://joshuamarie.com/posts/19-rng-r/image.png" medium="image" type="image/png"/>
+</item>
 <item>
   <title>R Reproducibility Stack</title>
   <dc:creator>Joshua Marie</dc:creator>

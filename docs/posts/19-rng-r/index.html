@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.8.26">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
 <meta name="author" content="Joshua Marie">
-
-<title>Check out my blogs – Joshua Marie</title>
+<meta name="dcterms.date" content="2026-05-31">
+<title>How usual or unusual R’s random number generation can be? – Joshua Marie</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,31 +19,64 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
-
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../assets/jm-favicon.png" rel="icon" type="image/png">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0a95de2c3be981c2e03029825b16c585.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-258e3254af85271b5b320c4cc30b0dc8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script id="quarto-search-options" type="application/json">{
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/jm-favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0a95de2c3be981c2e03029825b16c585.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-c2a4070949356990582fa11d5da3dd57.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/quarto-contrib/social-share-1.0.0/social-share.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/social-share-1.0.0/all.min.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
@@ -71,91 +102,25 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      page: 5,
-    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
-      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-<script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../styles/base.css">
-<link rel="stylesheet" href="../styles/layout.css">
-<link rel="stylesheet" href="../styles/hero.css">
-<link rel="stylesheet" href="../styles/cards.css">
-<link rel="stylesheet" href="../styles/about.css">
-<link rel="stylesheet" href="../styles/dark-mode.css">
-<link rel="stylesheet" href="Theme/code.css">
-<link rel="stylesheet" href="Theme/table.css">
-<link rel="alternate" type="application/rss+xml" title="Joshua Marie" href="index.xml" data-external="1"><meta name="twitter:title" content="Check out my blogs – Joshua Marie">
-<meta name="twitter:description" content="">
+}</script><script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script><link rel="stylesheet" href="../../styles/base.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/hero.css">
+<link rel="stylesheet" href="../../styles/cards.css">
+<link rel="stylesheet" href="../../styles/about.css">
+<link rel="stylesheet" href="../../styles/dark-mode.css">
+<link rel="stylesheet" href="../Theme/code.css">
+<link rel="stylesheet" href="../Theme/table.css">
+<meta name="twitter:title" content="How usual or unusual R’s random number generation can be? – Joshua Marie">
+<meta name="twitter:description" content="Observations about R’s functionality to generate random numbers">
 <meta name="twitter:image" content="https://joshuamarie.com/posts/19-rng-r/image.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
-
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
-      <div class="navbar-container container-fluid">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Joshua Marie</span>
     </a>
   </div>
@@ -165,21 +130,21 @@ window.Quarto = {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="../contacts.html"> 
+<li class="nav-item">
+    <a class="nav-link" href="../../contacts.html"> 
 <span class="menu-text">Contact</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../resources.html"> 
+    <a class="nav-link" href="../../resources.html"> 
 <span class="menu-text">My resources</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../posts/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../posts/index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
 </ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
+<ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item compact">
     <a class="nav-link" href="https://github.com/joshuamarie"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
 <span class="menu-text"></span></a>
@@ -195,24 +160,26 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS Feed">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS Feed">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
+</div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
-    </nav>
-</header>
-<!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
+    </nav></header><!-- content --><header id="title-block-header" class="quarto-title-block default page-columns page-full"><div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Check out my blogs</h1>
-                      </div>
+      <h1 class="title">How usual or unusual R’s random number generation can be?</h1>
+            <p class="subtitle lead">Observations about R’s functionality to generate random numbers</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">rng</div>
+                <div class="quarto-category">statistics</div>
+                <div class="quarto-category">random-sampling</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -225,6 +192,12 @@ window.Quarto = {
             </div>
     </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 31, 2026</p>
+      </div>
+    </div>
     
       
     </div>
@@ -234,3667 +207,1682 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#subscribe-to-my-newsletter" id="toc-subscribe-to-my-newsletter" class="nav-link active" data-scroll-target="#subscribe-to-my-newsletter">Subscribe to My Newsletter</a></li>
+<li><a href="#brief-intro" id="toc-brief-intro" class="nav-link active" data-scroll-target="#brief-intro"><span class="header-section-number">1</span> Brief Intro</a></li>
+  <li>
+<a href="#vectorized-distribution-parameters" id="toc-vectorized-distribution-parameters" class="nav-link" data-scroll-target="#vectorized-distribution-parameters"><span class="header-section-number">2</span> Vectorized Distribution Parameters</a>
+  <ul class="collapse">
+<li><a href="#what-about-numpy" id="toc-what-about-numpy" class="nav-link" data-scroll-target="#what-about-numpy"><span class="header-section-number">2.1</span> What about NumPy?</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(19)</span></div><div class="category" data-category="YW5hbHl0aWNz">analytics <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Ym9vaw==">book <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Ym94">box <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZGF0YS1zY2llbmNl">data-science <span class="quarto-category-count">(5)</span></div><div class="category" data-category="ZGVlcC1sZWFybmluZw==">deep-learning <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Zm9ybXVsYXM=">formulas <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZnA=">fp <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZnVuY3Rpb25hbC1wcm9ncmFtbWluZw==">functional-programming <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Z2dwbG90Mg==">ggplot2 <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Z3JpZC1zZWFyY2g=">grid-search <span class="quarto-category-count">(1)</span></div><div class="category" data-category="a2VyYXM=">keras <span class="quarto-category-count">(2)</span></div><div class="category" data-category="a2luZGxpbmc=">kindling <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWFjaGluZS1sZWFybmluZw==">machine-learning <span class="quarto-category-count">(6)</span></div><div class="category" data-category="bmV1cmFsLW5ldHdvcmtz">neural-networks <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cGFja2FnZXM=">packages <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UGFuZGFz">Pandas <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cGlwZXM=">pipes <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cG9pbnRsZXNzLWNvZGU=">pointless-code <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHJvZ3JhbW1pbmc=">programming <span class="quarto-category-count">(4)</span></div><div class="category" data-category="cHVycnI=">purrr <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UHl0aG9u">Python <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Ug==">R <span class="quarto-category-count">(17)</span></div><div class="category" data-category="cmFuZG9tLXNhbXBsaW5n">random-sampling <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmVncmVzc2lvbg==">regression <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmVudg==">renv <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cml4cHJlc3M=">rixpress <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmxhbmc=">rlang <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cm5n">rng <span class="quarto-category-count">(1)</span></div><div class="category" data-category="U1FM">SQL <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c3RhdGlzdGljcw==">statistics <span class="quarto-category-count">(3)</span></div><div class="category" data-category="dGFyZ2V0cw==">targets <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGVuc29yZmxvdw==">tensorflow <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dGlkeW1vZGVscw==">tidymodels <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGlkeXNlbGVjdA==">tidyselect <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGlkeXZlcnNl">tidyverse <span class="quarto-category-count">(7)</span></div><div class="category" data-category="dGltZS1zZXJpZXM=">time-series <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dG9yY2g=">torch <span class="quarto-category-count">(3)</span></div><div class="category" data-category="dmVyc2lvbi1jb250cm9s">version-control <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dmlzdWFsaXphdGlvbg==">visualization <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dml6">viz <span class="quarto-category-count">(1)</span></div></div></div>
-<!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
-
-
-
-
-
-<section id="subscribe-to-my-newsletter" class="level2">
-<h2 class="anchored" data-anchor-id="subscribe-to-my-newsletter">Subscribe to My Newsletter</h2>
-<p>Get notified when I publish new posts. No spam, unsubscribe anytime</p>
-<iframe src="https://joshuamarie.substack.com/embed" width="480" height="320" style="border:1px solid #EEE; background:white; margin-top: 1rem; margin-bottom: 3rem;" frameborder="0" scrolling="no">
-</iframe>
-<hr>
-
-
-
-</section>
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-    <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-    <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-      <option value="" disabled="" selected="" hidden="">Order By</option>
-      <option value="index" data-direction="asc">Default</option>
-      <option value="listing-title" data-direction="asc">
-        Title
-      </option>
-      <option value="listing-date-sort" data-direction="asc">
-        Date - Oldest
-      </option>
-      <option value="listing-date-sort" data-direction="desc">
-        Date - Newest
-      </option>
-      <option value="listing-author" data-direction="asc">
-        Author
-      </option>
-    </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
+</li>
+  <li>
+<a href="#rng-semantics" id="toc-rng-semantics" class="nav-link" data-scroll-target="#rng-semantics"><span class="header-section-number">3</span> RNG Semantics</a>
+  <ul class="collapse">
+<li><a href="#set.seed-is-not-a-complete-silver-bullet" id="toc-set.seed-is-not-a-complete-silver-bullet" class="nav-link" data-scroll-target="#set.seed-is-not-a-complete-silver-bullet"><span class="header-section-number">3.1</span> set.seed() is not a complete silver bullet</a></li>
+  <li><a href="#the-rng-kind" id="toc-the-rng-kind" class="nav-link" data-scroll-target="#the-rng-kind"><span class="header-section-number">3.2</span> The RNG Kind</a></li>
+  </ul>
+</li>
+  <li><a href="#making-the-sampling-faster-with-dqrng" id="toc-making-the-sampling-faster-with-dqrng" class="nav-link" data-scroll-target="#making-the-sampling-faster-with-dqrng"><span class="header-section-number">4</span> Making the sampling faster with dqrng</a></li>
+  <li><a href="#saving-and-restoring-rng-state" id="toc-saving-and-restoring-rng-state" class="nav-link" data-scroll-target="#saving-and-restoring-rng-state"><span class="header-section-number">5</span> Saving and Restoring RNG State</a></li>
+  <li><a href="#closing-thoughts" id="toc-closing-thoughts" class="nav-link" data-scroll-target="#closing-thoughts"><span class="header-section-number">6</span> Closing Thoughts</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">7</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/19-rng-r/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
-</div>
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="UiUyQ3JuZyUyQ3N0YXRpc3RpY3MlMkNyYW5kb20tc2FtcGxpbmc=" data-listing-date-sort="1780156800000" data-listing-file-modified-sort="1781344539561" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1802">
-<div class="thumbnail"><a href="../posts/19-rng-r/index.html" class="no-external">
-
-<img loading="lazy" src="../posts/19-rng-r/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/19-rng-r/index.html" class="no-external">How usual or unusual R’s random number generation can be?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/19-rng-r/index.html" class="no-external">Observations about R’s functionality to generate random numbers</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cm5n'); return false;">rng</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3RhdGlzdGljcw=='); return false;">statistics</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cmFuZG9tLXNhbXBsaW5n'); return false;">random-sampling</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/19-rng-r/index.html" class="no-external">
-It’s been a while since I wrote a blog, but this time, it’s some kind of case study after what I observed. Let me discuss some usual (or unusual?) things in R’s random…
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/19-rng-r/index.html" class="no-external">
-<div class="listing-date">
-May 31, 2026
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="UiUyQ3Byb2dyYW1taW5nJTJDYm94JTJDdGFyZ2V0cyUyQ3JlbnYlMkN2ZXJzaW9uLWNvbnRyb2wlMkNyaXhwcmVzcw==" data-listing-date-sort="1769443200000" data-listing-file-modified-sort="1770444058040" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3436">
-<div class="thumbnail"><a href="../posts/18-reproducibility-r/index.html" class="no-external">
-
-<img loading="lazy" src="../posts/18-reproducibility-r/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/18-reproducibility-r/index.html" class="no-external">R Reproducibility Stack</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/18-reproducibility-r/index.html" class="no-external">A pragmatic, layered approach to maintainable code</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHJvZ3JhbW1pbmc='); return false;">programming</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ym94'); return false;">box</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGFyZ2V0cw=='); return false;">targets</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cmVudg=='); return false;">renv</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dmVyc2lvbi1jb250cm9s'); return false;">version-control</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cml4cHJlc3M='); return false;">rixpress</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/18-reproducibility-r/index.html" class="no-external">
-Reproducibility in R has derived from theory to practice. After handling numerous data science projects, I have learned that reproducibility is rather fundamentally about…
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/18-reproducibility-r/index.html" class="no-external">
-<div class="listing-date">
-Jan 27, 2026
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="UHl0aG9uJTJDUGFuZGFzJTJDZGF0YS1zY2llbmNl" data-listing-date-sort="1768665600000" data-listing-file-modified-sort="1768719885187" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="707">
-<div class="thumbnail"><a href="../posts/17-pandas3/index.html" class="no-external">
-
-<img loading="lazy" src="../posts/17-pandas3/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/17-pandas3/index.html" class="no-external">What do you need to know before starting Pandas 3.0?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/17-pandas3/index.html" class="no-external">What changes, what breaks, what adds, and what finally makes sense</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">Python</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UGFuZGFz'); return false;">Pandas</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1zY2llbmNl'); return false;">data-science</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/17-pandas3/index.html" class="no-external">
-<p>For ones who started Pandas in version 3.0 and those who wants to transition</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/17-pandas3/index.html" class="no-external">
-<div class="listing-date">
-Jan 18, 2026
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="UHl0aG9uJTJDbWFjaGluZS1sZWFybmluZyUyQ2RlZXAtbGVhcm5pbmclMkN0b3JjaCUyQ3RlbnNvcmZsb3clMkNrZXJhcyUyQ25ldXJhbC1uZXR3b3Jrcw==" data-listing-date-sort="1768579200000" data-listing-file-modified-sort="1768644660882" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1259">
-<div class="thumbnail"><a href="../posts/16-pytorch/index.html" class="no-external">
-
-<img loading="lazy" src="../posts/16-pytorch/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/16-pytorch/index.html" class="no-external">PyTorch is my go-to framework for deep learning</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/16-pytorch/index.html" class="no-external">The ergonomic framework I chose for deep learning</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">Python</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">machine-learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGVlcC1sZWFybmluZw=='); return false;">deep-learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dG9yY2g='); return false;">torch</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGVuc29yZmxvdw=='); return false;">tensorflow</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('a2VyYXM='); return false;">keras</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bmV1cmFsLW5ldHdvcmtz'); return false;">neural-networks</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/16-pytorch/index.html" class="no-external">
-<p>Explaining why PyTorch my go-to framework for deep learning enthusiasts and researchers, with practical examples and comparisons to TensorFlow, Keras, and JAX</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/16-pytorch/index.html" class="no-external">
-<div class="listing-date">
-Jan 17, 2026
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="UiUyQ21hY2hpbmUtbGVhcm5pbmclMkNkZWVwLWxlYXJuaW5nJTJDdG9yY2glMkN0ZW5zb3JmbG93JTJDa2VyYXMlMkN0aWR5bW9kZWxzJTJDa2luZGxpbmclMkNuZXVyYWwtbmV0d29ya3M=" data-listing-date-sort="1767974400000" data-listing-file-modified-sort="1768646662769" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1449">
-<div class="thumbnail"><a href="../posts/15-nn-r/index.html" class="no-external">
-
-<img loading="lazy" src="../posts/15-nn-r/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/15-nn-r/index.html" class="no-external">Neural Networks in R Remain Viable in 2026</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/15-nn-r/index.html" class="no-external">The current state of R for deep learning: tools, workflows, and practical approaches</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">machine-learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGVlcC1sZWFybmluZw=='); return false;">deep-learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dG9yY2g='); return false;">torch</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGVuc29yZmxvdw=='); return false;">tensorflow</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('a2VyYXM='); return false;">keras</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeW1vZGVscw=='); return false;">tidymodels</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('a2luZGxpbmc='); return false;">kindling</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bmV1cmFsLW5ldHdvcmtz'); return false;">neural-networks</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/15-nn-r/index.html" class="no-external">
-<p>An overview of R’s neural network capabilities in 2026, featuring the new {kindling} package for simplified torch modeling</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/15-nn-r/index.html" class="no-external">
-<div class="listing-date">
-Jan 10, 2026
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="UiUyQ2dncGxvdDIlMkN2aXN1YWxpemF0aW9uJTJDdGlkeXZlcnNl" data-listing-date-sort="1767369600000" data-listing-file-modified-sort="1767850797068" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2630">
-<div class="thumbnail"><a href="../posts/14-aes-ggplot2/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/14-aes-ggplot2/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/14-aes-ggplot2/index.html" class="no-external">The genius invention about aesthetics in ggplot2</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/14-aes-ggplot2/index.html" class="no-external">The common and uncommon usages of aes() and its implementation</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Z2dwbG90Mg=='); return false;">ggplot2</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dmlzdWFsaXphdGlvbg=='); return false;">visualization</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeXZlcnNl'); return false;">tidyverse</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/14-aes-ggplot2/index.html" class="no-external">
-<p>A personal appreciation of aes() in ggplot2: from basic mappings to advanced delayed evaluation, ‘tidy’ programming patterns, and seamless tidyverse integration.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/14-aes-ggplot2/index.html" class="no-external">
-<div class="listing-date">
-Jan 3, 2026
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-categories="UiUyQ2RhdGEtc2NpZW5jZSUyQ2FuYWx5dGljcyUyQ3RpZHl2ZXJzZQ==" data-listing-date-sort="1766851200000" data-listing-file-modified-sort="1767506019409" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4209">
-<div class="thumbnail"><a href="../posts/13-careful-data/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/13-careful-data/index.html" class="no-external">A ‘careful’ and ‘small’ guide to data science with ‘tidyverse’</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/13-careful-data/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1zY2llbmNl'); return false;">data-science</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YW5hbHl0aWNz'); return false;">analytics</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeXZlcnNl'); return false;">tidyverse</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/13-careful-data/index.html" class="no-external">
-<p>Teaching you the things you can take advantage of, and things weren’t taught by some tutorials you (potentially) know</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/13-careful-data/index.html" class="no-external">
-<div class="listing-date">
-Dec 28, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="7" data-categories="UiUyQ2JveCUyQ3Byb2dyYW1taW5n" data-listing-date-sort="1766160000000" data-listing-file-modified-sort="1766922136842" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="15" data-listing-word-count-sort="2914">
-<div class="thumbnail"><a href="../posts/12-reusable-r-code/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/12-reusable-r-code/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/12-reusable-r-code/index.html" class="no-external">Bother yourself writing reusable codes in R, not throwaway codes</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/12-reusable-r-code/index.html" class="no-external">Reasons and applications with box</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ym94'); return false;">box</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHJvZ3JhbW1pbmc='); return false;">programming</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/12-reusable-r-code/index.html" class="no-external">
-<p>I can also show you a proper way to write reusable R codes</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/12-reusable-r-code/index.html" class="no-external">
-<div class="listing-date">
-Dec 20, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="8" data-categories="UiUyQ2RhdGEtc2NpZW5jZSUyQ3RpZHl2ZXJzZSUyQ3B1cnJyJTJDZnVuY3Rpb25hbC1wcm9ncmFtbWluZyUyQ2Zw" data-listing-date-sort="1765728000000" data-listing-file-modified-sort="1766577278650" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1347">
-<div class="thumbnail"><a href="../posts/11-composing-r-function/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/11-composing-r-function/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/11-composing-r-function/index.html" class="no-external">Three levels to compose R functions</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/11-composing-r-function/index.html" class="no-external">Intro to my functional programming series</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1zY2llbmNl'); return false;">data-science</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeXZlcnNl'); return false;">tidyverse</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHVycnI='); return false;">purrr</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZnVuY3Rpb25hbC1wcm9ncmFtbWluZw=='); return false;">functional-programming</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZnA='); return false;">fp</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/11-composing-r-function/index.html" class="no-external">
-<p>Introducing the 3 ways to compose functions in R.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/11-composing-r-function/index.html" class="no-external">
-<div class="listing-date">
-Dec 15, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="9" data-categories="UiUyQ2Zvcm11bGFzJTJDcmxhbmclMkNtYWNoaW5lLWxlYXJuaW5nJTJDc3RhdGlzdGljcw==" data-listing-date-sort="1765123200000" data-listing-file-modified-sort="1765434716123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2426">
-<div class="thumbnail"><a href="../posts/10-formulas-r/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/10-formulas-r/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/10-formulas-r/index.html" class="no-external">What’s so special about formulas in R</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/10-formulas-r/index.html" class="no-external">Hidden secrets? Somewhat</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Zm9ybXVsYXM='); return false;">formulas</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cmxhbmc='); return false;">rlang</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">machine-learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3RhdGlzdGljcw=='); return false;">statistics</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/10-formulas-r/index.html" class="no-external">
-<p>Let’s discover how in the world it works</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/10-formulas-r/index.html" class="no-external">
-<div class="listing-date">
-Dec 8, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="10" data-categories="UiUyQ2dncGxvdDIlMkNkYXRhLXNjaWVuY2UlMkN2aXN1YWxpemF0aW9uJTJDdGlkeXZlcnNlJTJDdml6JTJDcHJvZ3JhbW1pbmc=" data-listing-date-sort="1764518400000" data-listing-file-modified-sort="1764825860605" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3485">
-<div class="thumbnail"><a href="../posts/09-ggplot2/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/09-ggplot2/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/09-ggplot2/index.html" class="no-external">Things you may or you may not know in ggplot2</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/09-ggplot2/index.html" class="no-external">A rare case study — Some investigations I made</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Z2dwbG90Mg=='); return false;">ggplot2</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1zY2llbmNl'); return false;">data-science</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dmlzdWFsaXphdGlvbg=='); return false;">visualization</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeXZlcnNl'); return false;">tidyverse</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dml6'); return false;">viz</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHJvZ3JhbW1pbmc='); return false;">programming</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/09-ggplot2/index.html" class="no-external">
-<p>Here are some things I enumerated — things you may or may not know already</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/09-ggplot2/index.html" class="no-external">
-<div class="listing-date">
-Dec 1, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="11" data-categories="UiUyQ1NRTCUyQ2RhdGEtc2NpZW5jZSUyQ2FuYWx5dGljcyUyQ3RpZHl2ZXJzZQ==" data-listing-date-sort="1764259200000" data-listing-file-modified-sort="1764590898771" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3471">
-<div class="thumbnail"><a href="../posts/08-sql-r/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/08-sql-r/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/08-sql-r/index.html" class="no-external">Why SQL + R is an affable combo when I start learning SQL?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/08-sql-r/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('U1FM'); return false;">SQL</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1zY2llbmNl'); return false;">data-science</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YW5hbHl0aWNz'); return false;">analytics</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeXZlcnNl'); return false;">tidyverse</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/08-sql-r/index.html" class="no-external">
-<p>Learn mastering both — and how to make them work together seamlessly.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/08-sql-r/index.html" class="no-external">
-<div class="listing-date">
-Nov 28, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="12" data-categories="UiUyQ1B5dGhvbiUyQ3N0YXRpc3RpY3MlMkNyZWdyZXNzaW9uJTJDbWFjaGluZS1sZWFybmluZw==" data-listing-date-sort="1763827200000" data-listing-file-modified-sort="1764590950563" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="16" data-listing-word-count-sort="3027">
-<div class="thumbnail"><a href="../posts/07-glm/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/07-glm/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/07-glm/index.html" class="no-external">Tutorial on Generalized Linear Model from scratch</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/07-glm/index.html" class="no-external">Dogmatic statistics for fun series</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">Python</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3RhdGlzdGljcw=='); return false;">statistics</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cmVncmVzc2lvbg=='); return false;">regression</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">machine-learning</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/07-glm/index.html" class="no-external">
-<p>Finally understand what a link function actually does instead of just copy-pasting glm()</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/07-glm/index.html" class="no-external">
-<div class="listing-date">
-Nov 23, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="13" data-categories="UiUyQ3BhY2thZ2Vz" data-listing-date-sort="1763308800000" data-listing-file-modified-sort="1768462207347" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="21" data-listing-word-count-sort="4053">
-<div class="thumbnail"><a href="../posts/06-load-pkg/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/06-load-pkg/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/06-load-pkg/index.html" class="no-external">Ways to load / attach packages in R</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/06-load-pkg/index.html" class="no-external">Worst to best solution</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cGFja2FnZXM='); return false;">packages</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/06-load-pkg/index.html" class="no-external">
-<p>A completely objective, totally scientific ranking (2025 edition)</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/06-load-pkg/index.html" class="no-external">
-<div class="listing-date">
-Nov 17, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="14" data-categories="UiUyQ3BpcGVzJTJDdGlkeXZlcnNlJTJDcHJvZ3JhbW1pbmc=" data-listing-date-sort="1762704000000" data-listing-file-modified-sort="1764590936419" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2213">
-<div class="thumbnail"><a href="../posts/05-pipes/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/05-pipes/image.jpg" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/05-pipes/index.html" class="no-external">How much do you know about pipes?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/05-pipes/index.html" class="no-external">History and Functionality of pipes</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cGlwZXM='); return false;">pipes</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeXZlcnNl'); return false;">tidyverse</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHJvZ3JhbW1pbmc='); return false;">programming</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/05-pipes/index.html" class="no-external">
-I’ll go dive about the history of pipes in R. Pipes have revolutionized the way we write R code, making it more readable and maintainable. But the story of pipes in R is…<code></code><code></code>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/05-pipes/index.html" class="no-external">
-<div class="listing-date">
-Nov 10, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="15" data-categories="UiUyQ3RpZHlzZWxlY3QlMkN0aWR5dmVyc2U=" data-listing-date-sort="1762099200000" data-listing-file-modified-sort="1764590930000" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1956">
-<div class="thumbnail"><a href="../posts/04-tidyselect-helpers/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/04-tidyselect-helpers/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/04-tidyselect-helpers/index.html" class="no-external">The Hidden Magic of Tidy-Select: R’s Universal Column Selection Language</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/04-tidyselect-helpers/index.html" class="no-external">Not limited to tidyselect helpers</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeXNlbGVjdA=='); return false;">tidyselect</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGlkeXZlcnNl'); return false;">tidyverse</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/04-tidyselect-helpers/index.html" class="no-external">
-Have you ever wondered how <code>where()</code>, <code>starts_with()</code>, and other selection helpers work seamlessly across different tidyverse packages? I recently discovered something…<code></code>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/04-tidyselect-helpers/index.html" class="no-external">
-<div class="listing-date">
-Nov 3, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="16" data-categories="UiUyQ2Jvb2s=" data-listing-date-sort="1759852800000" data-listing-file-modified-sort="1764590924152" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="461">
-<div class="thumbnail"><a href="../posts/03-modules-in-r/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/03-modules-in-r/tmbnl.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/03-modules-in-r/index.html" class="no-external">Box: Placing module system into R</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/03-modules-in-r/index.html" class="no-external">Definitive Guide</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ym9vaw=='); return false;">book</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/03-modules-in-r/index.html" class="no-external">
-<em>Click here to read the actual book. </em>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/03-modules-in-r/index.html" class="no-external">
-<div class="listing-date">
-Oct 8, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="17" data-categories="UiUyQ3RpbWUtc2VyaWVzJTJDbWFjaGluZS1sZWFybmluZyUyQ2dyaWQtc2VhcmNo" data-listing-date-sort="1758902400000" data-listing-file-modified-sort="1764590916902" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5809">
-<div class="thumbnail"><a href="../posts/02-arima-grid-search/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/02-arima-grid-search/image.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/02-arima-grid-search/index.html" class="no-external">First level of time series modelling: Basic ARIMA model hyperparameter tuning and grid search in R</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/02-arima-grid-search/index.html" class="no-external">Basics of grid search for ARIMA with plots in R</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dGltZS1zZXJpZXM='); return false;">time-series</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">machine-learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Z3JpZC1zZWFyY2g='); return false;">grid-search</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/02-arima-grid-search/index.html" class="no-external">
-How do you train ARIMA model in your time series models? Grid search, or Hyndman and Khandaka (2008) algorithm? I created this document to demonstrate you how to fit every…
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/02-arima-grid-search/index.html" class="no-external">
-<div class="listing-date">
-Sep 27, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="18" data-categories="UiUyQ21hY2hpbmUtbGVhcm5pbmclMkN0b3JjaCUyQ3BvaW50bGVzcy1jb2Rl" data-listing-date-sort="1758556800000" data-listing-file-modified-sort="1764590908205" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4370">
-<div class="thumbnail"><a href="../posts/01-meta-nn/index.html" class="no-external">
-
-<img loading="lazy" data-src="../posts/01-meta-nn/tmbnl.jpg" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/01-meta-nn/index.html" class="no-external">Automatically generate Deep Feedforward Neural Network (DFFNN) module from torch expression</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../posts/01-meta-nn/index.html" class="no-external">Use case of code generation in practice</a>
-</div>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">machine-learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('dG9yY2g='); return false;">torch</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cG9pbnRsZXNzLWNvZGU='); return false;">pointless-code</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/01-meta-nn/index.html" class="no-external">
-I have a course tutorial, which I discuss the things to get “advance” in R. Code generation is part of it. My blog compiles <em>pointless codes</em> in <em>pointless code series</em>, and…
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/01-meta-nn/index.html" class="no-external">
-<div class="listing-date">
-Sep 23, 2025
-</div>
-<div class="listing-author">
-Joshua Marie
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-<nav id="listing-pagination" class="listing-pagination" aria-label="Page Navigation">
-  <ul class="pagination"></ul>
-</nav>
-</div></main> <!-- /main -->
-<style>
-
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content"><div class="page-columns page-rows-contents page-layout-article"><div class="social-share">
+<a href="https://twitter.com/share?url=https://joshuamarie.com/posts/19-rng-r&amp;text=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="twitter"><i class="fab fa-twitter fa-fw fa-lg"></i></a><a href="https://www.linkedin.com/shareArticle?url=https://joshuamarie.com/posts/19-rng-r&amp;title=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=RNG%20in%20R%20-%20Joshua%20Marie&amp;body=Check%20out%20this%20link:https://joshuamarie.com/posts/19-rng-r" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="https://www.facebook.com/sharer.php?u=https://joshuamarie.com/posts/19-rng-r" target="_blank" class="facebook"><i class="fab fa-facebook-f fa-fw fa-lg"></i></a><a href="https://reddit.com/submit?url=https://joshuamarie.com/posts/19-rng-r&amp;title=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="reddit">   <i class="fa-brands fa-reddit-alien fa-fw fa-lg"></i></a><a href="https://www.stumbleupon.com/submit?url=https://joshuamarie.com/posts/19-rng-r&amp;title=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="stumbleupon"><i class="fa-brands fa-stumbleupon fa-fw fa-lg"></i></a><a href="https://www.tumblr.com/share/link?url=https://joshuamarie.com/posts/19-rng-r&amp;name=RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="tumblr"><i class="fa-brands fa-tumblr fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=RNG in R - Joshua Marie https://joshuamarie.com/posts/19-rng-r'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a><a href="https://bsky.app/intent/compose?text=https://joshuamarie.com/posts/19-rng-r%20RNG%20in%20R%20-%20Joshua%20Marie" target="_blank" class="bsky"><i class="fa-brands fa-bluesky"></i></a>
+</div></div>
+
+
+<section id="brief-intro" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Brief Intro</h1>
+<p>It’s been a while since I wrote a blog, but this time, it’s some kind of case study after what I observed. Let me discuss some usual (or unusual?) things in R’s random number generation. R has a surprisingly rich set of behaviors around randomness that caught me off guard. The question is, have you already encountered them? Let’s walk through them.</p>
+</section><section id="vectorized-distribution-parameters" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Vectorized Distribution Parameters</h1>
+<p>Not random sampling <em>by group</em> in the <code><a href="https://dplyr.tidyverse.org/reference/slice.html">dplyr::slice_sample()</a></code> sense, this is about the random number generators from a certain probability distribution you are using, such as <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> or <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>. Anecdotally, I’ve seen few to no blogs cover this.</p>
+<p>Most people know that the first argument of these functions, <code>n</code>, controls how many draws to make. What’s less obvious (but intended — it is documented by core R team themselves) is that the <em>distribution parameters</em>, like <code>min</code>/<code>max</code> in <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> or <code>mean</code>/<code>sd</code> in <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>, can themselves be vectors. When they are, R recycles them across the <code>n</code> draws <em>alternatively</em>, giving you a different distribution per draw.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span></span>
+<span>    n <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>    min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>    max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">11</span>, <span class="fl">21</span>, <span class="fl">31</span>, <span class="fl">41</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  0.914806 10.937075 20.286140 30.830448 40.641746</code></pre>
+</div>
+</div>
+<p>Each of the 5 values is drawn from its own <code>[min, max]</code> interval. Compare this to the naive reading of <code>runif(5, min = 0, max = 40)</code>, which draws all 5 from the same range:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 36.59224 37.48302 11.44558 33.21791 25.66982</code></pre>
+</div>
+</div>
+<p>Completely different. The same applies to <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">6</span>, mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -10.3132269   0.1836433   8.3287428  -9.2023596   0.3295078   8.3590632</code></pre>
+</div>
+</div>
+<p>Here, <code>n = 6</code> but only 3 <code>mean</code> / <code>sd</code> pairs are supplied, R recycles them, so draws 1 and 4 share <code>mean = -10, sd = 0.5</code>, draws 2 and 5 share <code>mean = 0, sd = 1</code>, and so on.</p>
+<p>This can be useful for simulating heterogeneous populations in a single call, but it can catch you off guard if you pass a vector parameter by accident. R won’t warn you, just recycles silently.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Accidentally passing a two-element vector for mean</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">4</span>, mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span> <span class="co"># draws alternate between mean = 0 and mean = 100!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  -0.8408555 101.3843593  -1.2554919 100.0701428</code></pre>
+</div>
+</div>
+<p>At first I thought calling <code>rnorm(4, mean = c(0, 100))</code> is the same as <code>c(rnorm(2, 0), rnorm(2, 100))</code>, but it turns out the random numbers are generated alternatively — the recycling is index-based (draw <code>i</code> uses <code>mean[(i - 1) %% length(mean) + 1]</code>), not a chunked split. So with <code>n = 4</code> and a 2-element vector, draws 1 and 3 come from <code>mean = 0</code>, while draws 2 and 4 come from <code>mean = 100</code>. Thus, be careful when conducting an analysis.</p>
+<section id="what-about-numpy" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="what-about-numpy">
+<span class="header-section-number">2.1</span> What about NumPy?</h2>
+<p>If you’re coming from Python, this is worth a pause. NumPy’s <code>numpy.random.*()</code> does accept array-valued distribution parameters, but it broadcasts them against the <em>output shape</em>, and it does not recycle a short parameter array across a longer <code>size</code> the way R does.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>rng.normal(loc <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">100</span>], scale <span class="op">=</span> <span class="dv">1</span>, size <span class="op">=</span> <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ValueError: shape mismatch: objects cannot be broadcast to a single shape.  Mismatch is between arg 0 with shape (4,) and arg 1 with shape (2,).</code></pre>
+</div>
+</div>
+<p>This raises a broadcast error rather than recycling, <code>size = 4</code> can’t broadcast against a <code>loc</code> of shape <code>(2, )</code>. To get R’s behavior in NumPy, you’d have to do the recycling yourself:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>loc <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">100</span>])</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>size <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>rng.normal(loc <span class="op">=</span> np.tile(loc, size <span class="op">//</span> <span class="bu">len</span>(loc)), scale <span class="op">=</span> <span class="dv">1</span>, size <span class="op">=</span> size)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>array([  0.30471708,  98.96001589,   0.7504512 , 100.94056472])</code></pre>
+</div>
+</div>
+</section></section><section id="rng-semantics" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> RNG Semantics</h1>
+<p>Before getting into specific gotchas, it helps to separate two things that are easy to conflate: the <em>seed</em> (a starting value you set) and the <em>RNG kind</em> (the algorithm that turns that seed into a sequence of numbers). <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> controls the former, <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> controls the latter, and both — along with version-specific defaults like <code>sample.kind</code> — feed into what <code>.Random.seed</code> actually stores. Mixing these up is where most reproducibility surprises come from.</p>
+<section id="set.seed-is-not-a-complete-silver-bullet" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="set.seed-is-not-a-complete-silver-bullet">
+<span class="header-section-number">3.1</span> set.seed() is not a complete silver bullet</h2>
+<p><code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> resets R’s global RNG state. Most people know that. What fewer people know is that the generated random numbers of the same seed can differ depending on:</p>
+<ol type="1">
+<li>The RNG kind in use</li>
+<li>The R version</li>
+<li>The <code>sample.kind</code> argument introduced in R 3.6.0</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Default behavior (R &gt;= 3.6.0)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, <span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 836 679 129 930 509</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Old behavior pre-R 3.6.0</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span>, sample.kind <span class="op">=</span> <span class="st">"Rounding"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, <span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 266 372 572 906 201</code></pre>
+</div>
+</div>
+<p>In R 3.6.0, the default <code>sample.kind</code> changed from <code>"Rounding"</code> to <code>"Rejection"</code> to fix a known bias in discrete uniform sampling on large populations (R Project Bugzilla, 2019). This broke reproducibility for any code that used <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> and <code><a href="https://rdrr.io/r/base/sample.html">sample()</a></code> across that version boundary.</p>
+</section><section id="the-rng-kind" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="the-rng-kind">
+<span class="header-section-number">3.2</span> The RNG Kind</h2>
+<p>R supports multiple RNG algorithms, selectable via <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code>. By default, <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> is set to Mersenne-Twister. How to verify? Run <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> call to check the current kind:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">RNGkind</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Mersenne-Twister" "Inversion"        "Rounding"        </code></pre>
+</div>
+</div>
+<p>Switching kinds with the same seed produces entirely different sequences.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">RNGkind</a></span><span class="op">(</span><span class="st">"L'Ecuyer-CMRG"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6775328 0.4273457 0.9103805 0.9557282 0.8406586</code></pre>
+</div>
+</div>
+<p><code>"L'Ecuyer-CMRG"</code> is particularly relevant in parallel computing. It supports <em>substreams</em>, so each worker gets an independent, non-overlapping sequence. Using Mersenne-Twister naively across workers risks draws from overlapping sequences:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">RNGkind</a></span><span class="op">(</span><span class="st">"Mersenne-Twister"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2655087 0.3721239 0.5728534 0.9082078 0.2016819</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Take note">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Take note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When calling <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> in R, it completely overrides the current RNG kind in global environment. And here I thought calling <code><a href="https://rdrr.io/r/base/Random.html">RNGkind()</a></code> only applies on the current environment, not necessarily the global environment itself.</p>
+</div>
+</div>
+<p>So, if you’re sharing code meant to be reproduced across R versions, it’s worth being explicit:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span>, kind <span class="op">=</span> <span class="st">"Mersenne-Twister"</span>, normal.kind <span class="op">=</span> <span class="st">"Inversion"</span>, sample.kind <span class="op">=</span> <span class="st">"Rejection"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="fl">10</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  49  65  25  74  18 100  47  24  71  89</code></pre>
+</div>
+</div>
+</section></section><section id="making-the-sampling-faster-with-dqrng" class="level1" data-number="4"><h1 data-number="4">
+<span class="header-section-number">4</span> Making the sampling faster with dqrng</h1>
+<p>Another thing that surprises me is that the package <a href="https://daqana.github.io/dqrng/">dqrng</a> can speed up base R sampling process, at least some of them as far as I know. Unusual, isn’t it? <a href="https://daqana.github.io/dqrng/">dqrng</a> provides alternative generators: PCG64, Xoroshiro128++, etc…, that are substantially faster than base R’s Mersenne-Twister, especially for large draws.</p>
+<p>The most direct way to use them is to call <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html">dqrng::dqrnorm()</a></code>, <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html">dqrng::dqrunif()</a></code>, etc. directly:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">box</span><span class="fu">::</span><span class="fu"><a href="https://klmr.me/box/reference/use.html">use</a></span><span class="op">(</span><span class="va">dqrng</span><span class="op">[</span><span class="va">...</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">dqset.seed</span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://bench.r-lib.org/reference/mark.html">mark</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1e6L</span><span class="op">)</span>,</span>
+<span>    <span class="fu">dqrnorm</span><span class="op">(</span><span class="fl">1e6L</span><span class="op">)</span>,</span>
+<span>    check <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  expression             min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 rnorm(1000000L)     84.6ms   90.5ms      11.3    7.63MB     2.25
+2 dqrnorm(1000000L)   11.8ms   16.1ms      60.6    7.63MB    15.8 </code></pre>
+</div>
+</div>
+<p>There’s also a way to make <em>base</em> <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> / <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> themselves run on a <a href="https://daqana.github.io/dqrng/">dqrng</a> generator, via <code>register_methods()</code> and <code>dqRNGkind()</code>. This works because of R’s “user-supplied RNG” mechanism (R Core Team, n.d.-b): R’s internal <code>r&lt;dist&gt;</code> algorithms, the so-called Inversion method for <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>, the standard transform for <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code>, don’t generate their own raw bits.</p>
+<p>They call out to a C-level uniform random bit generator, and <code>RNGkind("user-supplied")</code> lets a package substitute its own C function for that step. <code>register_methods()</code> points that hook at <a href="https://daqana.github.io/dqrng/">dqrng</a>’s fast generators (e.g.&nbsp;Xoroshiro128++, PCG64), so <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> and <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> still run R’s own algorithms on top, but draw their underlying bits from <a href="https://daqana.github.io/dqrng/">dqrng</a> instead of Mersenne-Twister.</p>
+<p>This also explains why <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> / <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> after <code>register_methods()</code> produce <em>identical</em> output to <code>dqrunif()</code>/<code>dqrnorm()</code> given the same seed. Both paths use the same underlying bit generator and the same transform (Inversion, by default).</p>
+<p><code><a href="https://rdrr.io/r/stats/Exponential.html">rexp()</a></code>, however, will <em>not</em> match <code>dqrexp()</code> even after registering, because <a href="https://daqana.github.io/dqrng/">dqrng</a>’s exponential sampler uses a different algorithm (Ziggurat) than R’s built-in <code><a href="https://rdrr.io/r/stats/Exponential.html">rexp()</a></code>. The registration only swaps the uniform-bit source, not every distribution’s sampling algorithm (Stubner, n.d.-b).</p>
+<p>Here’s a simple benchmark:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://bench.r-lib.org/reference/mark.html">mark</a></span><span class="op">(</span></span>
+<span>    `base R` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1e6L</span><span class="op">)</span>, </span>
+<span>    pcg <span class="op">=</span> <span class="op">{</span></span>
+<span>        <span class="fu">register_methods</span><span class="op">(</span><span class="op">)</span></span>
+<span>        <span class="fu">dqRNGkind</span><span class="op">(</span><span class="st">"pcg64"</span><span class="op">)</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1e6L</span><span class="op">)</span></span>
+<span>        <span class="fu">restore_methods</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    xor <span class="op">=</span> <span class="op">{</span></span>
+<span>        <span class="fu">register_methods</span><span class="op">(</span><span class="op">)</span></span>
+<span>        <span class="fu">dqRNGkind</span><span class="op">(</span><span class="st">"Xoroshiro128++"</span><span class="op">)</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1e6L</span><span class="op">)</span></span>
+<span>        <span class="fu">restore_methods</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    <span class="fu">dqrnorm</span><span class="op">(</span><span class="fl">1e6L</span><span class="op">)</span>,</span>
+<span>    check <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 6
+  expression             min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 base R              80.4ms   85.4ms      11.8    7.63MB     5.91
+2 pcg                 50.7ms     51ms      18.6    7.63MB     7.99
+3 xor                 49.8ms   50.9ms      19.1    7.63MB     8.18
+4 dqrnorm(1000000L)   15.7ms   16.3ms      59.9    7.63MB    25.7 </code></pre>
+</div>
+</div>
+<p>Interestingly, in this particular run the swapped-in base <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> was faster than the default base <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code>, though still noticeably slower than calling <code>dqrnorm()</code> directly. Part of that gap likely comes from the explanation above: <code>dqrnorm()</code> uses dqrng’s own Ziggurat-based normal sampler directly, while the registered <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> still goes through R’s own Inversion-method machinery, it’s just drawing faster uniform bits underneath.</p>
+<p>The registration swap gets you a faster <em>bit source</em> under the same algorithm, not the faster <em>algorithm</em> that <code>dqrnorm()</code> uses outright. Though I can’t guarantee the usefulness, I haven’t yet isolated how much of the remaining gap is this algorithmic difference versus the overhead of <code>register_methods()</code> / <code>restore_methods()</code> themselves. That’s worth checking before treating this as a reliable speedup, since the swap mechanism is more useful as a way to get <em>some</em> benefit in code you can’t easily rewrite to call <code>dq*</code> functions directly, rather than as a path to the full speedup.</p>
+<p>As before, the two seed pools are independent: <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> controls base R’s <code>.Random.seed</code>, while <code>dqset.seed()</code> controls <code>dqrng</code>’s own state. Calling one has no effect on the other, so switching to <code>dqrng</code> functions for performance doesn’t interfere with reproducibility of your base R code, and vice versa.</p>
+</section><section id="saving-and-restoring-rng-state" class="level1" data-number="5"><h1 data-number="5">
+<span class="header-section-number">5</span> Saving and Restoring RNG State</h1>
+<p>This is unusual but useful when you want to rewind to a checkpoint mid-simulation without replaying everything from the start. Just save <code>.Random.seed</code> before the section you might want to re-run, and restore it as needed. The global RNG state lives in <code>.Random.seed</code>. You can snapshot and restore it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>                  <span class="co"># advance state a bit</span></span>
+<span><span class="co">## [1] 0.3077661 0.2576725 0.5523224</span></span>
+<span></span>
+<span><span class="va">saved_seed</span> <span class="op">=</span> <span class="va">.Random.seed</span> <span class="co"># snapshot</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>                  <span class="co"># advance further</span></span>
+<span><span class="co">## [1] 0.05638315 0.46854928 0.48377074 0.81240262 0.37032054</span></span>
+<span></span>
+<span><span class="va">.Random.seed</span> <span class="op">=</span> <span class="va">saved_seed</span> <span class="co"># restore</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>                  <span class="co"># same 5 numbers as before the second runif(5)</span></span>
+<span><span class="co">## [1] 0.05638315 0.46854928 0.48377074 0.81240262 0.37032054</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>One gotcha worth flagging: <code>.Random.seed</code> is a vector with a specific structure (its first element encodes the RNG kind, normal kind, and sample kind as a packed integer). Assigning a malformed or hand-edited vector to <code>.Random.seed</code> can cause R to throw an error or silently fall back to reseeding, so treat it as an opaque object you only ever get from snapshotting — never construct one by hand.</p>
+</section><section id="closing-thoughts" class="level1" data-number="6"><h1 data-number="6">
+<span class="header-section-number">6</span> Closing Thoughts</h1>
+<p>A few threads ran through this post:</p>
+<ol type="i">
+<li><p>Distribution parameters in <code>r&lt;dist&gt;</code> functions like <code><a href="https://rdrr.io/r/stats/Uniform.html">runif()</a></code> and <code><a href="https://rdrr.io/r/stats/Normal.html">rnorm()</a></code> recycle index-by-index across draws, not in chunks, so a stray vector where you meant a scalar changes your results without any warning.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code> alone doesn’t guarantee reproducibility across R versions or RNG kinds. The <code>sample.kind</code> change in R 3.6.0 is a good example of how a “fixed” bug can break old code.</p></li>
+<li><p><a href="https://daqana.github.io/dqrng/">dqrng</a> gives you faster generators via direct calls (the clear win) or, with some open questions about the actual gain, via swapping out base R’s generator entirely, with its own seed pool kept fully separate from <code>.Random.seed</code>.</p></li>
+</ol>
+<p>None of these are bugs, exactly. They’re documented, intentional behaviors. But they’re the kind of thing you only learn by getting bitten once.</p>
+</section><section id="references" class="level1" data-number="7"><h1 data-number="7">
+<span class="header-section-number">7</span> References</h1>
+<p>R Core Team. (n.d.-a). <em>Random number generation</em> [Documentation]. The R Project for Statistical Computing. https://stat.ethz.ch/R-manual/R-devel/library/base/html/Random.html</p>
+<p>R Core Team. (n.d.-b). <em>Random.user: User-supplied random number generation</em> [Documentation]. The R Project for Statistical Computing. https://stat.ethz.ch/R-manual/R-devel/library/base/html/Random.user.html</p>
+<p>R Project Bugzilla. (2019). <em>PR#17494: sample() bias on large populations</em> [Bug report]. https://bugs.r-project.org/show_bug.cgi?id=17494</p>
+<p>Stubner, R. (n.d.-a). <em>dqrng: Fast pseudo random number generators</em> [R package documentation]. CRAN. https://cran.r-project.org/web/packages/dqrng/index.html</p>
+<p>Stubner, R. (n.d.-b). <em>Registering as user-supplied RNG</em> [R package documentation]. dqrng. https://daqana.github.io/dqrng/reference/user-supplied-rng.html</p>
+<p>Stubner, R. (2023, September 24). <em>Using dqrng as user-supplied RNG</em>. https://stubner.me/post/2023-09-24-using-dqrng-as-user-supplied-rng/</p>
+
+
+</section></main><!-- /main --><style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-
-
 /* Light theme variables */
-
 :root {
-
   --primary-color: #3b82f6;
-
   --primary-dark: #2563eb;
-
   --secondary-color: #64748b;
-
   --accent-color: #06b6d4;
-
   --background: #ffffff;
-
   --surface: #f8fafc;
-
   --surface-hover: #f1f5f9;
-
   --surface-light: #e2e8f0;
-
   --border: #e2e8f0;
-
   --text-primary: #0f172a;
-
   --text-secondary: #475569;
-
   --text-muted: #64748b;
-
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-
   --radius: 8px;
-
   --radius-lg: 12px;
-
 }
-
-
 
 /* Dark theme variables */
-
 [data-theme="dark"] {
-
   --primary-color: #60a5fa;
-
   --primary-dark: #3b82f6;
-
   --secondary-color: #94a3b8;
-
   --accent-color: #22d3ee;
-
   --background: #0f172a;
-
   --surface: #1e293b;
-
   --surface-hover: #334155;
-
   --surface-light: #475569;
-
   --border: #334155;
-
   --text-primary: #f1f5f9;
-
   --text-secondary: #cbd5e1;
-
   --text-muted: #94a3b8;
-
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
-
 }
 
-
-
 /* =========================
-
    Navbar Theme Fix
-
    ========================= */
-
-
 
 /* Target all navbar elements to use theme colors */
-
 .navbar,
-
 .navbar-default,
-
 .navbar-expand-lg,
-
 nav.navbar,
-
 header.navbar,
-
 #quarto-header,
-
 .quarto-navbar,
-
 nav[role="navigation"] {
-
   background: var(--background) !important;
-
   border-bottom: 1px solid var(--border) !important;
-
   box-shadow: var(--shadow-sm) !important;
-
 }
 
-
-
 /* =========================
-
    Title Block Banner Theme Fix
-
    ========================= */
-
-
 
 /* Target title block banner area */
-
 #title-block-header,
-
 .quarto-title-block,
-
 header#title-block-header,
-
 .quarto-title-banner {
-
   background: var(--background) !important;
-
   color: var(--text-primary) !important;
-
 }
-
-
 
 /* Title block container */
-
 .quarto-title-block .quarto-title,
-
 #title-block-header .quarto-title {
-
   background: var(--background) !important;
-
 }
 
-
-
 /* =========================
-
    Listing Controls Theme Fix (Sorter/Filter)
-
    ========================= */
-
-
 
 /* Order By / Sort dropdown and Filter input */
-
 .listing-option-group,
-
 .listing-actions,
-
 .listing-controls,
-
 div[class*="listing"] {
-
   background: var(--background) !important;
-
 }
-
-
 
 /* Dropdowns and inputs in listing controls */
-
 .listing-option-group select,
-
 .listing-option-group input,
-
 #listing-order-by,
-
 select,
-
 input[type="text"],
-
 input[type="search"] {
-
   background: var(--surface) !important;
-
   color: var(--text-primary) !important;
-
   border: 1px solid var(--border) !important;
-
 }
-
-
 
 .listing-option-group select:hover,
-
 .listing-option-group input:hover,
-
 select:hover,
-
 input[type="text"]:hover,
-
 input[type="search"]:hover {
-
   background: var(--surface-hover) !important;
-
   border-color: var(--primary-color) !important;
-
 }
-
-
 
 /* Labels in listing controls */
-
 .listing-option-group label,
-
 .listing-controls label {
-
   color: var(--text-primary) !important;
-
 }
 
-
-
 /* =========================
-
    Footer Theme Fix
-
    ========================= */
-
-
 
 /* Footer area */
-
 footer,
-
 .footer,
-
 .nav-footer,
-
 .quarto-footer,
-
 body > footer,
-
 #quarto-footer {
-
   background: var(--surface) !important;
-
   color: var(--text-secondary) !important;
-
   border-top: 1px solid var(--border) !important;
-
 }
-
-
 
 /* Footer links */
-
 footer a,
-
 .footer a,
-
 .nav-footer a,
-
 .quarto-footer a {
-
   color: var(--text-secondary) !important;
-
 }
-
-
 
 footer a:hover,
-
 .footer a:hover,
-
 .nav-footer a:hover,
-
 .quarto-footer a:hover {
-
   color: var(--primary-color) !important;
-
 }
-
-
 
 /* Footer text */
-
 footer p,
-
 footer div,
-
 .footer p,
-
 .footer div,
-
 .nav-footer p,
-
 .nav-footer div {
-
   color: var(--text-secondary) !important;
-
 }
-
-
 
 /* Navbar brand/logo */
-
 .navbar-brand,
-
 .navbar-title,
-
 a.navbar-brand {
-
   color: var(--text-primary) !important;
-
 }
-
-
 
 /* Navbar links */
-
 .navbar-nav .nav-link,
-
 .navbar .nav-link,
-
 .navbar a,
-
 .nav-link {
-
   color: var(--text-secondary) !important;
-
 }
-
-
 
 .navbar-nav .nav-link:hover,
-
 .navbar .nav-link:hover,
-
 .navbar a:hover,
-
 .nav-link:hover {
-
   color: var(--primary-color) !important;
-
 }
-
-
 
 /* Active navbar link */
-
 .navbar-nav .nav-link.active,
-
 .navbar .nav-link.active,
-
 .nav-link.active {
-
   color: var(--primary-color) !important;
-
 }
-
-
 
 /* Navbar toggler*/
-
 .navbar-toggler {
-
   border-color: var(--border) !important;
-
   padding: 0.25rem 0.5rem;
-
 }
-
-
 
 .navbar-toggler:focus {
-
   box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
-
 }
-
-
 
 /* Create custom hamburger icon that respects theme */
-
 .navbar-toggler-icon {
-
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(71, 85, 105, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
-
   display: inline-block;
-
   width: 1.5em;
-
   height: 1.5em;
-
   vertical-align: middle;
-
 }
-
-
 
 /* Dark theme hamburger icon */
-
 [data-theme="dark"] .navbar-toggler-icon {
-
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(203, 213, 225, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
-
 }
-
-
 
 /* Search button and icons in navbar */
-
 .navbar .quarto-navbar-tools,
-
 .navbar-nav .nav-item i,
-
 .navbar i {
-
   color: var(--text-secondary) !important;
-
 }
-
-
 
 .navbar .quarto-navbar-tools:hover,
-
 .navbar-nav .nav-item i:hover,
-
 .navbar i:hover {
-
   color: var(--primary-color) !important;
-
 }
-
-
 
 /* Theme toggle button - repositioned to avoid navbar overlap */
-
 .theme-toggle {
-
   position: fixed;
-
   bottom: 20px;
-
   right: 20px;
-
   z-index: 1000;
-
   background: var(--primary-color);
-
   color: white;
-
   border: none;
-
   width: 50px;
-
   height: 50px;
-
   border-radius: 50%;
-
   cursor: pointer;
-
   font-size: 1.25rem;
-
   transition: all 0.3s ease;
-
   box-shadow: var(--shadow-lg);
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
 }
-
-
 
 .theme-toggle:hover {
-
   background: var(--primary-dark);
-
   transform: scale(1.1);
-
   box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.3);
-
 }
-
-
 
 .theme-toggle:active {
-
   transform: scale(0.95);
-
 }
-
-
 
 /* Base styles with smooth transitions */
-
 * {
-
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-
 }
-
-
 
 /* Remove automatic numbering for headings */
-
 body {
-
   counter-reset: none;
-
 }
-
-
 
 h1::before,
-
 h2::before,
-
 h3::before,
-
 h4::before,
-
 h5::before,
-
 h6::before {
-
   content: none !important;
-
 }
-
-
 
 /* Override any automatic numbering */
-
 .section .header-section-number {
-
   display: none !important;
-
 }
-
-
 
 .header-section-number {
-
   display: none !important;
-
 }
-
-
 
 body {
-
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
   line-height: 1.7;
-
   color: var(--text-primary);
-
   background: var(--background);
-
   margin: 0;
-
   padding: 0;
-
   font-size: 16px;
-
   -webkit-font-smoothing: antialiased;
-
   -moz-osx-font-smoothing: grayscale;
-
 }
-
-
 
 /* Container styling */
-
 .container-fluid {
-
   max-width: 1200px;
-
   margin: 0 auto;
-
   padding: 2rem;
-
   padding-top: 4rem; 
-
 }
-
-
 
 /* Header styling with enhanced animations */
-
 .title {
-
   font-size: 2.5rem;
-
   font-weight: 700;
-
   color: var(--text-primary);
-
   margin-bottom: 0.5rem;
-
   line-height: 1.2;
-
   background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-
   -webkit-background-clip: text;
-
   -webkit-text-fill-color: transparent;
-
   background-clip: text;
-
   animation: slideInFromTop 0.8s ease-out;
-
 }
-
-
 
 .subtitle {
-
   font-size: 1.25rem;
-
   color: var(--text-secondary);
-
   margin-bottom: 2rem;
-
   font-weight: 400;
-
   animation: slideInFromTop 0.8s ease-out 0.2s both;
-
 }
-
-
 
 .author, .date {
-
   color: var(--text-muted);
-
   font-size: 1.325rem;
-
   margin-bottom: 0.5rem;
-
   animation: slideInFromTop 0.8s ease-out 0.4s both;
-
 }
-
-
 
 /* Animations */
-
 @keyframes slideInFromTop {
-
   from {
-
     opacity: 0;
-
     transform: translateY(-30px);
-
   }
-
   to {
-
     opacity: 1;
-
     transform: translateY(0);
-
   }
-
 }
-
-
 
 @keyframes fadeIn {
-
   from {
-
     opacity: 0;
-
   }
-
   to {
-
     opacity: 1;
-
   }
-
 }
 
-
-
 /* =========================
-
    Table of Contents
-
    ========================= */
-
-
 
 #TOC {
-
   background: var(--surface) !important;
-
   border: 1px solid var(--border) !important;
-
   border-radius: var(--radius-lg);
-
   padding: 1.5rem;
-
   margin-bottom: 2rem;
-
   box-shadow: var(--shadow-sm);
-
   animation: fadeIn 0.8s ease-out 0.6s both;
-
 }
-
-
 
 /* Force all TOC elements to use theme colors */
-
 #TOC,
-
 #TOC ul,
-
 #TOC li,
-
 #TOC div {
-
   background: var(--surface) !important;
-
   color: var(--text-primary) !important;
-
 }
-
-
 
 /* Hide "on this page" text in TOC - Multiple selectors for compatibility */
-
 body.quarto-post #TOC .toc-title,
-
 #TOC .toc-title,
-
 .toc-title,
-
 #quarto-margin-sidebar .toc-title,
-
 .sidebar nav[role="doc-toc"] > h2,
-
 .sidebar nav[role="doc-toc"] > .h2,
-
 #quarto-margin-sidebar h2,
-
 aside[role="complementary"] h2,
-
 nav[role="doc-toc"] h2 {
-
   display: none !important;
-
 }
-
-
 
 #TOC ul {
-
   margin: 0;
-
   padding-left: 1.25rem;
-
   list-style: none;
-
   background: var(--surface) !important;
-
 }
-
-
 
 #TOC > ul {
-
   padding-left: 0;
-
   background: var(--surface) !important;
-
 }
-
-
 
 #TOC li {
-
   margin: 0.5rem 0;
-
   position: relative;
-
   transform: translateX(0);
-
   transition: transform 0.2s ease;
-
   background: var(--surface) !important;
-
 }
-
-
 
 #TOC li:hover {
-
   transform: translateX(5px);
-
   background: var(--surface) !important;
-
 }
-
-
 
 #TOC li::before {
-
   content: "→";
-
   color: var(--primary-color);
-
   font-weight: bold;
-
   position: absolute;
-
   left: -1rem;
-
   opacity: 0;
-
   transition: opacity 0.2s ease;
-
 }
-
-
 
 #TOC li:hover::before {
-
   opacity: 1;
-
 }
-
-
 
 #TOC a {
-
   color: var(--text-primary) !important;
-
   text-decoration: none;
-
   font-weight: 500;
-
   transition: all 0.2s ease;
-
   display: block;
-
   padding: 0.25rem 0;
-
   border-radius: var(--radius);
-
   padding-left: 0.5rem;
-
   background: transparent !important;
-
 }
-
-
 
 #TOC a:hover {
-
   color: var(--primary-color) !important;
-
   background: var(--surface-hover) !important;
-
 }
-
-
 
 /* Target specific R Markdown TOC structure */
-
 .tocify-wrapper,
-
 .tocify-extend-page {
-
   background: var(--surface) !important;
-
 }
-
-
 
 /* Override any white backgrounds in TOC */
-
 #TOC * {
-
   background-color: var(--surface) !important;
-
 }
-
-
 
 #TOC a * {
-
   background-color: transparent !important;
-
 }
-
-
 
 /* Floating TOC with enhanced styling */
-
 .tocify {
-
   background: var(--surface) !important;
-
   border: 1px solid var(--border) !important;
-
   border-radius: var(--radius);
-
   box-shadow: var(--shadow-md);
-
   padding: 1rem;
-
   backdrop-filter: blur(10px);
-
 }
-
-
 
 .tocify-header {
-
   font-weight: 600;
-
   color: var(--text-primary) !important;
-
   padding: 0.5rem 0;
-
   border-bottom: 1px solid var(--border);
-
   margin-bottom: 0.5rem;
-
 }
-
-
 
 .tocify-item {
-
   padding: 0.25rem 0;
-
 }
-
-
 
 .tocify-item a {
-
   color: var(--text-secondary) !important;
-
   text-decoration: none;
-
   transition: all 0.2s ease;
-
   padding: 0.25rem 0.5rem;
-
   border-radius: var(--radius);
-
   display: block;
-
 }
-
-
 
 .tocify-item a:hover,
-
 .tocify-item.active a {
-
   color: var(--primary-color) !important;
-
   background: var(--surface-hover) !important;
-
 }
-
-
 
 /* Headers styling */
-
 h1, h2, h3, h4, h5, h6 {
-
   font-weight: 600;
-
   margin-top: 2.5rem;
-
   margin-bottom: 1rem;
-
   line-height: 1.3;
-
   color: var(--text-primary);
-
 }
-
-
 
 h1 {
-
   font-size: 2.25rem;
-
   border-bottom: 3px solid var(--primary-color);
-
   padding-bottom: 0.75rem;
-
   margin-bottom: 1.5rem;
-
   position: relative;
-
   overflow: hidden;
-
 }
-
-
 
 h1::after {
-
   content: "";
-
   position: absolute;
-
   bottom: -3px;
-
   left: -100%;
-
   right: 100%;
-
   height: 3px;
-
   background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
-
   animation: shimmer 2s ease-in-out infinite;
-
 }
-
-
 
 @keyframes shimmer {
-
   0%, 100% {
-
     left: -100%;
-
     right: 100%;
-
   }
-
   50% {
-
     left: 0%;
-
     right: 0%;
-
   }
-
 }
-
-
 
 h2 {
-
   font-size: 1.875rem;
-
   color: var(--primary-dark);
-
   position: relative;
-
   padding-left: 1rem;
-
 }
-
-
 
 h2::before {
-
   content: "";
-
   position: absolute;
-
   left: 0;
-
   top: 0.25rem;
-
   bottom: 0.25rem;
-
   width: 4px;
-
   background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
-
   border-radius: 2px;
-
   transform: scaleY(0);
-
   transform-origin: top;
-
   transition: transform 0.3s ease;
-
 }
-
-
 
 h2:hover::before {
-
   transform: scaleY(1);
-
 }
-
-
 
 h3 {
-
   font-size: 1.5rem;
-
   color: var(--text-primary);
-
 }
-
-
 
 h4 {
-
   font-size: 1.25rem;
-
   color: var(--secondary-color);
-
 }
-
-
 
 /* Interactive code folding button */
-
 .code-folding-btn {
-
   background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-
   color: white;
-
   border: none;
-
   padding: 0.75rem 1.25rem;
-
   border-radius: var(--radius);
-
   cursor: pointer;
-
   font-size: 0.875rem;
-
   font-weight: 600;
-
   transition: all 0.3s ease;
-
   margin-bottom: 1rem;
-
   position: relative;
-
   overflow: hidden;
-
 }
-
-
 
 .code-folding-btn:hover {
-
   transform: translateY(-2px);
-
   box-shadow: var(--shadow-lg);
-
 }
-
-
 
 .code-folding-btn:active {
-
   transform: translateY(0);
-
 }
-
-
 
 .code-folding-btn::after {
-
   content: "";
-
   position: absolute;
-
   top: 0;
-
   left: -100%;
-
   width: 100%;
-
   height: 100%;
-
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-
   transition: left 0.5s ease;
-
 }
-
-
 
 .code-folding-btn:hover::after {
-
   left: 100%;
-
 }
 
-
-
 /* =========================
-
    Callout title
-
    ========================= */
-
-
 
 .callout-title-container {
-
   color: #19183B !important;
-
 }
 
-
-
 /* =========================
-
    Global hyperlink styling
-
    ========================= */
-
-
 
 /* Global styling - Light mode */
-
 a:not(.quarto-category):not(.listing-category),
-
 a:visited:not(.quarto-category):not(.listing-category) {
-
   color: #3A6F43 !important;
-
   text-decoration: none;
-
 }
-
-
 
 a:hover:not(.quarto-category):not(.listing-category) {
-
   color: #333333 !important;
-
 }
-
-
 
 /* Dark mode hyperlinks */
-
 [data-theme="dark"] a:not(.quarto-category):not(.listing-category),
-
 [data-theme="dark"] a:visited:not(.quarto-category):not(.listing-category) {
-
   color: #8BAE66 !important;
-
 }
-
-
 
 [data-theme="dark"] a:hover:not(.quarto-category):not(.listing-category) {
-
   color: #a8cc88 !important;
-
 }
 
-
-
 /* =========================
-
    Category Links Fix
-
    ========================= */
-
-
 
 /* Ensure category links remain functional */
-
 .quarto-category,
-
 a.quarto-category,
-
 .quarto-categories .quarto-category,
-
 .listing-category,
-
 a.listing-category {
-
   pointer-events: auto !important;
-
   cursor: pointer !important;
-
   color: inherit !important;
-
   text-decoration: none !important;
-
 }
-
-
 
 .quarto-category:hover,
-
 .listing-category:hover {
-
   opacity: 0.8 !important;
-
   text-decoration: none !important;
-
 }
-
-
 
 /* =========================
-
    Strong Global bold text
-
    ========================= */
 
-
-
 strong, b {
-
   font-weight: 700;
-
 }
-
-
 
 /* Enhanced blockquotes */
-
 blockquote {
-
   border-left: 4px solid var(--accent-color);
-
   margin: 1.5rem 0;
-
   padding: 1rem 1.5rem;
-
   background: var(--surface);
-
   border-radius: 0 var(--radius) var(--radius) 0;
-
   color: var(--text-secondary);
-
   font-style: italic;
-
   position: relative;
-
   box-shadow: var(--shadow-sm);
-
 }
-
-
 
 blockquote::before {
-
   content: """;
-
   font-size: 3rem;
-
   color: var(--accent-color);
-
   position: absolute;
-
   top: -10px;
-
   left: 10px;
-
   opacity: 0.3;
-
 }
-
-
 
 /* Smooth scrolling and enhanced focus */
-
 html {
-
   scroll-behavior: smooth;
-
 }
-
-
 
 /* Selection styling */
-
 ::selection {
-
   background: var(--primary-color);
-
   color: white;
-
 }
-
-
 
 ::-moz-selection {
-
   background: var(--primary-color);
-
   color: white;
-
 }
-
-
 
 /* Enhanced focus styles */
-
 button:focus,
-
 a:focus,
-
 input:focus,
-
 textarea:focus {
-
   outline: 2px solid var(--primary-color);
-
   outline-offset: 2px;
-
   border-radius: var(--radius);
-
 }
-
-
 
 /* Custom scrollbar */
-
 ::-webkit-scrollbar {
-
   width: 12px;
-
 }
-
-
 
 ::-webkit-scrollbar-track {
-
   background: var(--surface);
-
   border-radius: 6px;
-
 }
-
-
 
 ::-webkit-scrollbar-thumb {
-
   background: var(--border);
-
   border-radius: 6px;
-
   border: 2px solid var(--surface);
-
 }
-
-
 
 ::-webkit-scrollbar-thumb:hover {
-
   background: var(--secondary-color);
-
 }
-
-
 
 /* Responsive design */
-
 @media (max-width: 768px) {
-
   .theme-toggle {
-
     bottom: 15px;
-
     right: 15px;
-
     width: 45px;
-
     height: 45px;
-
     font-size: 1.1rem;
-
   }
-
   
-
   .container-fluid {
-
     padding: 1rem;
-
     padding-top: 3rem;
-
   }
-
   
-
   .title {
-
     font-size: 2rem;
-
   }
-
   
-
   .subtitle {
-
     font-size: 1.725rem;
-
   }
-
   
-
   h1 {
-
     font-size: 1.875rem;
-
   }
-
   
-
   h2 {
-
     font-size: 1.5rem;
-
   }
-
   
-
   pre {
-
     padding: 1rem;
-
   }
-
   
-
   pre code {
-
     font-size: 0.9rem;
-
   }
-
 }
-
-
 
 /* Print styles */
-
 @media print {
-
   .theme-toggle {
-
     display: none;
-
   }
-
   
-
   body {
-
     font-size: 12pt;
-
     line-height: 1.5;
-
     color: black;
-
     background: white;
-
   }
-
   
-
   .title {
-
     color: black;
-
     -webkit-text-fill-color: black;
-
   }
-
   
-
   h1, h2, h3, h4, h5, h6 {
-
     color: black;
-
     page-break-after: avoid;
-
   }
-
   
-
   pre, blockquote {
-
     page-break-inside: avoid;
-
   }
-
   
-
   .tocify {
-
     display: none;
-
   }
-
 }
-
 </style>
-
-
-
 <script>
-
 document.addEventListener('DOMContentLoaded', function() {
-
   const themeToggle = document.createElement('button');
-
   themeToggle.className = 'theme-toggle';
-
   themeToggle.innerHTML = '🌙';
-
   themeToggle.setAttribute('aria-label', 'Toggle dark mode');
-
   themeToggle.setAttribute('title', 'Toggle dark/light mode');
-
   
-
   document.body.appendChild(themeToggle);
-
   
-
   const savedTheme = localStorage.getItem('theme') || 'light';
-
   document.documentElement.setAttribute('data-theme', savedTheme);
-
   themeToggle.innerHTML = savedTheme === 'dark' ? '🌙' : '☀️';
-
   
-
   themeToggle.addEventListener('click', function() {
-
     const currentTheme = document.documentElement.getAttribute('data-theme');
-
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
     
-
     document.documentElement.setAttribute('data-theme', newTheme);
-
     localStorage.setItem('theme', newTheme);
-
     themeToggle.innerHTML = newTheme === 'dark' ? '🌙' : '☀️';
-
     
-
     themeToggle.style.transform = 'rotate(360deg)';
-
     setTimeout(() => {
-
       themeToggle.style.transform = 'rotate(0deg)';
-
     }, 300);
-
   });
-
   
-
   setTimeout(function() {
-
     const tocTitles = document.querySelectorAll('.toc-title, #quarto-margin-sidebar h2, nav[role="doc-toc"] h2');
-
     tocTitles.forEach(function(title) {
-
       title.style.display = 'none';
-
     });
-
   }, 100);
-
   
-
   const tocLinks = document.querySelectorAll('#TOC a, .tocify a');
-
   tocLinks.forEach(function(link) {
-
     link.addEventListener('click', function(e) {
-
       const href = this.getAttribute('href');
-
       if (href && href.startsWith('#')) {
-
         e.preventDefault();
-
         const target = document.querySelector(href);
-
         if (target) {
-
           target.scrollIntoView({
-
             behavior: 'smooth',
-
             block: 'start'
-
           });
-
         }
-
       }
-
     });
-
   });
-
   
-
   const images = document.querySelectorAll('img');
-
   images.forEach(function(img) {
-
     if (img.complete) {
-
       img.style.opacity = '1';
-
     } else {
-
       img.style.opacity = '0';
-
       img.style.transition = 'opacity 0.5s ease';
-
       
-
       img.addEventListener('load', function() {
-
         this.style.opacity = '1';
-
       });
-
     }
-
   });
-
 });
-
-</script>
-
-<style>
-
+</script><style>
     /* Modal Styles */
-
     .code-modal {
-
         display: none;
-
         position: fixed;
-
         z-index: 1000;
-
         left: 0;
-
         top: 0;
-
         width: 100%;
-
         height: 100%;
-
         background-color: rgba(0, 0, 0, 0.8);
-
         backdrop-filter: blur(5px);
-
     }
-
-
 
     .code-modal-content {
-
         position: relative;
-
         background-color: #fff;
-
         margin: 5% auto;
-
         padding: 0;
-
         border-radius: 8px;
-
         width: 90%;
-
         max-width: 1200px;
-
         max-height: 80vh;
-
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-
         overflow: hidden;
-
         display: flex;
-
         flex-direction: column;
-
     }
-
-
 
     .code-modal-header {
-
         background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
-
         color: white;
-
         padding: 15px 20px;
-
         display: flex;
-
         justify-content: space-between;
-
         align-items: center;
-
         border-bottom: 1px solid #ddd;
-
     }
-
-
 
     .code-modal-title {
-
         font-size: 1.2em;
-
         font-weight: 600;
-
         margin: 0;
-
     }
-
-
 
     .code-modal-close {
-
         background: none;
-
         border: none;
-
         color: white;
-
         font-size: 24px;
-
         cursor: pointer;
-
         padding: 0;
-
         width: 30px;
-
         height: 30px;
-
         border-radius: 50%;
-
         display: flex;
-
         align-items: center;
-
         justify-content: center;
-
         transition: background-color 0.2s;
-
     }
-
-
 
     .code-modal-close:hover {
-
         background-color: rgba(255, 255, 255, 0.2);
-
     }
-
-
 
     .code-modal-body {
-
         flex: 1;
-
         overflow-y: auto;
-
         padding: 20px;
-
         background-color: #f8f9fa;
-
     }
-
-
 
     .code-modal-section {
-
         margin-bottom: 20px;
-
     }
-
-
 
     .code-modal-section:last-child {
-
         margin-bottom: 0;
-
     }
-
-
 
     .code-modal-section h3 {
-
         margin: 0 0 10px 0;
-
         font-size: 1.1em;
-
         color: #333;
-
         padding-bottom: 5px;
-
         border-bottom: 2px solid #1e3a8a;
-
         display: flex;
-
         justify-content: space-between;
-
         align-items: center;
-
     }
-
-
 
     .code-modal-code {
-
         background-color: #0f172a;
-
         color: #e2e8f0;
-
         padding: 15px;
-
         border-radius: 6px;
-
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-
         font-size: 0.9em;
-
         line-height: 1.4;
-
         overflow-x: auto;
-
         white-space: pre;
-
         margin: 0;
-
     }
-
-
 
     .code-modal-output {
-
         background-color: #fff;
-
         border: 1px solid #e2e8f0;
-
         padding: 15px;
-
         border-radius: 6px;
-
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-
         font-size: 0.9em;
-
         line-height: 1.4;
-
         white-space: pre-wrap;
-
         margin: 0;
-
         color: #2d3748;
-
     }
-
-
 
     /* Button to open modal */
-
     .code-open-btn {
-
         background: #0f172a;
-
         color: white;
-
         border: none;
-
         padding: 8px 16px;
-
         border-radius: 4px;
-
         cursor: pointer;
-
         font-size: 0.85em;
-
         font-weight: 500;
-
         margin: 5px 0;
-
         transition: all 0.3s ease;
-
     }
-
-
 
     .code-open-btn:hover {
-
         background: #1e293b;
-
         transform: translateY(-1px);
-
     }
-
-
 
     /* Copy button styles */
-
     .copy-btn {
-
         background: #1e3a8a;
-
         color: white;
-
         border: none;
-
         padding: 4px 8px;
-
         border-radius: 4px;
-
         cursor: pointer;
-
         font-size: 0.75em;
-
         display: flex;
-
         align-items: center;
-
         gap: 4px;
-
         transition: all 0.2s ease;
-
     }
-
-
 
     .copy-btn:hover {
-
         background: #1e40af;
-
     }
-
-
 
     .copy-btn.copied {
-
         background: #059669;
-
     }
-
-
 
     .copy-icon {
-
         width: 14px;
-
         height: 14px;
-
         fill: currentColor;
-
     }
-
-
 
     /* Hide original code blocks that have code-open */
-
     .cell[data-code-open="true"] .sourceCode {
-
         display: none;
-
     }
-
-
 
     .cell[data-code-open="true"] .cell-output {
-
         display: none;
-
     }
-
-
 
     /* Animation */
-
     @keyframes modalFadeIn {
-
         from {
-
             opacity: 0;
-
             transform: scale(0.8);
-
         }
-
         to {
-
             opacity: 1;
-
             transform: scale(1);
-
         }
-
     }
-
-
 
     .code-modal.show .code-modal-content {
-
         animation: modalFadeIn 0.3s ease-out;
-
     }
-
-
 
     /* Responsive */
-
     @media (max-width: 768px) {
-
         .code-modal-content {
-
             width: 95%;
-
             margin: 2% auto;
-
             max-height: 90vh;
-
         }
-
-
 
         .code-modal-header {
-
             padding: 10px 15px;
-
         }
-
-
 
         .code-modal-body {
-
             padding: 15px;
-
         }
-
     }
-
 </style>
-
-
-
 <script>
-
     document.addEventListener('DOMContentLoaded', function() {
-
         // Function to create modal
-
         function createModal() {
-
             const modal = document.createElement('div');
-
             modal.className = 'code-modal';
-
             document.body.appendChild(modal);
-
             return modal;
-
         }
-
-
 
         // Create the modal
-
         const modal = createModal();
-
         const modalContent = modal.querySelector('.code-modal-content');
-
         const closeBtn = modal.querySelector('.code-modal-close');
-
         const codeElement = modal.querySelector('.code-modal-code');
-
         const outputElement = modal.querySelector('.code-modal-output');
 
-
-
         // Function to open modal
-
         function openModal(codeText, outputText, title = 'Code & Output') {
-
             modal.querySelector('.code-modal-title').textContent = title;
-
             codeElement.textContent = codeText;
-
             outputElement.textContent = outputText || 'No output';
-
             modal.style.display = 'block';
-
             setTimeout(() => modal.classList.add('show'), 10);
-
             document.body.style.overflow = 'hidden';
-
         }
-
-
 
         // Function to close modal
-
         function closeModal() {
-
             modal.classList.remove('show');
-
             setTimeout(() => {
-
                 modal.style.display = 'none';
-
                 document.body.style.overflow = '';
-
             }, 300);
-
         }
-
-
 
         // Event listeners for modal
-
         closeBtn.addEventListener('click', closeModal);
 
-
-
         // Copy functionality
-
         const copyCodeBtn = modal.querySelector('#copy-code-btn');
-
         const copyOutputBtn = modal.querySelector('#copy-output-btn');
 
-
-
         copyCodeBtn.addEventListener('click', async function() {
-
             try {
-
                 await navigator.clipboard.writeText(codeElement.textContent);
-
                 copyCodeBtn.innerHTML = `
-
                     <svg class="copy-icon" viewBox="0 0 24 24">
-
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-
                     </svg>
-
                     Copied!
-
                 `;
-
                 copyCodeBtn.classList.add('copied');
-
                 setTimeout(() => {
-
                     copyCodeBtn.innerHTML = `
-
                         <svg class="copy-icon" viewBox="0 0 24 24">
-
                             <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-
                         </svg>
-
                         Copy
-
                     `;
-
                     copyCodeBtn.classList.remove('copied');
-
                 }, 2000);
-
             } catch (err) {
-
                 console.error('Failed to copy code:', err);
-
             }
-
         });
-
-
 
         copyOutputBtn.addEventListener('click', async function() {
-
             try {
-
                 await navigator.clipboard.writeText(outputElement.textContent);
-
                 copyOutputBtn.innerHTML = `
-
                     <svg class="copy-icon" viewBox="0 0 24 24">
-
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-
                     </svg>
-
                     Copied!
-
                 `;
-
                 copyOutputBtn.classList.add('copied');
-
                 setTimeout(() => {
-
                     copyOutputBtn.innerHTML = `
-
                         <svg class="copy-icon" viewBox="0 0 24 24">
-
                             <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-
                         </svg>
-
                         Copy
-
                     `;
-
                     copyOutputBtn.classList.remove('copied');
-
                 }, 2000);
-
             } catch (err) {
-
                 console.error('Failed to copy output:', err);
-
             }
-
         });
-
-
 
         modal.addEventListener('click', function(e) {
-
             if (e.target === modal) {
-
                 closeModal();
-
             }
-
         });
-
-
 
         document.addEventListener('keydown', function(e) {
-
             if (e.key === 'Escape' && modal.style.display === 'block') {
-
                 closeModal();
-
             }
-
         });
 
-
-
         // Function to extract title from Quarto cell metadata
-
         function extractTitleFromCell(cell) {
-
             // Look for code-modal-title in various places
-
             let title = null;
 
-
-
             // 1. Check for data attribute on the cell
-
             if (cell.hasAttribute('data-code-modal-title')) {
-
                 title = cell.getAttribute('data-code-modal-title');
-
             }
-
-
 
             // 2. Check for code-modal-title in cell options (Quarto metadata)
-
             const cellOptions = cell.querySelector('.cell-meta, .cell-code-meta');
-
             if (cellOptions && !title) {
-
                 const optionsText = cellOptions.textContent;
-
                 const titleMatch = optionsText.match(/code-modal-title:\s*["']([^"']+)["']/);
-
                 if (titleMatch) {
-
                     title = titleMatch[1];
-
                 }
-
             }
-
-
 
             // 3. Look for title in HTML comments (Quarto sometimes puts metadata there)
-
             const htmlContent = cell.innerHTML;
-
             const commentMatch = htmlContent.match(/<!--.*?code-modal-title:\s*["']([^"']+)["'].*?-->/s);
-
             if (commentMatch && !title) {
-
                 title = commentMatch[1];
-
             }
-
-
 
             // 4. Look for title in the cell's script tags or data attributes
-
             const scripts = cell.querySelectorAll('script[type="application/json"]');
-
             scripts.forEach(script => {
-
                 if (!title) {
-
                     try {
-
                         const data = JSON.parse(script.textContent);
-
                         if (data['code-modal-title']) {
-
                             title = data['code-modal-title'];
-
                         }
-
                     } catch (e) {
-
                         // Ignore JSON parse errors
-
                     }
-
                 }
-
             });
-
-
 
             // 5. Look in the raw text content for the pattern
-
             if (!title) {
-
                 const rawText = cell.textContent;
-
                 const rawMatch = rawText.match(/code-modal-title:\s*["']?([^"'\n]+)["']?/);
-
                 if (rawMatch) {
-
                     title = rawMatch[1].trim().replace(/["']/g, '');
-
                 }
-
             }
-
-
 
             // 6. Alternative pattern matching for YAML-like syntax
-
             if (!title) {
-
                 const yamlMatch = htmlContent.match(/code-modal-title:\s*(.+)/);
-
                 if (yamlMatch) {
-
                     title = yamlMatch[1].trim().replace(/["']/g, '');
-
                 }
-
             }
 
-
-
             return title;
-
         }
-
-
 
         // Function to process code blocks with code-open attribute
-
         function processCodeOpenBlocks() {
-
             // Look for cells with code-open attribute in Quarto
-
             const cells = document.querySelectorAll('.cell');
 
-
-
             cells.forEach((cell, index) => {
-
                 // Skip if already processed
-
                 if (cell.hasAttribute('data-processed')) return;
 
-
-
                 // Check if this cell should have code-open functionality
-
                 const hasCodeOpen = cell.querySelector('[data-code-open="true"]') ||
-
                     cell.hasAttribute('data-code-open') ||
-
                     cell.innerHTML.includes('code-open: true') ||
-
                     cell.textContent.includes('code-open: true');
 
-
-
                 if (hasCodeOpen) {
-
                     // Mark the cell as processed
-
                     cell.setAttribute('data-code-open', 'true');
-
                     cell.setAttribute('data-processed', 'true');
 
-
-
                     // Extract custom title
-
                     const customTitle = extractTitleFromCell(cell);
 
-
-
                     // Find source code
-
                     const sourceCode = cell.querySelector('.sourceCode code, pre code, .r code');
-
                     const codeText = sourceCode ? sourceCode.textContent : '';
 
-
-
                     // Find output
-
                     const outputElements = cell.querySelectorAll('.cell-output pre, .cell-output .output');
-
                     let outputText = '';
-
                     outputElements.forEach(output => {
-
                         outputText += output.textContent + '\n';
-
                     });
-
-
 
                     // Create open button
-
                     const openBtn = document.createElement('button');
-
                     openBtn.className = 'code-open-btn';
-
                     openBtn.textContent = 'View Code & Output';
 
-
-
                     openBtn.addEventListener('click', function() {
-
                         // Use custom title if available, otherwise default
-
                         const title = customTitle || `Code Block ${index + 1}`;
-
                         openModal(codeText, outputText.trim(), title);
-
                     });
 
-
-
                     // Insert button at the beginning of the cell
-
                     cell.insertBefore(openBtn, cell.firstChild);
-
                 }
-
             });
-
         }
 
-
-
         // Alternative approach for direct code blocks
-
         function processDirectCodeBlocks() {
-
             const codeBlocks = document.querySelectorAll('pre code');
 
-
-
             codeBlocks.forEach(code => {
-
                 const preElement = code.parentElement;
-
                 const container = preElement.parentElement;
 
-
-
                 // Skip if already processed
-
                 if (container.hasAttribute('data-processed')) return;
 
-
-
                 // Check for code-open in various ways
-
                 if (container.hasAttribute('data-code-open') ||
-
                     container.classList.contains('code-open') ||
-
                     preElement.hasAttribute('data-code-open') ||
-
                     container.innerHTML.includes('code-open: true')) {
 
-
-
                     // Mark as processed
-
                     container.setAttribute('data-processed', 'true');
 
-
-
                     // Extract custom title
-
                     const customTitle = extractTitleFromCell(container);
-
-
 
                     const codeText = code.textContent;
 
-
-
                     // Look for adjacent output
-
                     let outputText = '';
-
                     let nextElement = container.nextElementSibling;
-
                     if (nextElement && (nextElement.tagName === 'PRE' || nextElement.classList.contains('output'))) {
-
                         outputText = nextElement.textContent;
-
                     }
-
-
 
                     // Create and insert button
-
                     const openBtn = document.createElement('button');
-
                     openBtn.className = 'code-open-btn';
-
                     openBtn.textContent = 'View Code & Output';
 
-
-
                     openBtn.addEventListener('click', function() {
-
                         const title = customTitle || 'Code Block';
-
                         openModal(codeText, outputText, title);
-
                     });
 
-
-
                     // Hide original and add button
-
                     container.style.display = 'none';
-
                     if (nextElement && outputText) {
-
                         nextElement.style.display = 'none';
-
                     }
 
-
-
                     container.parentElement.insertBefore(openBtn, container);
-
                 }
-
             });
-
         }
-
-
 
         // Run processing functions
-
         processCodeOpenBlocks();
-
         processDirectCodeBlocks();
 
-
-
         // Also run after a short delay to catch dynamically loaded content
-
         setTimeout(() => {
-
             processCodeOpenBlocks();
-
             processDirectCodeBlocks();
-
         }, 1000);
 
-
-
         // Run again after a longer delay for slow-loading content
-
         setTimeout(() => {
-
             processCodeOpenBlocks();
-
             processDirectCodeBlocks();
-
         }, 3000);
-
     });
-
-
 
     // Manual function to add code-open functionality
-
     function addCodeOpen(codeElement, outputElement, title) {
-
         const openBtn = document.createElement('button');
-
         openBtn.className = 'code-open-btn';
-
         openBtn.textContent = 'View Code & Output';
 
-
-
         openBtn.addEventListener('click', function() {
-
             const codeText = codeElement.textContent;
-
             const outputText = outputElement ? outputElement.textContent : '';
 
-
-
             // Trigger the modal (assuming the modal is already created)
-
             const modal = document.querySelector('.code-modal');
-
             if (modal) {
-
                 const event = new CustomEvent('openCodeModal', {
-
                     detail: { codeText, outputText, title }
-
                 });
-
                 document.dispatchEvent(event);
-
             }
-
         });
 
-
-
         return openBtn;
-
     }
 
-
-
     // Listen for custom events
-
     document.addEventListener('openCodeModal', function(e) {
-
         const { codeText, outputText, title } = e.detail;
-
         const modal = document.querySelector('.code-modal');
-
         if (modal) {
-
             modal.querySelector('.code-modal-title').textContent = title || 'Code & Output';
-
             modal.querySelector('.code-modal-code').textContent = codeText;
-
             modal.querySelector('.code-modal-output').textContent = outputText || 'No output';
-
             modal.style.display = 'block';
-
             setTimeout(() => modal.classList.add('show'), 10);
-
             document.body.style.overflow = 'hidden';
-
         }
-
     });
-
-</script>
-
-
-
-<script id="quarto-html-after-body" type="application/javascript">
+</script><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -4293,23 +2281,21 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
-  </script>
+  </script><script src="https://utteranc.es/client.js" repo="joshuamarie/joshuamarie.github.io" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
 </div> <!-- /content -->
-<footer class="footer">
-  <div class="nav-footer">
+<footer class="footer"><div class="nav-footer">
     <div class="nav-footer-left">
       &nbsp;
     </div>   
     <div class="nav-footer-center">
 <p>Design inspired by <a href="https://github.com/statichunt/geeky-hugo">Geeky Hugo</a></p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/edit/main/posts/19-rng-r/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/joshuamarie/joshuamarie.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
-
-
 
 
 </body></html>

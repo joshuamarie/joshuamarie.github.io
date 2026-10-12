@@ -9,6 +9,10 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  CRAN_REPO: https://packagemanager.posit.co/cran/__linux__/noble/latest
+  RENV_CONFIG_REPOS_OVERRIDE: https://packagemanager.posit.co/cran/__linux__/noble/latest
+
 jobs:
   snapshot:
     runs-on: ubuntu-latest
@@ -17,18 +21,39 @@ jobs:
 
       - uses: r-lib/actions/setup-r@v2
         with:
+          r-version: "4.5.1"
           use-public-rspm: true
 
-      # Restores whatever is already in renv.lock
-      - uses: r-lib/actions/setup-renv@v2
-
-      - name: Install packages used by the QMDs, then snapshot
+      - name: Restore, fill in missing packages, snapshot
         shell: Rscript {0}
         run: |
-          deps <- unique(renv::dependencies(quiet = TRUE)$Package)
-          missing <- setdiff(deps, rownames(installed.packages()))
-          if (length(missing)) renv::install(missing)
-          renv::snapshot(type = "implicit", prompt = FALSE)
+          options(repos = c(CRAN = Sys.getenv("CRAN_REPO")))
+          lib = Sys.getenv("R_LIBS_USER")
+          dir.create(lib, recursive = TRUE, showWarnings = FALSE)
+          .libPaths(c(lib, .libPaths()))
+
+          install.packages("renv", lib = lib)
+          renv::restore(library = lib, prompt = FALSE)
+
+          needed = unique(
+              c(
+                  "knitr", 
+                  "rmarkdown", 
+                  "downlit", 
+                  "xml2",
+                  renv::dependencies(quiet = TRUE)$Package
+              )
+          )
+          needed = intersect(needed, rownames(available.packages()))
+          missing = setdiff(needed, rownames(installed.packages()))
+          if (length(missing)) install.packages(missing, lib = lib)
+
+          renv::snapshot(
+              library = lib, 
+              lockfile = "renv.lock",
+              type = "implicit", 
+              prompt = FALSE
+          )
 
       - name: Open PR if the lockfile changed
         uses: peter-evans/create-pull-request@v6
@@ -38,4 +63,3 @@ jobs:
           title: "chore: update renv.lock"
           body: "Automated renv snapshot of packages used in the QMD files."
           add-paths: renv.lock
-  

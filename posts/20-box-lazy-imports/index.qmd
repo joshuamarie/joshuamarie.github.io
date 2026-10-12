@@ -1,0 +1,43 @@
+---
+title: "New lazy imports in {box}"
+subtitle: "Learn to begin with lazy imports"
+date: "2026-10-12"
+image: "image.png"
+categories: [R, box, programming, modules, packages]
+format:
+    html:
+        toc: true
+        toc-float: true
+        toc-depth: 3
+        number-sections: true
+        code-fold: false
+        code-tools: false
+        theme: default
+        fig-width: 10
+        fig-height: 6
+        fig-cap-location: bottom
+execute:
+    echo: true
+    warning: false
+    message: false
+filters:
+    - social-share
+    - collapse-output
+share:
+    permalink: "https://joshuamarie.com/posts/20-box-lazy-imports"
+    description: "Lazy imports in {box} R - Joshua Marie"
+    twitter: true
+    facebook: true
+    reddit: true
+    stumble: true
+    tumblr: true
+    linkedin: true
+    email: true
+    mastodon: true
+    bsky: true
+    location: "before-body"
+engine: knitr
+---
+
+***Under Construction...***
+

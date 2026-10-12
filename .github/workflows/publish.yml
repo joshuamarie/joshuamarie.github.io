@@ -32,6 +32,14 @@ jobs:
         with:
           r-version: "4.5.1"
           use-public-rspm: true
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python packages
+        if: hashFiles('requirements.txt') != ''
+        run: pip install -r requirements.txt
 
       - name: Cache R packages
         uses: actions/cache@v4

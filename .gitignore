@@ -8,5 +8,7 @@
 *.pyc
 *.pyo
 *.pyd
+_site/
+docs/
 
 **/*.quarto_ipynb

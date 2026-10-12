@@ -49,7 +49,7 @@ jobs:
           if (length(missing)) install.packages(missing, lib = lib)
 
           renv::snapshot(
-              library = lib, 
+              library = .libPaths(), 
               lockfile = "renv.lock",
               type = "implicit", 
               prompt = FALSE

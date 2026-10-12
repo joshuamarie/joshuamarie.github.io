@@ -55,11 +55,13 @@ jobs:
               prompt = FALSE
           )
 
-      - name: Open PR if the lockfile changed
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: chore/renv-snapshot
-          commit-message: "chore: update renv.lock"
-          title: "chore: update renv.lock"
-          body: "Automated renv snapshot of packages used in the QMD files."
-          add-paths: renv.lock
+      - name: Commit lockfile if it changed
+        run: |
+          if [[ -n "$(git status --porcelain renv.lock)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add renv.lock
+            git commit -m "chore: update renv.lock"
+            git pull --rebase --autostash
+            git push
+          fi

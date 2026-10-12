@@ -5,7 +5,7 @@ project:
     - CNAME
 
 execute: 
-  freeze: true
+  freeze: auto
 
 website:
   title: "Joshua Marie"

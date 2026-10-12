@@ -21,6 +21,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: quarto-dev/quarto-actions/setup@v2
+      
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.5.1'
+          use-public-rspm: true
 
       # `execute: freeze: true` + committed _freeze/ means no R/Python is needed.
       # If you ever want CI to re-execute code, uncomment the R block below.

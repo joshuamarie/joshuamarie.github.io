@@ -1,6 +1,6 @@
 ---
-title: "New lazy imports in {box}"
-subtitle: "Learn to begin with lazy imports"
+title: "New behooveful features for {box} modules"
+subtitle: "Another ways to write {box} modules"
 date: "2026-10-12"
 image: "image.png"
 categories: [R, box, programming, modules, packages]
@@ -25,7 +25,7 @@ filters:
     - collapse-output
 share:
     permalink: "https://joshuamarie.com/posts/20-box-lazy-imports"
-    description: "Lazy imports in {box} R - Joshua Marie"
+    description: "New features in {box} R - Joshua Marie"
     twitter: true
     facebook: true
     reddit: true

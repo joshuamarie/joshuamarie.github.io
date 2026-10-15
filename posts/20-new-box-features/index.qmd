@@ -6,7 +6,6 @@ author: "Joshua Marie"
 date: "2026-10-12"
 image: "image.png"
 categories: [R, box, programming, modules, packages]
-draft: true
 format:
     html:
         toc: true
@@ -37,10 +36,7 @@ share:
 engine: knitr
 ---
 
-::: {.callout-warning}
-## Under construction
-This post is a work in progress.
-:::
+<!-- Under construction -->
 
 # Rationale
 

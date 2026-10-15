@@ -1,9 +1,12 @@
 ---
 title: "New behooveful features for {box} modules"
-subtitle: "Another ways to write {box} modules"
+subtitle: "Other ways to write {box} modules"
+description: "Packaging, lazy imports, and native code for {box} modules."
+author: "Joshua Marie"
 date: "2026-10-12"
 image: "image.png"
 categories: [R, box, programming, modules, packages]
+draft: true
 format:
     html:
         toc: true
@@ -13,9 +16,6 @@ format:
         code-fold: false
         code-tools: false
         theme: default
-        fig-width: 10
-        fig-height: 6
-        fig-cap-location: bottom
 execute:
     echo: true
     warning: false
@@ -24,20 +24,294 @@ filters:
     - social-share
     - collapse-output
 share:
-    permalink: "https://joshuamarie.com/posts/20-box-lazy-imports"
-    description: "New features in {box} R - Joshua Marie"
+    permalink: "https://joshuamarie.com/posts/20-new-box-features"
+    description: "New features in {box} for R — Joshua Marie"
     twitter: true
     facebook: true
     reddit: true
-    stumble: true
     tumblr: true
     linkedin: true
     email: true
     mastodon: true
-    bsky: true
     location: "before-body"
 engine: knitr
 ---
 
-***Under Construction...***
+::: {.callout-warning}
+## Under construction
+This post is a work in progress.
+:::
+
+# Rationale
+
+R keeps growing, and its ecosystem is a big part of why. A talented community keeps writing R code that improves the language for everyone else, and it ships that code as R packages. Reusable code can be organized in a few ways, but I am not fond of the native options. I even ranked the [ways to import R packages](https://joshuamarie.com/posts/06-load-pkg/) in an earlier post, with the native functionality at the bottom of the list.
+
+First, `library()`. It attaches a package's exported names to the search path, which is not the same as importing them into a local scope. The attached `package:dplyr` environment sits right after the global environment, so code anywhere in your session sees those names. This causes collisions: attaching `{dplyr}` masks `filter()` and `lag()` from `{stats}`. You also cannot confine an attach to a function. Take this example:
+
+``` r
+cv_data = function(data, ...) {
+    library(dplyr)
+    library(tidyr)
+    library(tidyselect)
+
+    data |>
+        select(...) |>
+        select(where(is.numeric)) |>
+        pivot_longer(
+            cols = everything(),
+            names_to = "var",
+            values_to = "val"
+        ) |>
+        group_by(var) |>
+        summarise(
+            m = mean(val, na.rm = TRUE),
+            sd = sd(value, na.rm = TRUE),
+            cv = (sd / m) * 100,
+            # .by = var
+        )
+}
+```
+
+`iris |> cv_data(everything())` works, but it also leaves `{dplyr}` and `{tidyr}` attached for the rest of the session, so the imports leak out of the function. The native `::` operator (`dplyr::select()`) avoids the attach, but it gets noisy in pipelines and gives you no aliasing or selective import. `box::use(dplyr[select, group_by])` gives you both.
+
+Then there is `source()`, the native way to reuse a local script. By default, it evaluates in the global environment (`local = FALSE`). With `local = TRUE` it evaluates in the calling environment instead, but you still get no namespace, no explicit import list, and no way to tell where a name came from. Neither `library()` nor `source()` makes R modular.
+
+Second, little in native R is ergonomic for writing and organizing code. R has the package system, but here are the shortcomings I have observed:
+
+1. Traditional R packages do not support hierarchical nesting of code. The source container is the flat `R/` directory, an awkward constraint (Disclaimer: in my opinion) when you come from Python, where folders and scripts map directly onto nestable packages and modules.
+
+2. They need boilerplate: `DESCRIPTION`, `NAMESPACE`, and a formal package structure, even for a small reusable unit. `{usethis}` and `{roxygen2}` generate most of it, so this is not a huge deal, but it is still friction.
+
+3. Source files in a CRAN-style package are evaluated into one shared package namespace. The order follows the `Collate` field in `DESCRIPTION`, and without it, files are evaluated by the *lexicographical/alphabetical order* of the file name (see the [roxygen2 article on collation](https://roxygen2.r-lib.org/articles/collate.html)). This gets more annoying as the code grows. By contrast, each `{box}` module lives in its own isolated namespace and is loaded with `box::use()`, not sourced into the calling environment.
+
+# "Futuristic" Aspects
+
+I have been contributing to `{box}` lately, as I am aiming to the future for a better way to write, organize, and reuse R code for the past years. Over the past 8 months I built `{baler}`, a CLI tool written in Rust, to package and distribute `{box}` modules. There is no formal name for these packages, so I call them `box-bale` modules for now. I am biased, but I recommend writing packages this way. I won't list every reason here (the [official documentation](https://baler-dev.github.io/baler/) does), but in a nutshell, its logic and interface resemble `pip` in Python: it takes versioning seriously, and you can lock the dependency structure of `box-bale` modules.
+
+I wrote `{baler}` to give `{box}` modules a path to being packaged the way Python modules are, and I also contributed to `{box}` itself. There I proposed lazy imports through a `~` prefix on the leftmost side of a declared import. The idea comes from [PEP 810](https://peps.python.org/pep-0810/), which shipped in Python 3.15 in October 2026 with a `lazy import` keyword. Since `box::use()` is an ordinary R function call, a keyword is not an option, so `~` is the R adaptation. I'll discuss it later.
+
+These new features in `{box}` are not just something I want. I need them (as the title suggests).
+
+![](spongebob-meme-i-need-it.gif){fig-alt="SpongeBob meme: I need it"}
+
+# Making packages out of them
+
+Imagine you are in Python or Julia. With `baler`, you can now turn `{box}` modules into packages, with a procedure close to Python's. Yes, assuming you are on the existing directory, run one of the following:
+
+1.  Without a source code directory:
+
+    ``` bash
+    baler init
+    ```
+
+2.  With an existing source code directory:
+
+    ``` bash
+    baler init --src <directory-name>
+    ```
+
+`baler init` always writes the metadata file, `baler.toml`, which is similar to `DESCRIPTION` in a CRAN-style R package.
+
+## Declaring dependencies
+
+`baler.toml` is where a module declares what it needs: R packages in `[dependencies]`, and other modules in `[dependencies.baler]`. Version constraints use the same style you would see in `pip` or Cargo.
+
+``` toml
+[dependencies]
+dplyr = ">=1.1.0"
+tidyr = "*"
+```
+
+## Installing modules
+
+There are few ways to install `box-bale` module. First, open this to let me warn you:
+
+::: {.callout-warning title="Warning" collapse="true"}
+You can install `baler install <name-of-the-module>`, an ordinary way. The registry for `box-bale` modules, however, its infrastructure haven't built yet. Thus, stay with the alternative ways to be discussed below.
+:::
+
+1.  You want to install the module within the path:
+
+    ``` bash
+    baler install --path .
+    baler install --path <name-of-the-module>_<version>.tar.gz
+    baler install --path . --install-deps
+    ```
+
+2.  Installing the source from GitHub
+
+    ``` bash
+    baler install --git <GitHub URL> 
+    baler install --git <GitHub URL> --branch <Git Branch>
+    baler install --git <GitHub URL> --tag <GitHub tag>
+    baler install --git <GitHub URL> --module-dir <dir>
+    baler install --git <GitHub URL> --module-dir <dir> --tag <GitHub tag>
+    ```
+
+3.  Installing the archived tarball directly in a URL
+
+    ``` bash
+    baler install --url <url.tar.gaz>
+    ```
+
+An installed module behaves like a package, so you load it with `box::use()` as usual:
+
+``` r
+box::use(module_name[some_function])
+```
+
+## Locking dependencies
+
+Like `pip freeze` or `uv lock`, `{baler}` can record the exact resolved dependency tree in `baler.lock`. Locking is opt-in by presence: if `baler.lock` exists, it is used, otherwise will rely on the `baler.toml`. Record the dependency tree by running the following, assuming you are in a current directory `.`: 
+
+``` bash
+baler lock                      # No need to place `.` since that's the value by default
+baler lock --with-rver          # If you wanna record R version you are working in
+baler lock --update             # Updates the lockfile and re-resolves the dependency tree
+```
+
+Commit `baler.lock` to version control, so everyone on the project gets the same dependency structure.
+
+# Lazy Imports
+
+By default, `box::use()` loads everything it is given at the moment it runs. If a module imports a heavy package that only one rarely used function needs, you pay the loading cost on every run, even when that function is never called. Lazy imports defer that cost until the name is first used.
+
+## The `~` prefix
+
+Put `~` in front of an import to make it lazy. Imports without it behave as before:
+
+``` r
+box::use(
+    ~ dplyr,
+    tidyr
+)
+```
+
+Here `dplyr` is only loaded when something from it is first accessed, while `tidyr` is loaded immediately. This is the same idea as the `lazy` keyword in Python 3.15:
+
+``` python
+lazy import json
+import os
+```
+
+The prefix works on everything you can pass to `box::use()`: packages, local modules, submodules, and modules installed with `{baler}`.
+
+## Toy Example
+
+Let's start with a toy example...
+
+## Rules
+
+`~` is a marker on a whole import declaration, not an operator. It is valid only as a single, outermost prefix:
+
+``` r
+# Valid
+box::use(~ dplyr)
+box::use(~ dplyr[select, mutate])
+box::use(~ ./utils)
+box::use(~ ./utils[fn])
+
+# Invalid
+box::use(~~dplyr)
+box::use(./a/~b)
+box::use(a ~ b)
+box::use(~ dplyr[...])
+```
+
+The last line is rejected too: a lazy import cannot use the `[...]` wildcard, because attaching every export requires loading the package to know what they are. Python has the same restriction for `lazy from module import *`.
+
+## Trade-offs
+
+Lazy imports are not free:
+
+-   Errors move. A missing or broken package fails at first use, not at `box::use()`.
+-   Side effects move. Anything a package does when it loads, such as setting options, happens later.
+-   Packages you always need gain nothing. Keep those eager.
+
+## Try it
+
+The lazy imports pull request has been submitted to `{box}` and is awaiting merge. Until then, you can try it from my fork:
+
+``` r
+# install.packages('pak')
+pak::pak("joshuamarie/box@feature/lazy-imports")
+```
+
+<!-- VERIFY: fork owner and branch name -->
+
+# Not exactly new but astral
+
+Not exactly new, but worth showing with `{baler}` and `{box}` together: three things that other languages made routine, now available for R modules.
+
+## Writing native compiled code
+
+A module can ship compiled code, such as Rcpp. With `{baler}`, you declare it in `baler.toml`, and `baler install` builds and caches the compiled code automatically, with no manual steps:
+
+``` toml
+[compiled-code]
+# path = ["src/"]
+binary = true
+keep_source = true
+
+[compiled-code.build-deps]
+Rcpp = ">=1.1.0"
+RcppEigen = "*"
+```
+
+`build-deps` lists the packages needed to compile the code. Since the build is cached, users do not recompile on every install. As with any Rcpp code, a compiler toolchain is still needed on the machine that builds it (Rtools on Windows).
+
+## The `if __name__ == '__main__'` idiom, but for `{box}`
+
+In Python, this idiom lets a file act as both an importable module and a runnable script:
+
+``` python
+def main():
+    print("running")
+
+if __name__ == "__main__":
+    main()
+```
+
+`{box}` has an equivalent. `box::name()` returns `NULL` when a file runs as a script, and the module name when it is imported:
+
+``` r
+box::use(./utils[clean])
+
+main = function() {
+    clean()
+}
+
+if (is.null(box::name())) {
+    main()
+}
+```
+
+Run it with `Rscript path/to/file.r` and `main()` executes. Import it from another module with `box::use(./file[main])` and nothing runs until you call it.
+
+## Testing modules
+
+Tests are plain `{testthat}` files that import the module under test with `box::use()`:
+
+``` r
+box::use(
+    ../R/stats_utils[cv]
+)
+
+test_that("cv is zero for constant input", {
+    expect_equal(cv(c(2, 2, 2)), 0)
+})
+```
+
+Run it with `testthat::test_file()`. If you edit a module during a session, `box::reload()` picks up the change without restarting R.
+
+# Conclusion
+
+# References {.unnumbered}
+
+-   Rudolph, K. `{box}`: Write Reusable, Composable and Modular R Code. Official documentation: <https://klmr.me/box/>. Source: <https://github.com/klmr/box>. The "Using compiled code" and "Testing modules" vignettes are the relevant ones for the last section.
+-   `{baler}` official documentation: <https://baler-dev.github.io/baler/>
+-   PEP 810, Explicit lazy imports: <https://peps.python.org/pep-0810/>
+-   Roxygen2, Collation: <https://roxygen2.r-lib.org/articles/collate.html>
+-   Marie, J. Ways to import R packages: <https://joshuamarie.com/posts/06-load-pkg/>
+-   Marie, J., Bagnol, J. Box: Alternative Module System in R 2e: <https://modules-in-r.joshuamarie.com/>
 

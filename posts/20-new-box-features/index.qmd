@@ -92,7 +92,143 @@ These new features in `{box}` are not just something I want. I need them (as the
 
 # Making packages out of them
 
-Imagine you are in Python or Julia. With `baler`, you can now turn `{box}` modules into packages, with a procedure close to Python's. Yes, assuming you are on the existing directory, run one of the following:
+Imagine you are in Python or Julia. With `baler`, you can now turn `{box}` modules into packages, with a procedure close to Python's. So, if I were to recreate `{tidyverse}` framework, from a meta package to an actual module syncing with `{baler}`, first, this would be the structure:
+
+::: {.callout-note title="Click to see more" collapse="true" icon="false"}
+```
+tidyverse/
+├── __init__.r                          # Top-level façade – re-exports the main packages
+│
+├── dplyr/
+│   ├── __init__.r                      # Public dplyr API
+│   ├── verbs/
+│   │   ├── __init__.r
+│   │   ├── rows.r                      # filter, arrange, distinct, slice_*, sample_*
+│   │   ├── columns.r                   # select, rename, relocate, mutate, transmute, pull
+│   │   ├── groups.r                    # group_by, ungroup, summarise, reframe, count, tally, rowwise
+│   │   └── joins.r                     # *_join, bind_rows, bind_cols, set operations
+│   ├── helpers/
+│   │   ├── __init__.r
+│   │   ├── select.r                    # tidyselect helpers (starts_with, where, etc.)
+│   │   ├── vector.r                    # if_else, case_when, coalesce, between, lead/lag, ranking
+│   │   └── context.r                   # n(), cur_*, across, c_across, pick
+│   ├── backend/                        # Lower-level / less common (optional)
+│   │   └── __init__.r
+│   └── data.r                          # starwars, storms, band_members, etc.
+│
+├── tidyr/
+│   ├── __init__.r
+│   ├── pivoting.r                      # pivot_longer, pivot_wider
+│   ├── nesting.r                       # nest, unnest, unpack, hoist
+│   ├── missing.r                       # drop_na, fill, replace_na
+│   ├── expanding.r                     # complete, expand, crossing, nesting
+│   ├── separating.r                    # separate, unite, extract, separate_rows
+│   └── helpers.r                       # everything else (chop, pack, etc.)
+│
+├── ggplot2/
+│   ├── __init__.r
+│   ├── core.r                          # ggplot, aes, %+%, layer
+│   ├── geoms/
+│   │   ├── __init__.r
+│   │   ├── basic.r                     # geom_point, geom_line, geom_bar, geom_col, geom_histogram...
+│   │   ├── statistical.r               # geom_smooth, geom_boxplot, geom_violin, geom_density...
+│   │   └── specialized.r               # geom_sf, geom_raster, geom_tile, etc.
+│   ├── scales/
+│   │   ├── __init__.r
+│   │   ├── continuous.r
+│   │   ├── discrete.r
+│   │   └── date.r
+│   ├── themes/
+│   │   ├── __init__.r
+│   │   ├── built_in.r                  # theme_bw, theme_minimal, theme_void...
+│   │   └── elements.r                  # theme(), element_*, margin, etc.
+│   ├── coords.r                        # coord_cartesian, coord_flip, coord_polar, coord_sf...
+│   ├── facets.r                        # facet_wrap, facet_grid
+│   ├── stats.r                         # stat_*, position_*
+│   └── guides.r                        # labs, guides, guide_*
+│
+├── tibble/
+│   ├── __init__.r
+│   ├── constructors.r                  # tibble, tribble, as_tibble, enframe, deframe
+│   ├── subsetting.r                    # [, [[, $, add_row, add_column
+│   └── printing.r                      # print methods, glimpse, view
+│
+├── readr/
+│   ├── __init__.r
+│   ├── readers.r                       # read_csv, read_tsv, read_delim, read_fwf, read_table...
+│   ├── writers.r                       # write_csv, write_tsv, write_delim...
+│   ├── parsing.r                       # parse_*, col_*, locale, problems
+│   └── helpers.r                       # type_convert, melt_csv, etc.
+│
+├── purrr/
+│   ├── __init__.r
+│   ├── map.r                           # map, map2, pmap, imap, map_*, walk*
+│   ├── reduce.r                        # reduce, accumulate, reduce2...
+│   ├── predicate.r                     # keep, discard, compact, every, some, none, detect...
+│   ├── pluck.r                         # pluck, chuck, pluck_depth, assign_in...
+│   ├── modify.r                        # modify, modify_if, modify_at, modify_depth...
+│   └── rate.r                          # slowly, insistently, rate_* (optional)
+│
+├── stringr/
+│   ├── __init__.r
+│   ├── detect.r                        # detect, which, subset, starts, ends
+│   ├── match.r                         # extract, match, locate, count
+│   ├── mutate.r                        # replace, replace_all, remove, sub
+│   ├── split.r                         # split, split_i, split_1
+│   ├── pad_trim.r                      # pad, trim, trunc, wrap
+│   ├── case.r                          # to_lower, to_upper, to_title, to_sentence
+│   └── helpers.r                       # c, length, order, sort, regex, fixed...
+│
+├── forcats/
+│   ├── __init__.r
+│   ├── reorder.r                       # reorder, reorder2, infreq, inorder...
+│   ├── recode.r                        # recode, collapse, lump*, other
+│   ├── level.r                         # relevel, expand, drop, unify
+│   └── helpers.r                       # as_factor, count, match, relabel...
+│
+└── lubridate/
+    ├── __init__.r
+    ├── parse.r                         # ymd, mdy, dmy, ymd_hms, parse_date_time...
+    ├── accessors.r                     # year, month, day, hour, minute, second, wday, yday...
+    ├── arithmetic.r                    # +, -, %m+%, %m-%, add_with_rollback...
+    ├── periods.r                       # years, months, weeks, days, hours... (duration/period)
+    ├── intervals.r                     # interval, int_start, int_end, int_length, %within%
+    ├── timezones.r                     # with_tz, force_tz, OlsonNames...
+    └── helpers.r                       # today, now, as_date, as_datetime, stamp...
+```
+:::
+
+And if I am going to import `{dplyr}`, for example, I simply would like to declare the following:
+
+``` r
+box::use(
+    tidyverse/dplyr,                          # 1
+    tidyverse/dplyr/verbs[...],               # 2
+    tidyverse/dplyr/helper/select[...]        # 3
+)
+```
+
+1.  Here, I would want to import the whole `{dplyr}` module without attaching names, just like the usual `library(dplyr)` in R. 
+2.  At times when I prefer all main `{dplyr}` verbs to be attached to the current environment while still not let everything in `{dplyr}` to get attached. I just do this. 
+3.  The same as 2 but for the exported names from `helper/select.r` submodule.
+
+I prefer this, now that you don't have to declare the exports from your package with some oddball fixes through prefixes, usually the way by many packages write (such as `fct_reorder()`, `fct_relevel()`, ..., from `{forcats}`). You can instead declare the names without the prefixes, then import the module without attaching the names, like the following:
+
+```{r}
+#| eval: false
+#| title: "Just an example"
+box::use(fct = tidyverse/forcats)
+
+set.seed(123)
+x = sample(letters[1:5], 50, replace = TRUE) |> 
+    factor(levels = letters[1:5])
+fct$count(x)
+fct$unique(x)
+```
+
+## To get started
+
+Assuming you are on the existing directory, run one of the following:
 
 1.  Without a source code directory:
 

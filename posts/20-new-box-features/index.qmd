@@ -198,7 +198,7 @@ tidyverse/
 ```
 :::
 
-And if I am going to import `{dplyr}`, for example, I simply would like to declare the following:
+And if I am going to need `{dplyr}`, for example, I simply would like to declare the imports through the following:
 
 ``` r
 box::use(
@@ -208,7 +208,7 @@ box::use(
 )
 ```
 
-1.  Here, I would want to import the whole `{dplyr}` module without attaching names, just like the usual `library(dplyr)` in R. 
+1.  Here, I would want to import the whole `{dplyr}` module without attaching names, unlike the usual `library(dplyr)` in R. 
 2.  At times when I prefer all main `{dplyr}` verbs to be attached to the current environment while still not let everything in `{dplyr}` to get attached. I just do this. 
 3.  The same as 2 but for the exported names from `helper/select.r` submodule.
 

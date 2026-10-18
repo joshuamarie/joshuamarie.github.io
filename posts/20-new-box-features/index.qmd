@@ -61,9 +61,8 @@ cv_data = function(data, ...) {
         group_by(var) |>
         summarise(
             m = mean(val, na.rm = TRUE),
-            sd = sd(value, na.rm = TRUE),
-            cv = (sd / m) * 100,
-            # .by = var
+            sd = sd(val, na.rm = TRUE),
+            cv = (sd / m) * 100
         )
 }
 ```
@@ -82,9 +81,9 @@ Second, little in native R is ergonomic for writing and organizing code. R has t
 
 # "Futuristic" Aspects
 
-I have been contributing to `{box}` lately, as I am aiming to the future for a better way to write, organize, and reuse R code for the past years. Over the past 8 months I built `{baler}`, a CLI tool written in Rust, to package and distribute `{box}` modules. There is no formal name for these packages, so I call them `box-bale` modules for now. I am biased, but I recommend writing packages this way. I won't list every reason here (the [official documentation](https://baler-dev.github.io/baler/) does), but in a nutshell, its logic and interface resemble `pip` in Python: it takes versioning seriously, and you can lock the dependency structure of `box-bale` modules.
+I have been contributing to `{box}` lately, because I want a better way to write, organize, and reuse R code, and I have wanted it for years. Over the past 8 months, I — though we started as a team, I am only left just for now — built `{baler}` (started as `{carrier}` BTW), a CLI tool written in Rust, to package and distribute `{box}` modules. There is no formal name for these packages, so I call them `box-bale` modules for now. I am biased, but I recommend writing packages this way. I won't list every reason here (the [official documentation](https://baler-dev.github.io/baler/) does), but in a nutshell, its logic and interface resemble `pip` in Python: it takes versioning seriously, and you can lock the dependency structure of `box-bale` modules.
 
-I wrote `{baler}` to give `{box}` modules a path to being packaged the way Python modules are, and I also contributed to `{box}` itself. There I proposed lazy imports through a `~` prefix on the leftmost side of a declared import. The idea comes from [PEP 810](https://peps.python.org/pep-0810/), which shipped in Python 3.15 in October 2026 with a `lazy import` keyword. Since `box::use()` is an ordinary R function call, a keyword is not an option, so `~` is the R adaptation. I'll discuss it later.
+I wrote `{baler}` to give `{box}` modules a path to being packaged the way Python modules are, and I also contributed to `{box}` itself. There I proposed lazy imports through a `~` prefix on the leftmost side of a declared import. The idea comes from [PEP 810](https://peps.python.org/pep-0810/), which shipped in Python 3.15 in October 2026 with the `lazy` soft keyword. Since `box::use()` is an ordinary R function call, a keyword is not an option, so `~` is the R adaptation. I'll discuss it later.
 
 These new features in `{box}` are not just something I want. I need them (as the title suggests).
 
@@ -92,12 +91,12 @@ These new features in `{box}` are not just something I want. I need them (as the
 
 # Making packages out of them
 
-Imagine you are in Python or Julia. With `baler`, you can now turn `{box}` modules into packages, with a procedure close to Python's. So, if I were to recreate `{tidyverse}` framework, from a meta package to an actual module syncing with `{baler}`, first, this would be the structure:
+With `{baler}`, you can now turn `{box}` modules into packages, with a procedure close to Python's. I like it because modules can be nested, and scripts and folders can depend on each other. If I were to recreate the `{tidyverse}` from a meta package into an actual module that syncs with `{baler}`, this would be the structure:
 
 ::: {.callout-note title="Click to see more" collapse="true" icon="false"}
 ```
 tidyverse/
-├── __init__.r                          # Top-level façade – re-exports the main packages
+├── __init__.r                          # Top-level facade: re-exports the main packages
 │
 ├── dplyr/
 │   ├── __init__.r                      # Public dplyr API
@@ -204,19 +203,19 @@ And if I am going to need `{dplyr}`, for example, I simply would like to declare
 box::use(
     tidyverse/dplyr,                          # 1
     tidyverse/dplyr/verbs[...],               # 2
-    tidyverse/dplyr/helper/select[...]        # 3
+    tidyverse/dplyr/helpers/select[...]       # 3
 )
 ```
 
 1.  Here, I would want to import the whole `{dplyr}` module without attaching names, unlike the usual `library(dplyr)` in R. 
-2.  At times when I prefer all main `{dplyr}` verbs to be attached to the current environment while still not let everything in `{dplyr}` to get attached. I just do this. 
-3.  The same as 2 but for the exported names from `helper/select.r` submodule.
+2.  When I want all the main `{dplyr}` verbs attached to the current environment, without attaching everything else in `{dplyr}`, I do this.
+3.  The same as 2, but for the names exported by the `helpers/select.r` submodule.
 
-I prefer this, now that you don't have to declare the exports from your package with some oddball fixes through prefixes, usually the way by many packages write (such as `fct_reorder()`, `fct_relevel()`, ..., from `{forcats}`). You can instead declare the names without the prefixes, then import the module without attaching the names, like the following:
+I prefer this because you no longer need prefixes to avoid namespace pollution, the workaround many packages use (such as `fct_reorder()` and `fct_relevel()` from `{forcats}`). Declare the names without prefixes, import the module without attaching its names, and give it an alias:
 
 ```{r}
 #| eval: false
-#| title: "Just an example"
+#| filename: "Just an example"
 box::use(fct = tidyverse/forcats)
 
 set.seed(123)
@@ -256,13 +255,13 @@ tidyr = "*"
 
 ## Installing modules
 
-There are few ways to install `box-bale` module. First, open this to let me warn you:
+There are a few ways to install a `box-bale` module. To begin with, let me provide you some warning:
 
 ::: {.callout-warning title="Warning" collapse="true"}
-You can install `baler install <name-of-the-module>`, an ordinary way. The registry for `box-bale` modules, however, its infrastructure haven't built yet. Thus, stay with the alternative ways to be discussed below.
+`baler install <name-of-the-module>` is the ordinary way to install a module, but it is reserved for modules hosted in a registry (think of CRAN). The registry for `box-bale` modules has not been built yet, so use the alternatives below.
 :::
 
-1.  You want to install the module within the path:
+1.  Install from a local path:
 
     ``` bash
     baler install --path .
@@ -280,10 +279,10 @@ You can install `baler install <name-of-the-module>`, an ordinary way. The regis
     baler install --git <GitHub URL> --module-dir <dir> --tag <GitHub tag>
     ```
 
-3.  Installing the archived tarball directly in a URL
+3.  Install an archived tarball from a URL:
 
     ``` bash
-    baler install --url <url.tar.gaz>
+    baler install --url <url.tar.gz>
     ```
 
 An installed module behaves like a package, so you load it with `box::use()` as usual:
@@ -294,23 +293,23 @@ box::use(module_name[some_function])
 
 ## Locking dependencies
 
-Like `pip freeze` or `uv lock`, `{baler}` can record the exact resolved dependency tree in `baler.lock`. Locking is opt-in by presence: if `baler.lock` exists, it is used, otherwise will rely on the `baler.toml`. Record the dependency tree by running the following, assuming you are in a current directory `.`: 
+Like `pip freeze` or `uv lock`, `{baler}` can record the exact resolved dependency tree in `baler.lock`. Locking is opt-in by presence: if `baler.lock` exists, it is used, otherwise `baler.toml` is used. Record the dependency tree by running one of the following from the module directory:
 
 ``` bash
-baler lock                      # No need to place `.` since that's the value by default
-baler lock --with-rver          # If you wanna record R version you are working in
-baler lock --update             # Updates the lockfile and re-resolves the dependency tree
+baler lock                      # The directory defaults to `.`
+baler lock --with-rver          # Also records the R version
+baler lock --update             # Re-resolves the dependency tree and updates the lockfile
 ```
 
 Commit `baler.lock` to version control, so everyone on the project gets the same dependency structure.
 
 # Lazy Imports
 
-By default, `box::use()` loads everything it is given at the moment it runs. If a module imports a heavy package that only one rarely used function needs, you pay the loading cost on every run, even when that function is never called. Lazy imports defer that cost until the name is first used.
+By default, `box::use()` loads everything it is given at the moment it runs. If a module imports a heavy package that only one rarely used function needs, you pay the loading cost on every run, even when that function is never called. Lazy imports defer that cost until the name is first used. The feature is submitted as a pull request to upstream `{box}`, and you can already try it (see below).
 
 ## The `~` prefix
 
-Put `~` in front of an import to make it lazy. Imports without it behave as before:
+Just place `~` in front of a declared import to make it lazy. Imports without it behave as before:
 
 ``` r
 box::use(
@@ -319,7 +318,7 @@ box::use(
 )
 ```
 
-Here `dplyr` is only loaded when something from it is first accessed, while `tidyr` is loaded immediately. This is the same idea as the `lazy` keyword in Python 3.15:
+Here `dplyr` is only loaded when something from it is first accessed, while `tidyr` is loaded immediately. This is the same idea as the `lazy` soft keyword from [PEP 810](https://peps.python.org/pep-0810/), which Python 3.15 now ships:
 
 ``` python
 lazy import json
@@ -328,13 +327,73 @@ import os
 
 The prefix works on everything you can pass to `box::use()`: packages, local modules, submodules, and modules installed with `{baler}`.
 
-## Toy Example
+## How it works
 
-Let's start with a toy example...
+Let's start with a toy example. Suppose you write a module, `heavy.r`, that announces itself when it is evaluated:
+
+``` r
+# heavy.r
+message("[heavy] module is loading")
+
+#' @export
+double = function(x) {
+    x * 2
+}
+```
+
+Then another module, `main.r`, imports it lazily:
+
+``` r
+# main.r
+box::use(
+    ~ ./heavy
+)
+
+message("[main] imports declared")
+print(heavy$double(21))
+message("[main] done")
+```
+
+Running `Rscript main.r` then prints:
+
+```
+[main] imports declared
+[heavy] module is loading
+[1] 42
+[main] done
+```
+
+`box::use()` binds the name `heavy` right away, but `heavy.r` is not evaluated yet. The module loads at the first access, `heavy$double()`, which is why `[heavy] module is loading` shows up between the two `[main]` messages. Drop the `~` and now the order flips, because the module loads while `box::use()` runs:
+
+```
+[heavy] module is loading
+[main] imports declared
+[1] 42
+[main] done
+```
+
+A lazy import that is never touched is never loaded. If `main.r` declares `~ ./heavy` but never uses `heavy`, the `[heavy]` message never appears.
+
+Lazy imports also work with an attach list. In `box::use(~ ./heavy[double])`, the name `double` is bound immediately, and `heavy.r` is evaluated the first time `double` is used:
+
+``` r
+box::use(~ ./heavy[double])
+
+message("[main] imports declared")
+print(double(21))
+```
+
+```
+[main] imports declared
+[heavy] module is loading
+[1] 42
+```
+
+This example needs the fork from [Try it](#try-it).
 
 ## Rules
 
-`~` is a marker on a whole import declaration, not an operator. It is valid only as a single, outermost prefix:
+`~` is a marker on a whole import declaration, rather than an operator. It is valid only as a single, outermost prefix:
 
 ``` r
 # Valid
@@ -356,7 +415,7 @@ The last line is rejected too: a lazy import cannot use the `[...]` wildcard, be
 
 Lazy imports are not free:
 
--   Errors move. A missing or broken package fails at first use, not at `box::use()`.
+-   Errors move. A missing package, or a module that throws while loading, fails at first use, not at `box::use()`. The exception is a module path that does not exist: the file is still located when `box::use()` runs, so that error appears right away.
 -   Side effects move. Anything a package does when it loads, such as setting options, happens later.
 -   Packages you always need gain nothing. Keep those eager.
 
@@ -368,8 +427,6 @@ The lazy imports pull request has been submitted to `{box}` and is awaiting merg
 # install.packages('pak')
 pak::pak("joshuamarie/box@feature/lazy-imports")
 ```
-
-<!-- VERIFY: fork owner and branch name -->
 
 # Not exactly new but astral
 
@@ -388,23 +445,26 @@ keep_source = true
 [compiled-code.build-deps]
 Rcpp = ">=1.1.0"
 RcppEigen = "*"
+BH = "*"
 ```
 
 `build-deps` lists the packages needed to compile the code. Since the build is cached, users do not recompile on every install. As with any Rcpp code, a compiler toolchain is still needed on the machine that builds it (Rtools on Windows).
 
 ## The `if __name__ == '__main__'` idiom, but for `{box}`
 
-In Python, this idiom lets a file act as both an importable module and a runnable script:
+In Python, this idiom lets a file act as both an importable module and a runnable script. Save the following code below as `run.py`: 
 
 ``` python
+from utils import clean
+
 def main():
-    print("running")
+    return clean()
 
 if __name__ == "__main__":
     main()
 ```
 
-`{box}` has an equivalent. `box::name()` returns `NULL` when a file runs as a script, and the module name when it is imported:
+`{box}` has an equivalent. `box::name()` returns `NULL` when a file runs as a script, and the module name when it is imported (save this as `run.r`: 
 
 ``` r
 box::use(./utils[clean])
@@ -418,25 +478,87 @@ if (is.null(box::name())) {
 }
 ```
 
-Run it with `Rscript path/to/file.r` and `main()` executes. Import it from another module with `box::use(./file[main])` and nothing runs until you call it.
+Run it with `Rscript path/to/run.r` and `main()` executes. Import it from another module with `box::use(./run[main])` and nothing runs until you call it.
 
 ## Testing modules
 
-Tests are plain `{testthat}` files that import the module under test with `box::use()`:
+It doesn't matter what R packages you used, you are free to write unit tests for modules. The most popular one is the `{testthat}`. A test file imports the module under test with `box::use()`, then calls its functions like any other code. Suppose the project looks like this:
+
+```
+my_project/
+├── R/
+│   ├── __init__.r
+│   └── stats_utils.r
+└── tests/
+    ├── __init__.r
+    └── test-stats_utils.r
+```
+
+Our example module under test, `R/stats_utils.r`, exports a coefficient of variation. A module only sees base R by default, so `sd()` has to be imported from `{stats}`:
 
 ``` r
 box::use(
-    ../R/stats_utils[cv]
+    stats[sd]
+)
+
+cv = function(x) {
+    sd(x) / mean(x) * 100
+}
+```
+
+The `__init__.r` file contains the attached `{testthat}` package — all the names are now used throughout `tests/` — and the `.on_load(ns)` hook, in which when `tests/` module is loaded and then the following code:
+
+``` r
+box::use(testthat[...])
+
+.on_load = function (ns) {
+    test_dir(box::file(), reporter = 'progress')
+}
+
+box::export()
+```
+
+All the tests you wrote are executed. The alternative way is to place
+
+``` r
+if (is.null(box::name())) {
+    box::use(./tests)
+}
+```
+
+at the bottom of `R/stats_utils.r`, so that when you execute this module by running `Rscript ./R/stats_utils.r`, all the tests will be run at once. 
+
+The test file, `tests/test-stats_utils.r`, imports that module:
+
+``` r
+box::use(
+    ../R/stats_utils,
+    stats[rnorm, rpois]
 )
 
 test_that("cv is zero for constant input", {
-    expect_equal(cv(c(2, 2, 2)), 0)
+    expect_equal(stats_utils$cv(c(2, 2, 2)), 0)
+})
+
+test_that("cv is working for all numeric data but not working for non-numeric data", {
+    set.seed(123)
+    x = rnorm(100, 0.97, 2)
+    y = rpois(100, 3.5)
+    groups = sample(letters[1:5], size = 50, replace = TRUE)
+    
+    expect_no_error(stats_utils$cv(x))
+    expect_no_error(stats_utils$cv(y))
+    expect_error(stats_utils$cv(groups))
 })
 ```
 
-Run it with `testthat::test_file()`. If you edit a module during a session, `box::reload()` picks up the change without restarting R.
+The path `../R/stats_utils` is relative to the test file, not to your working directory, so the test runs the same from anywhere. As what said above, the execution of the tests is via loading the `tests/` module, or by running `Rscript ./R/stats_utils.r` in case that the idiom exists, but the another alternative way where you only want to execute this test file. Here's the following code you need to place at the bottom of `R/stats_utils.r` script:
 
-# Conclusion
+``` r
+if (is.null(box::name())) {
+    testthat::test_file("tests/test-stats_utils.r")
+}
+```
 
 # References {.unnumbered}
 
@@ -446,4 +568,3 @@ Run it with `testthat::test_file()`. If you edit a module during a session, `box
 -   Roxygen2, Collation: <https://roxygen2.r-lib.org/articles/collate.html>
 -   Marie, J. Ways to import R packages: <https://joshuamarie.com/posts/06-load-pkg/>
 -   Marie, J., Bagnol, J. Box: Alternative Module System in R 2e: <https://modules-in-r.joshuamarie.com/>
-

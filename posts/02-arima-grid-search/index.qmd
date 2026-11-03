@@ -13,7 +13,7 @@ format:
     number-sections: true
     code-fold: false
     code-tools: false
-    theme: default
+    # theme: default
     fig-width: 10
     fig-height: 6
     fig-cap-location: bottom

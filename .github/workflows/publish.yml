@@ -23,6 +23,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -32,7 +33,7 @@ jobs:
         with:
           r-version: "4.5.1"
           use-public-rspm: true
-      
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -46,35 +47,9 @@ jobs:
         with:
           path: ${{ env.R_LIBS_USER }}
           key: r-${{ runner.os }}-4.5.1-${{ hashFiles('renv.lock') }}
-          restore-keys: r-${{ runner.os }}-4.5.1-
 
       - name: Install R packages
-        shell: Rscript {0}
-        run: |
-          options(repos = c(CRAN = Sys.getenv("CRAN_REPO")))
-          lib = Sys.getenv("R_LIBS_USER")
-          dir.create(lib, recursive = TRUE, showWarnings = FALSE)
-          .libPaths(c(lib, .libPaths()))
-
-          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv", lib = lib)
-
-          # 1. Versions recorded in renv.lock
-          renv::restore(library = lib, prompt = FALSE)
-
-          # 2. Anything the site needs that is not in the lockfile yet
-          #    (knitr/rmarkdown/downlit/xml2 are needed by Quarto itself and by `code-link`)
-          needed = unique(
-              c(
-                  "knitr", 
-                  "rmarkdown", 
-                  "downlit", 
-                  "xml2",
-                  renv::dependencies(quiet = TRUE)$Package
-              )
-          )
-          needed = intersect(needed, rownames(available.packages()))
-          missing = setdiff(needed, rownames(installed.packages()))
-          if (length(missing)) install.packages(missing, lib = lib)
+        run: Rscript .github/scripts/setup-r-libs.R
 
       - name: Render site
         run: quarto render
@@ -92,3 +67,4 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        

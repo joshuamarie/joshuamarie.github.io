@@ -1,17 +1,40 @@
 /* Components carried over from the old theme.html.
-   Colors follow Quarto's light/dark switch (body.quarto-dark). */
+   Colors follow Quarto's light/dark switch (body.quarto-dark).
+   The variable names below are the ones Theme/table.css and Theme/code.css rely on. */
 
 :root {
-    --c-primary: #2ecc71;
-    --c-surface: var(--bs-tertiary-bg, #f8f9fa);
-    --c-border: var(--bs-border-color, #dee2e6);
-    --c-muted: var(--bs-secondary-color, #555);
-    --c-radius: 8px;
-    --c-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --primary-color: #2ecc71;
+    --primary-dark: #27ae60;
+    --background: var(--bs-body-bg);
+    --surface: #f8f9fa;
+    --surface-hover: #f1f3f5;
+    --surface-light: #e9ecef;
+    --border: #dee2e6;
+    --text-primary: var(--bs-body-color);
+    --text-muted: #555;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 body.quarto-dark {
-    --c-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --surface: #1e1e1e;
+    --surface-hover: #2a2a2a;
+    --surface-light: #333;
+    --border: #333;
+    --text-muted: #bbb;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 html {
@@ -22,9 +45,9 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid var(--c-primary);
+    outline: 2px solid var(--primary-color);
     outline-offset: 2px;
-    border-radius: var(--c-radius);
+    border-radius: var(--radius);
 }
 
 ::-webkit-scrollbar {
@@ -32,13 +55,13 @@ textarea:focus-visible {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--c-surface);
+    background: var(--surface);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--c-border);
+    background: var(--border);
     border-radius: 6px;
-    border: 2px solid var(--c-surface);
+    border: 2px solid var(--surface);
 }
 
 #TOC a {
@@ -46,19 +69,19 @@ textarea:focus-visible {
 }
 
 #TOC a:hover {
-    color: var(--c-primary);
+    color: var(--primary-color);
     transform: translateX(4px);
 }
 
 main.content blockquote {
-    border-left: 4px solid var(--c-primary);
+    border-left: 4px solid var(--primary-color);
     margin: 1.5rem 0;
     padding: 1rem 1.5rem;
-    background: var(--c-surface);
-    border-radius: 0 var(--c-radius) var(--c-radius) 0;
-    color: var(--c-muted);
+    background: var(--surface);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--text-muted);
     font-style: italic;
-    box-shadow: var(--c-shadow);
+    box-shadow: var(--shadow-sm);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,16 @@
+/*-- scss:defaults --*/
+
+// Dark half of the light/dark pair. Listed after theming.scss, so these win.
+$body-bg: #121212;
+$body-color: #bbb;
+$headings-color: #f0f0f0;
+$border-color: #333;
+
+// "navbar: background: light" maps to $light, so this darkens the navbar in dark mode
+$light: #1a1a1a;
+
+$link-color: #2ecc71;
+$link-hover-color: #58d68d;
+
+$code-bg: #1e1e1e;
+$code-color: #e6e6e6;

@@ -21,7 +21,7 @@ format:
           <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9842567530621468" crossorigin="anonymous"></script>
     fontsize: 1em
     include-after-body:
-      - Theme/theme.html
+      # - Theme/theme.html
       - Theme/code-modal.html
     toc-title: ""
     highlight-style:

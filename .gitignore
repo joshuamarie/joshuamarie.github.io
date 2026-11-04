@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+*.Rproj
 
 /.quarto/
 **/__pycache__/
@@ -12,3 +13,12 @@ _site/
 docs/
 
 **/*.quarto_ipynb
+
+# renv (the important ones)
+renv/library/
+renv/local/
+renv/cellar/
+renv/lock/
+renv/python/
+renv/sandbox/
+renv/staging/

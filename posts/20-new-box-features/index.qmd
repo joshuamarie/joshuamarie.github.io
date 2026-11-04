@@ -94,7 +94,7 @@ I have been using to `{box}` lately, because I want a better way to write, organ
 I won't list every reason here (the [official documentation](https://baler-dev.github.io/baler/) does), but in a nutshell, its packages resemble Python's packaging system, and its logic and interface, it takes versioning seriously, and you can lock the dependency structure of `box-bale` modules.
 :::
 
-`{baler}` is made to give `{box}` modules a chance to be a package, the way Python modules are, and I also contributed to `{box}` itself a bit. There, I proposed lazy imports through a `lazy()` call and plug the declared import within it. The idea comes from [PEP 810](https://peps.python.org/pep-0810/), which shipped in Python 3.15 in October 2026 with the `lazy` soft keyword. Since `box::use()` is an ordinary R function call, a keyword is not an option, so `~` is the R adaptation. I'll discuss it later.
+`{baler}` is made to give `{box}` modules a chance to be a package, the way Python modules are, and I also contributed to `{box}` itself a bit. There, I proposed lazy imports through a `lazy()` call and plug the declared import within it. The idea comes from [PEP 810](https://peps.python.org/pep-0810/), which shipped in Python 3.15 in October 2026 with the `lazy` soft keyword. Since `box::use()` is an ordinary R function call, a keyword is not an option, so `lazy()` function call is the R adaptation. I'll discuss it later.
 
 These new features in `{box}` are not just something I want. I need them (as the title suggests).
 
@@ -378,7 +378,7 @@ Running `Rscript main.r` then prints:
 [main] done
 ```
 
-`box::use()` binds the name `heavy` right away, but `heavy.r` is not evaluated yet during import time. The module loads at the first access, `heavy$double()`, which is why `[heavy] module is loading` shows up between the two `[main]` messages. Drop the `~` and now the order flips, because the module loads while `box::use()` runs:
+`box::use()` binds the name `heavy` right away, but `heavy.r` is not evaluated yet during import time. The module loads at the first access, `heavy$double()`, which is why `[heavy] module is loading` shows up between the two `[main]` messages. Drop the `lazy()` usage and now the order flips, because the module loads while `box::use()` runs:
 
 ```
 [heavy] module is loading
@@ -387,7 +387,7 @@ Running `Rscript main.r` then prints:
 [main] done
 ```
 
-A lazy import that is never touched is never loaded. If `main.r` declares `~ ./heavy` but never uses `heavy`, the `[heavy]` message never appears.
+A lazy import that is never touched is never loaded. If `main.r` declares `lazy(./heavy)` but never uses `heavy`, the `[heavy]` message never appears.
 
 Lazy imports also work with an attach list. In `box::use(lazy(./heavy[double]))`, the name `double` is bound immediately, and `heavy.r` is evaluated the first time `double` is used:
 

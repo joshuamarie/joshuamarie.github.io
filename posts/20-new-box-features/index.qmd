@@ -1,7 +1,7 @@
 ---
 title: "New behooveful features for {box} modules"
 subtitle: "Other ways to write {box} modules"
-description: "Packaging, lazy imports, and native code for {box} modules."
+description: "Packaging and lazy imports for {box} modules."
 author: "Joshua Marie"
 date: "2026-10-12"
 image: "image.png"
@@ -70,25 +70,33 @@ cv_data = function(data, ...) {
 }
 ```
 
-So, when you run an `iris |> cv_data(everything())` instance, it works but it also leaves `{dplyr}` and `{tidyr}` attached for the rest of the session, so the imports leak out of the function. The native `::` operator (`dplyr::select()`) avoids the attach, but it gets noisy in pipelines and gives you no aliasing or selective import. Oh well, you could by assigning it into a variable, e.g. `keep_when = dplyr::filter`, but it's dirty and more laborous. With `{box}`, this reduces those shortcomings — we have `box::use(dplyr[select, group_by, keep_when = filter])` that gives you both.
+So, when you run an `iris |> cv_data(everything())` instance, it works but it also leaves `{dplyr}` and `{tidyr}` attached for the rest of the session, so the imports leak out of the function. The native `::` operator (`dplyr::select()`) avoids the attach, but it gets noisy in pipelines and gives you no aliasing or selective import. Oh well, you could by assigning it into a variable, e.g. `keep_when = dplyr::filter`, but it's still dirty and more laborous. With `{box}`, this reduces those shortcomings — we have `box::use(dplyr[select, group_by, keep_when = filter])` that gives you both.
 
-How about working with local R codes? Then there is `source()` for that job. By default, it evaluates in the global environment (`local = FALSE`). With `local = TRUE` it evaluates in the calling environment instead, but you still get no namespace, no explicit import list, and no way to tell where a name came from. Neither `library()` nor `source()` makes R modular. Actually speaking, there are so many shortcomings from this function but my only gripe is it has too many parameters — `r length(formals(source))` to be exact — and there's no way I can remember them at once (I have to reach out its documentation through `?source()` but it doesn't help me at any case). 
+How about working with local R codes? Then there is `source()` for the sake of reusability. By default, it evaluates in the global environment (`local = FALSE`). With `local = TRUE` it evaluates in the calling environment instead, but you still get no namespace, no explicit import list, and no way to tell where a name came from. Neither `library()` nor `source()` makes R modular. Actually speaking, there are so many shortcomings from this function but my only gripe is it has too many parameters — `r length(formals(source))` to be exact — and there's no way I can remember all of them at once. I have to reach out its documentation through `?source` but it doesn't help me at any case. 
 
 Second, little in native R is ergonomic for writing and organizing code. After years of experience using R, but its package system, I have been observing its flaws and shortcomings and here's my list:
 
-1.  Its package do not support hierarchical nesting of code, so you won't see submodules and such in traditional R packages (`polars` is odd as it uses a different but "mystical" approach to store the main public APIs in a `pl` environment). The source container is the flat `R/` directory, an awkward constraint (Disclaimer: in my opinion) when you come from Python, where folders and scripts map directly onto nestable packages and modules.
+1.  Its package do not support hierarchical nesting of code, that's why you won't see submodules and such in traditional R packages (`polars` is odd as it uses a different but "mystical" approach to store the main public APIs in a `pl` environment). The source container is the flat `R/` directory, an awkward constraint *(Disclaimer: in my opinion)* when you come from Python, where folders and scripts map directly onto nestable packages and modules.
 
-2.  They need boilerplate, namely `DESCRIPTION`, `NAMESPACE`, and other plenty of structures, mostly in a formal package structure, and they have to be used even for a small reusable unit. `{usethis}` and `{roxygen2}` helps you most of it, so this is not a huge deal, but it is still friction. 
+2.  They need finite boilerplates, namely the use `DESCRIPTION`, `NAMESPACE`, and other plenty of structures, mostly in a formal package structure, and they have to be used even for a small reusable unit. Although `{usethis}` and `{roxygen2}` exists to help you most of it, thus this is not a huge deal, it still adds friction.  
 
-> You don't do this on `{box}` at all. `{baler}` only requires 1 file and then the folder which contains the source codes, nothing else, in order to package `{box}` modules. 
+    ::: {.callout-tip title=" "}
 
-3.  Source files in a CRAN-style package are evaluated into one shared package namespace. The order follows the `Collate` field in `DESCRIPTION`, and without it, files are evaluated by the *lexicographical/alphabetical order* of the file name (see the [roxygen2 article on collation](https://roxygen2.r-lib.org/articles/collate.html)). This gets more annoying as the code grows. 
+    In fact, you don't do this with `{box}` at all. `{baler}`, that makes these modules packageable, only requires 1 file and then the folder which contains the source codes, nothing else, in order to package `{box}` modules. 
 
-> By contrast, each `{box}` module lives in its own isolated namespace and is loaded with `box::use()`, not sourced into the calling environment.
+    :::
+
+3.  Source files in a CRAN-style package are evaluated into one shared package namespace. The order follows the `Collate` field in `DESCRIPTION`, and without it, files are evaluated by the *lexicographical / alphabetical order* of the file name (see the [roxygen2 article on collation](https://roxygen2.r-lib.org/articles/collate.html)). This gets more annoying as the code grows.  
+
+    ::: {.callout-tip title=" "}
+
+    By contrast, each `{box}` module lives in its own isolated namespace and is loaded with `box::use()`, not sourced into the calling environment.
+
+    :::
 
 # "Futuristic" Features
 
-I have been using to `{box}` lately, because I want a better way to write, organize, and reuse R code, and I have wanted it for years. In fact, I bestow some little to plenty contributions on this package. Over a year now (before I wrote this blog), I (though we started as a team, I am only left just for now) embarked a project called `{baler}` (started as `{carrier}` BTW), which is written in Rust with a thin CLI wrapper, to package and distribute `{box}` modules. There is no formal name for these packages, so I call them `box-bale` modules for now. I am biased, but I recommend writing packages this way. 
+I have been using to `{box}` lately, because I want a better way to write, organize, and reuse R code, and I have wanted it for years. In fact, I bestow some little, if not plenty, contributions to this package. Over a year now (before I wrote this blog), I (though we started as a team, I am only left just for now) embarked a project called `{carrier}`, which is written in Rust with a thin CLI wrapper, to package and distribute `{box}` modules, then migrated into `{baler}` later on. There is no formal name for these packages, so I call them `box-bale` modules for now. I am biased, but I recommend writing packages this way. 
 
 ::: {.callout-tip title="In a nutshell"}
 I won't list every reason here (the [official documentation](https://baler-dev.github.io/baler/) does), but in a nutshell, its packages resemble Python's packaging system, and its logic and interface, it takes versioning seriously, and you can lock the dependency structure of `box-bale` modules.
